@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block script %}
+<!-- 
+styling here
+
+-->
+{% endblock script %}
+
+{% block my_content %}
+
+<!-- Plotly plot placeholder -->
+<div class="container-fluid">
+    Market Consensus Drill Down
+
+    <!-- first row, first column-->
+    <div class=2"row">
+        <div class="chart" id="market-1">
+        </div>
+    </div>
+    <hr>
+    <div class=2"row">
+        <div class='chart' id="market-2">
+        </div>
+    </div>
+    <hr>
+    <div class=2"row">
+        <div class='chart' id="market-3">
+        </div>
+    </div>
+    <hr>
+
+</div>
+
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.market_sentiments_drill1 | safe }};
+    Plotly.plot('market-1', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.market_sentiments_drill2 | safe }};
+    Plotly.plot('market-2', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.market_sentiments_drill3 | safe }};
+    Plotly.plot('market-3', graphs, {});
+</script>
+
+{% endblock my_content %}

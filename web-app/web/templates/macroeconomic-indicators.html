@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block script %}
+<!-- 
+styling here
+-->
+{% endblock script %}
+
+
+{% block my_content %}
+
+<!-- Plotly plot placeholder -->
+<div class="container-fluid">
+    Macroeconomic Indicators
+
+    <!-- first row, first column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+    <div class="row">
+        <div class="col">
+            <div class="chart" id="macro-1">
+            </div>
+        </div>
+        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+        <div class="col">
+            <div class="chart" id="macro-3">
+            </div>
+        </div>
+    </div>
+    <hr>
+    <!-- second row, first column-->
+    <div class="row">
+        <div id="macro-2">
+        </div>
+    </div>
+</div>
+
+<!-- Script to execute the Json ( we can create it also with looping) -->
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_gdp_index | safe }};
+    Plotly.plot('macro-1', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_gdp_index | safe }};
+    Plotly.plot('macro-2', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_gdp_index | safe }};
+    Plotly.plot('macro-3', graphs, {});
+</script>
+{% endblock my_content %}
