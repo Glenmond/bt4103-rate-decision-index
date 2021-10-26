@@ -13,8 +13,8 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 import json
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+import dash as dcc
+import dash as html
 from web.utils.utils import load_market_data
 
 ## Time series of market sentiments (drill down)
