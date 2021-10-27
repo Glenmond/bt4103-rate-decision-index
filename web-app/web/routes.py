@@ -8,8 +8,8 @@ import json
 from werkzeug.utils import secure_filename
 import os
 
-# Setting data directory
-uploads_dir = os.path.join(app.instance_path, 'data')
+# Setting data directory: saved to web/data
+uploads_dir = os.path.join(os.path.dirname(app.instance_path), 'web/data')
 os.makedirs(uploads_dir, exist_ok=True)
 
 # Loading raw data and clean it
@@ -71,7 +71,8 @@ def upload_file():
 def upload_files():
    if request.method == 'POST':
       f = request.files['file']
-      f.save(secure_filename(f.filename))
+      path = os.path.join(uploads_dir, secure_filename(f.filename))
+      f.save(path)
       return 'file uploaded successfully'
 
 
