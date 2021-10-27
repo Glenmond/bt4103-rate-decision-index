@@ -4,11 +4,13 @@
 put your custom script or styling here
 
 -->
+
 {% endblock script %}
 
 
 {% block my_content %}
 <!-- first row -->
+<body>
 <div class="row">
     <h2>Overall rate decision</h2>
 </div>
@@ -16,9 +18,10 @@ put your custom script or styling here
     <div class="chart" id="home-5">
     </div>
 </div>
+<br>
 <div class="row">
     <div class="col-4">
-        <div class="small-box bg-warning">
+        <div class="small-box bg-purple">
             <div class="inner">
                 <div class = 'row'>
                     <h3>    Market Consensus</h3>
@@ -30,14 +33,14 @@ put your custom script or styling here
         </div>
     </div>
     <div class="col-4">
-        <div class="small-box bg-success">
+        <div class="small-box bg-purple">
             <div class="inner">
                 <h3>Macroeconomic Indicators</h3>
             </div>
         </div>
     </div>
     <div class="col-4">
-        <div class="small-box bg-danger">
+        <div class="small-box bg-purple">
             <div class="inner">
 
                 <h3>Fed Fund Futures</h3>
@@ -61,6 +64,7 @@ put your custom script or styling here
         </div>
     </div>
 </div>
+</body>
 
 
 
