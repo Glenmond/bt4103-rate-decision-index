@@ -4,6 +4,8 @@ import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot
+from web.fff_model.main import Main
+
 import json
 from werkzeug.utils import secure_filename
 import os
@@ -11,6 +13,9 @@ import os
 # Setting data directory: saved to web/data
 uploads_dir = os.path.join(os.path.dirname(app.instance_path), 'web/data')
 os.makedirs(uploads_dir, exist_ok=True)
+
+main = Main()
+
 
 # Loading raw data and clean it
 
@@ -65,8 +70,13 @@ def plot_main_dashboard():
 
 @app.route("/upload")
 def upload_file():
-   return render_template('model-run.html')
-	
+    return render_template('model-run.html')
+
+@app.route("/runfff", methods = ['GET', 'POST'])
+def run_fff_model():
+    main.run_main()
+    return render_template('model-run.html')
+
 @app.route('/uploader', methods = ['GET', 'POST'])
 def upload_files():
    if request.method == 'POST':
