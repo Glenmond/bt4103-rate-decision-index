@@ -10,57 +10,60 @@ put your custom script or styling here
 
 {% block my_content %}
 <!-- first row -->
-<body>
-<div class="row">
-    <h2>Overall rate decision</h2>
-</div>
-<div class=2"row">
-    <div class="chart" id="home-5">
+<div class="container-fluid">
+    <div class="row">
+        <h2>Overall Rate Decision</h2>
     </div>
-</div>
-<br>
-<div class="row">
-    <div class="col-4">
-        <div class="small-box bg-purple">
-            <div class="inner">
-                <div class = 'row'>
-                    <h3>    Market Consensus</h3>
+    <div class=2"row">
+        <div class="chart" id="home-6">
+        </div>
+    </div>
+    <div class=2"row">
+        <div class="chart" id="home-5">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <div class = 'row'>
+                        <h3>    Market Consensus</h3>
+                    </div>
+                    <div class = 'row'>
+                        <div class='chart' id="home-4"></div>
+                    </div>
                 </div>
-                <div class = 'row'>
-                    <div class='chart' id="home-4"></div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>Macroeconomic Indicators</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>Fed Fund Futures</h3>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-4">
-        <div class="small-box bg-purple">
-            <div class="inner">
-                <h3>Macroeconomic Indicators</h3>
+    <hr>
+    <!-- second row -->
+    <div class="row">
+        <div class="col-4">
+            <div id="home-1">
             </div>
         </div>
-    </div>
-    <div class="col-4">
-        <div class="small-box bg-purple">
-            <div class="inner">
-
-                <h3>Fed Fund Futures</h3>
+        <div class="col-4">
+            <div id="home-2">
             </div>
         </div>
-    </div>
-</div>
-<hr>
-<!-- second row -->
-<div class="row">
-    <div class="col-4">
-        <div id="home-1">
-        </div>
-    </div>
-    <div class="col-4">
-        <div id="home-2">
-        </div>
-    </div>
-    <div class="col-4">
-        <div id="home-3">
+        <div class="col-4">
+            <div id="home-3">
+            </div>
         </div>
     </div>
 </div>
@@ -94,5 +97,10 @@ put your custom script or styling here
     //PLACEHOLDER TO BE REPLACED WITH ACTUAL OVERALL INDEX
     var graphs = {{ context.market_sentiments_drill1 | safe }};
     Plotly.plot('home-5', graphs, {});
+</script>
+<script>
+    //PLACEHOLDER TO BE REPLACED WITH GAUGE
+    var graphs = {{ context.plot_gauge | safe }};
+    Plotly.plot('home-6', graphs, {});
 </script>
 {% endblock my_content %}

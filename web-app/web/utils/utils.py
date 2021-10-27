@@ -10,21 +10,21 @@ def isNaN(num):
 
 #loading data
 def load_market_data():
-    market_data = pd.read_csv("https://raw.githubusercontent.com/angjamais/rate-decision-index-webapp/main/data/ms_result.csv")
+    market_data = pd.read_csv("web/data/ms_result.csv")
     return market_data
 
 def load_macro_data():
-    gdp_sub_index = pd.read_csv("https://raw.githubusercontent.com/angjamais/rate-decision-index-webapp/main/data/macro_gdp_data.csv")
+    gdp_sub_index = pd.read_csv("web/data/macro_gdp_data.csv")
     return gdp_sub_index
 
 def load_fff_data():
-    fff_data = pd.read_csv("https://raw.githubusercontent.com/angjamais/rate-decision-index-webapp/main/data/fff_result.csv")
-    fake_data = pd.read_csv("https://raw.githubusercontent.com/angjamais/rate-decision-index-webapp/main/data/macro_gdp_data.csv")
+    fff_data = pd.read_csv("web/data/fff_result.csv")
+    fake_data = pd.read_csv("web/data/macro_gdp_data.csv")
     
     return fff_data, fake_data
 
 def load_home_data():
-    home_data = pd.read_csv("https://raw.githubusercontent.com/angjamais/rate-decision-index-webapp/main/data/macro_gdp_data.csv")
+    home_data = pd.read_csv("web/data/macro_gdp_data.csv")
     return home_data
 
 
