@@ -248,7 +248,7 @@ def plot_fff(fff_data):
 
     fig.update_layout(
         font_family="Courier New",
-        font_color="white",
+        font_color="black",
         title_font_family="Times New Roman Bold",
         title_font_color="black",
         title_text='Probability of Change in Target Rates by Basis Points', 
