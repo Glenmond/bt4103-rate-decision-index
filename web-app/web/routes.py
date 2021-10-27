@@ -5,6 +5,12 @@ from flask import render_template, url_for, flash, redirect, request, make_respo
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot
 import json
+from werkzeug.utils import secure_filename
+import os
+
+# Setting data directory
+uploads_dir = os.path.join(app.instance_path, 'data')
+os.makedirs(uploads_dir, exist_ok=True)
 
 # Loading raw data and clean it
 
@@ -43,6 +49,9 @@ def plot_main_dashboard():
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
 
+    # gauge
+    plot_gauge = home_plot.plot_gauge()
+
     context = {"market_consensus": market_consensus,
                "macroeconomic_indicators": macroeconomic_indicators,
                "fedfundfutures": fedfundfutures,
@@ -50,8 +59,21 @@ def plot_main_dashboard():
                "plot_market_average": plot_market_average,
                'plot_gdp_index': plot_gdp_index, 
                'plot_fff': plot_fff,
-               'market_sentiments_drill1': market_sentiments_drill1}
+               'market_sentiments_drill1': market_sentiments_drill1,
+               "plot_gauge": plot_gauge}
     return render_template('home.html', context=context)
+
+@app.route("/upload")
+def upload_file():
+   return render_template('model-run.html')
+	
+@app.route('/uploader', methods = ['GET', 'POST'])
+def upload_files():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
+
 
 @app.route("/home")
 def plot_home():
@@ -72,6 +94,9 @@ def plot_home():
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
 
+    # gauge
+    plot_gauge = home_plot.plot_gauge()
+
     context = {"market_consensus": market_consensus,
                "macroeconomic_indicators": macroeconomic_indicators,
                "fedfundfutures": fedfundfutures,
@@ -79,7 +104,8 @@ def plot_home():
                "plot_market_average": plot_market_average,
                'plot_gdp_index': plot_gdp_index, 
                'plot_fff': plot_fff,
-               'market_sentiments_drill1': market_sentiments_drill1}
+               'market_sentiments_drill1': market_sentiments_drill1,
+               "plot_gauge": plot_gauge}
     return render_template('home.html', context=context)
 
 
