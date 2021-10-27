@@ -14,6 +14,43 @@ import plotly.express as px
 import json
 from web.utils.utils import load_home_data, load_market_data, load_fff_data
 
+
+def plot_gauge():
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = 0.654,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': "Rate Hike-Cut", 'font': {'size': 20}},
+        delta = {'reference': 0.5, 'increasing': {'color': "mediumseagreen"}},
+        gauge = {
+            'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': "white"},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "gray",
+            'steps': [
+                {'range': [0, 0.1], 'color': 'maroon'},
+                {'range': [0.1, 0.2], 'color': 'firebrick'},
+                {'range': [0.2, 0.3], 'color': 'indianred'},
+                {'range': [0.3, 0.4], 'color': 'lightcoral'},
+                {'range': [0.4, 0.5], 'color': 'rosybrown'},
+                {'range': [0.5, 0.6], 'color': 'floralwhite'},
+                {'range': [0.6, 0.7], 'color': 'palegreen'},
+                {'range': [0.7, 0.8], 'color': 'lightgreen'},
+                {'range': [0.8, 0.9], 'color': 'limegreen'},
+                {'range': [0.9, 1], 'color': 'forestgreen'}],
+            'threshold': {
+                'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': 0.654}}))
+
+    #fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+    #fig.update_layout(width=800, height=450)
+    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    return plot_json
+
+
 def plot_market(market_data):
     #currently is static and hard coded. 
     # need to implment date picker for entire dashboard for home page
@@ -170,7 +207,7 @@ def plot_market_average(market_data):
         font_color="black")
     
     
-    fig.update_layout(width=650, height=200)
+    #fig.update_layout(width=650, height=200)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
        
@@ -198,7 +235,7 @@ def plot_fff(fff_data):
 
     fig.update_yaxes(range=[-1.1, 1.1])
     
-    #fig.update_layout(width=650, height=200)
+    #fig.update_layout(width=650, height=400)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
