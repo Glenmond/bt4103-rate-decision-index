@@ -109,7 +109,6 @@ def plot_home():
     return render_template('home.html', context=context)
 
 
-
 @app.route("/market-consensus")
 def plot_market_consensus():
     #ploting

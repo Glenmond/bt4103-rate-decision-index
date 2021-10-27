@@ -11,6 +11,7 @@ import pandas as pd
 from vega_datasets import data
 from plotly.subplots import make_subplots
 import plotly.express as px
+import plotly.io as pio
 import json
 from web.utils.utils import load_home_data, load_market_data, load_fff_data
 
@@ -56,7 +57,17 @@ def plot_market(market_data):
     # need to implment date picker for entire dashboard for home page
     date = '2000-04-30'
     df_senti = market_data
-    fig = go.Figure()
+    
+    layout = go.Layout(
+        margin=go.layout.Margin(
+        l=150, #left margin
+        r=0, #right margin
+        b=30, #bottom margin
+        t=30  #top margin
+        )
+    )
+    
+    fig = go.Figure(layout=layout)
     
     fig.add_trace(go.Indicator(
         title = {'text': "Sentiments for " + date, 
@@ -126,9 +137,13 @@ def plot_market(market_data):
         grid = {'rows': 4, 'columns': 2, 'pattern': "independent"}, 
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
-        font_color="black")
+        font_color="black",
+        #template='plotly_dark'
+        )
     
-    fig.update_layout(width=800, height=450)
+
+    
+    fig.update_layout(width=650, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
@@ -181,8 +196,18 @@ def plot_market_average(market_data):
         word = "Overall Dovish"
     elif avg == 0:
         word = "Overall Neutral"
+        
+    layout = go.Layout(
+        margin=go.layout.Margin(
+        l=120, #left margin
+        r=40, #right margin
+        b=0, #bottom margin
+        t=0  #top margin
+        )
+    )
     
-    fig = go.Figure()
+    fig = go.Figure(layout=layout)
+
     fig.add_trace(go.Indicator(
         mode = "number",
         value = avg,
@@ -206,8 +231,8 @@ def plot_market_average(market_data):
         font_family="Times New Roman Bold",
         font_color="black")
     
-    
-    #fig.update_layout(width=650, height=200)
+
+    fig.update_layout(width=600, height=125)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
        
@@ -223,7 +248,7 @@ def plot_fff(fff_data):
 
     fig.update_layout(
         font_family="Courier New",
-        font_color="black",
+        font_color="white",
         title_font_family="Times New Roman Bold",
         title_font_color="black",
         title_text='Probability of Change in Target Rates by Basis Points', 
@@ -240,18 +265,18 @@ def plot_fff(fff_data):
     return plot_json
 
 def plot_gdp_index(home_data):
-    '''
-    Placeholder function for plots
-    '''
     df = home_data
+    #df['period'] = df.index
+    #df['date'] = pd.PeriodIndex(df['period'], freq='Q').to_timestamp()
+    
     x = df['Date']
 
     fig = go.Figure()
 
     fig.add_trace(go.Line(x=x, y=df['GDPC1'],name='GDP', marker=dict(color="Black"))),
-    fig.add_trace(go.Line(x=x, y=df['PCEC96'],name='Domestic Consumption', marker=dict(color="lightcoral"))),
-    fig.add_trace(go.Line(x=x, y=df['GPDIC1'], name='Domestic Investment', marker=dict(color="sandybrown")))
-    fig.add_trace(go.Line(x=x, y=df['GCEC1'], name='Government Expenditure', marker=dict(color="darkseagreen")))
+    fig.add_trace(go.Line(x=x, y=df['PCEC96'],name='Consumption', marker=dict(color="lightcoral"))),
+    fig.add_trace(go.Line(x=x, y=df['GPDIC1'], name='Investment', marker=dict(color="sandybrown")))
+    fig.add_trace(go.Line(x=x, y=df['GCEC1'], name='Expenditure', marker=dict(color="darkseagreen")))
     fig.add_trace(go.Line(x=x, y=df['NETEXC'], name='Net Export', marker=dict(color="cornflowerblue")))
 
     fig.update_layout(title_text='GDP and its components',
@@ -281,9 +306,17 @@ def plot_gdp_index(home_data):
                     args=[{"visible":[True,False,False,False,True]},
                         {"title":"Net Export"}])
             ]),
+            direction="down",
+            pad={"r": 5, "t": 5},
+            showactive=True,
+            x=1,
+            xanchor="center",
+            y=1.2,
+            yanchor="bottom"
             )
         ],
     )
+    #fig.update_xaxes(rangeslider_visible=True)
     #fig.update_layout(width=600, height=400)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json

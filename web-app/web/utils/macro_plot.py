@@ -52,8 +52,16 @@ def plot_gdp_index(gdp_sub_index):
                     args=[{"visible":[True,False,False,False,True]},
                         {"title":"Net Export"}])
             ]),
+            direction="down",
+            pad={"r": 5, "t": 5},
+            showactive=True,
+            x=1.3,
+            xanchor="left",
+            y=1.2,
+            yanchor="top"
             )
         ],
+
     )
     #fig.update_layout(width=1500, height=500)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
