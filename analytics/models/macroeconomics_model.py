@@ -35,6 +35,8 @@ class MacroModel(Model):
         self.validation_results = None
         self.testing_results = None
 
+        self.preprocess()
+
     def preprocess(self):
         # Preprocess the data obtained from the API call
 
@@ -113,21 +115,32 @@ class MacroModel(Model):
             print("The dataset is not defined properly, make sure you preprocess the data first before fitting!") 
 
     def predict(self, data):
-        # TODO add in the Nonetype checks for the date (X_test or X_val)
-        # TODO make sure data can be anything list-like, can be a normal python list, or np.array or pd.series etc
+        # TODO if the data is not in pd.DataFrame format (like if input is in a list of tuples or dictionary something like that), 
+        # convert into pd DataFrame format
         
-        y_pred_res = self.fitted_model.get_prediction(sm.add_constant(data))
-        y_pred = y_pred_res.predicted_mean
-        y_pred = np.array([[x] for x in y_pred])
-        y_pred = [np.array([0]) if x < 0 else x for x in y_pred]
-        
-        return y_pred_res, y_pred
+        try:
+            y_pred_res = self.fitted_model.get_prediction(sm.add_constant(data))
+            y_pred = y_pred_res.predicted_mean
+            y_pred = np.array([[x] for x in y_pred])
+            y_pred = [np.array([0]) if x < 0 else x for x in y_pred]
+            
+            return y_pred_res, y_pred
+        except Exception as e:
+            print(e)
+            print("The dataset is not defined properly, make sure you fit the model with data first before fitting!") 
+            return
+
 
     def assess_val_set_performance(self):
-        y_pred_res, y_pred = self.predict(self.X_val)
-        self.validation_results = y_pred_res 
-        
-        # TODO: add in the NoneType checks for y_val
+        try:
+            y_pred_res, y_pred = self.predict(self.X_val)
+            self.validation_results = y_pred_res
+        except Exception as e:
+            print("Error when obtaining prediction for validation set") 
+            print(e)
+            print()
+            return
+
         r2 = r2_score(self.y_val, y_pred)
         adj_r2 = 1-(1-r2)*(len(self.X_val)-1)/(len(self.X_val)-4-1)
         rmse = math.sqrt(mean_squared_error(self.y_val, y_pred))
@@ -138,10 +151,15 @@ class MacroModel(Model):
         print(f"\tThe RMSE score is {rmse}")
         
     def assess_test_set_performance(self):
-        y_pred_res, y_pred = self.predict(self.X_test)
-        self.testing_result = y_pred_res
+        try:
+            y_pred_res, y_pred = self.predict(self.X_test)
+            self.testing_result = y_pred_res
+        except Exception as e:
+            print("Error when obtaining prediction for test set") 
+            print(e)
+            print()
+            return
         
-        # TODO: add in the NoneType checks for y_test
         r2 = r2_score(self.y_test, y_pred)
         adj_r2 = 1-(1-r2)*(len(self.X_test)-1)/(len(self.X_test)-4-1)
         rmse = math.sqrt(mean_squared_error(self.y_test, y_pred))

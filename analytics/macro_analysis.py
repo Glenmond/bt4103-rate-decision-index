@@ -9,8 +9,7 @@ if __name__ == '__main__':
     data = fetch_data()
 
     macro_model = MacroModel(data)
-    #macro_model.preprocess()
-    
+
     macro_model.fit_data()
 
     macro_model.assess_val_set_performance()
