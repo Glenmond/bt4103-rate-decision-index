@@ -8,11 +8,10 @@ if __name__ == '__main__':
     # Get the data
     data = fetch_data()
 
-
     macro_model = MacroModel(data)
-    macro_model.preprocess()
+    #macro_model.preprocess()
     
     macro_model.fit_data()
-    print(macro_model.y_test)
 
+    macro_model.assess_val_set_performance()
     macro_model.assess_test_set_performance()

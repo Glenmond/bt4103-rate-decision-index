@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
-from scipy.stats.mstats import gmean
+from scipy.stats.mstats import gmean, hmean
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error
@@ -47,11 +47,17 @@ class MacroModel(Model):
         hd = hd[hd.index >= '2003-01']
         hd = hd[hd.index <= '2021-04']
 
-        # Combine the different sentiments by using geometric mean
+        # Combine the different sentiments by using harmonic mean
         hd['Score_Statement'] = MinMaxScaler().fit_transform(hd['Score_Statement'].values.reshape(-1,1))
         hd['Score_Minutes'] = MinMaxScaler().fit_transform(hd['Score_Minutes'].values.reshape(-1,1))
         hd['Score_News'] = MinMaxScaler().fit_transform(hd['Score_News'].values.reshape(-1,1))
-        hd['Overall'] = gmean([hd['Score_Statement'],hd['Score_Minutes'],hd['Score_News']])
+        hd['Overall'] = hmean([hd['Score_Statement'],hd['Score_Minutes'],hd['Score_News']])
+        
+        # Scale then use arithmetic mean
+        # hd['Score_Statement'] = hd['Score_Statement'].apply(lambda x: x/(hd['Score_Statement'].max()) if x > 0 else -(x/(hd['Score_Statement'].min())))
+        # hd['Score_Minutes'] = hd['Score_Minutes'].apply(lambda x: x/(hd['Score_Minutes'].max()) if x > 0 else -(x/(hd['Score_Minutes'].min())))
+        # hd['Score_News'] = hd['Score_News'].apply(lambda x: x/(hd['Score_News'].max()) if x > 0 else -(x/(hd['Score_News'].min())))
+        # hd['Overall'] = [np.mean([x,y,z]) for x,y,z in zip(hd['Score_Statement'], hd['Score_Minutes'], hd['Score_News'])]
 
         # Add the HD index to the data
         self.data['HD_index'] = hd['Overall']
@@ -103,18 +109,8 @@ class MacroModel(Model):
             model_results = model.fit()
             self.fitted_model = model_results
             self.model_details = model_results.summary()
-        except TypeError:
-            print("The dataset is not defined properly, make sure you preprocess the data first before fitting!")
-
-        '''# Get performance on validation set
-        y_pred2_res = model_results.get_prediction(sm.add_constant(X_val_initial))
-        y_pred2 = y_pred2_res.predicted_mean
-        r2 = r2_score(y_pred2, y_val_initial)
-        adj_r2 = 1-(1-r2)*(len(X_val_initial)-1)/(len(X_val_initial)-4-1)
-
-        print(f"The R2 score is {r2}")
-        print(f"The Adjusted R2 score is {adj_r2}")
-        print(f"The RMSE is {math.sqrt(mean_squared_error(y_val_initial,y_pred2))}")'''    
+        except (TypeError):
+            print("The dataset is not defined properly, make sure you preprocess the data first before fitting!") 
 
     def predict(self, data):
         # TODO add in the Nonetype checks for the date (X_test or X_val)
