@@ -15,8 +15,11 @@ warnings.filterwarnings('ignore')
 
 from .base_model import Model
 
-class MacroModel(Model):
+class MacroData():
     def __init__(self, data):
+        # TODO: configure this data to be compatible with both pd Dataframe and json dictionaries
+        # if data is a json dictionary, parse it into a pd Dataframe
+        # The self.data is a pd DataFrame!!!
         self.data = data
 
         # Initialise train and test sets as None first
@@ -27,13 +30,8 @@ class MacroModel(Model):
         self.y_val = None
         self.y_test = None
 
-        # Initialize model results as None first
-        self.fitted_model = None
-        self.model_details = None
-
-        # Initialize test and val predictions as None first
-        self.validation_results = None
-        self.testing_results = None
+        # Initialise the scaler as None first
+        self.scaler=None
 
         self.preprocess()
 
@@ -93,15 +91,30 @@ class MacroModel(Model):
         self.X_train = pd.DataFrame(scaler.transform(self.X_train), columns=self.X_train.columns, index=self.X_train.index)
         self.X_val = pd.DataFrame(scaler.transform(self.X_val), columns=self.X_val.columns, index=self.X_val.index)
         self.X_test = pd.DataFrame(scaler.transform(self.X_test), columns=self.X_test.columns, index=self.X_test.index)
+        self.scaler = scaler
 
         # Rearrange the input features
         self.X_train = self.X_train[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
         self.X_val = self.X_val[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
         self.X_test = self.X_test[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
 
+
+class MacroModel(Model):
+    def __init__(self, data: MacroData):
+        self.data = data
+        self.scaler = data.scaler
+
+        # Initialize model results as None first
+        self.fitted_model = None
+        self.model_details = None
+
+        # Initialize test and val predictions as None first
+        self.validation_results = None
+        self.testing_results = None      
+
     def fit_data(self):
-        exog = self.X_train
-        endog = self.y_train
+        exog = self.data.X_train
+        endog = self.data.y_train
 
         try:
             # add a constant term for the regression
@@ -133,7 +146,7 @@ class MacroModel(Model):
 
     def assess_val_set_performance(self):
         try:
-            y_pred_res, y_pred = self.predict(self.X_val)
+            y_pred_res, y_pred = self.predict(self.data.X_val)
             self.validation_results = y_pred_res
         except Exception as e:
             print("Error when obtaining prediction for validation set") 
@@ -141,9 +154,9 @@ class MacroModel(Model):
             print()
             return
 
-        r2 = r2_score(self.y_val, y_pred)
-        adj_r2 = 1-(1-r2)*(len(self.X_val)-1)/(len(self.X_val)-4-1)
-        rmse = math.sqrt(mean_squared_error(self.y_val, y_pred))
+        r2 = r2_score(self.data.y_val, y_pred)
+        adj_r2 = 1-(1-r2)*(len(self.data.X_val)-1)/(len(self.data.X_val)-4-1)
+        rmse = math.sqrt(mean_squared_error(self.data.y_val, y_pred))
 
         print("Performance on Validation Set")
         print(f"\tThe R2 score is {r2}")
@@ -152,7 +165,7 @@ class MacroModel(Model):
         
     def assess_test_set_performance(self):
         try:
-            y_pred_res, y_pred = self.predict(self.X_test)
+            y_pred_res, y_pred = self.predict(self.data.X_test)
             self.testing_result = y_pred_res
         except Exception as e:
             print("Error when obtaining prediction for test set") 
@@ -160,9 +173,9 @@ class MacroModel(Model):
             print()
             return
         
-        r2 = r2_score(self.y_test, y_pred)
-        adj_r2 = 1-(1-r2)*(len(self.X_test)-1)/(len(self.X_test)-4-1)
-        rmse = math.sqrt(mean_squared_error(self.y_test, y_pred))
+        r2 = r2_score(self.data.y_test, y_pred)
+        adj_r2 = 1-(1-r2)*(len(self.data.X_test)-1)/(len(self.data.X_test)-4-1)
+        rmse = math.sqrt(mean_squared_error(self.data.y_test, y_pred))
 
         print("Performance on Test Set")
         print(f"\tThe R2 score is {r2}")

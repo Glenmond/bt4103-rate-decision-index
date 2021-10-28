@@ -2,13 +2,14 @@
 import numpy
 
 from data import fetch_data
-from models import MacroModel
+from models import MacroModel, MacroData
 
 if __name__ == '__main__':
     # Get the data
     data = fetch_data()
 
-    macro_model = MacroModel(data)
+    macro_data = MacroData(data)
+    macro_model = MacroModel(macro_data)
 
     macro_model.fit_data()
 
