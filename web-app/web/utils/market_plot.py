@@ -71,6 +71,19 @@ def display_market_sentiments_drill_down_2(market_data):
 
     fig_minutes.update_xaxes(rangeslider_visible=True)
     fig_minutes.update_yaxes(range=[-1.1, 1.1])
+    
+    fig_minutes.update_xaxes(
+    rangeslider_visible=True,
+    rangeselector=dict(
+        buttons=list([
+            dict(count=1, label="1m", step="month", stepmode="backward"),
+            dict(count=6, label="6m", step="month", stepmode="backward"),
+            dict(count=1, label="YTD", step="year", stepmode="todate"),
+            dict(count=1, label="1y", step="year", stepmode="backward"),
+            dict(step="all")
+        ])
+    )
+)
 
     plot_json = json.dumps(fig_minutes, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
@@ -94,6 +107,19 @@ def display_market_sentiments_drill_down_3(market_data):
     fig_news.update_xaxes(rangeslider_visible=True)
     fig_news.update_yaxes(range=[-1.1, 1.1])
 
+    fig_news.update_xaxes(
+        rangeslider_visible=True,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="YTD", step="year", stepmode="todate"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
+                dict(step="all")
+            ])
+        )
+    )
+    
     plot_json = json.dumps(fig_news, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 

@@ -141,9 +141,7 @@ def plot_market(market_data):
         #template='plotly_dark'
         )
     
-
-    
-    fig.update_layout(width=650, height=450)
+    fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
@@ -187,7 +185,9 @@ def plot_market_average(market_data):
     date = '2000-04-30'
     df_senti = market_data
     
-    avg = get_average_sentiment(market_data)
+    avg = round(get_average_sentiment(market_data),4)
+    
+    #avg = get_average_sentiment(market_data)
     
     word = ""
     if avg > 0:
@@ -199,10 +199,10 @@ def plot_market_average(market_data):
         
     layout = go.Layout(
         margin=go.layout.Margin(
-        l=120, #left margin
-        r=40, #right margin
+        l=0, #left margin
+        r=100, #right margin
         b=0, #bottom margin
-        t=0  #top margin
+        t=50  #top margin
         )
     )
     
@@ -219,14 +219,15 @@ def plot_market_average(market_data):
     
     fig.add_trace(go.Indicator(
         title = {'text': word, 
-                 'font.size': 20,
-                 'font.family': 'Courier New'},
+                 'font.size': 16,
+                 'font.family': 'Courier New Bold',
+                 'font.color':'saddlebrown'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
-        domain = {'row': 0, 'column': 1}))
+        domain = {'row': 1, 'column': 0}))
     
     fig.update_layout(
-        grid = {'rows': 1, 'columns': 2, 'pattern': "independent"}, 
+        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black")
