@@ -16,6 +16,7 @@ import dash
 import dash as dcc
 import dash as html
 from web.utils.utils import load_market_data
+from sklearn.feature_extraction.text import CountVectorizer
 
 ## Time series of market sentiments (drill down)
 
@@ -146,3 +147,25 @@ def display_market_sentiments_drill_down_3(market_data):
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
+
+def plot_top_n_trigram(data):
+    corpus = data
+    n=3
+    vec = CountVectorizer(ngram_range=(n, n)).fit([corpus])
+    bag_of_words = vec.transform([corpus])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot = pd.DataFrame(words_freq[:10], columns = ['Word/Phrase' , 'Count'])
+    fig = px.bar(df_plot, x='Word/Phrase', y='Count')
+    
+    fig.update_layout(
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",
+        title_text='Top 10 Most Common Words/Phrases', 
+        title_x=0.5
+    )
+    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json

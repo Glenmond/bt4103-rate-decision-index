@@ -14,6 +14,7 @@ import plotly.express as px
 import json
 from web.utils.utils import load_macro_data
 
+
 def plot_gdp_index(gdp_sub_index):
     x = gdp_sub_index['Date']
 
@@ -205,3 +206,7 @@ def plot_inflation_index(gdp_sub_index):
     fig.update_xaxes(rangeslider_visible=True)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
+
+
+
+

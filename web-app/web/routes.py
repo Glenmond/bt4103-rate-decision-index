@@ -24,6 +24,10 @@ main = Main()
 market_data = utils.load_market_data()
 market_data_cleaned = utils.clean_market(market_data)
 
+market_ngram_min, market_ngram_statement = utils.load_ngram_market_data()
+market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
+market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
+
 #macro
 gdp_data, employment_data, inflation_data = utils.load_macro_data()
 
@@ -126,9 +130,15 @@ def plot_market_consensus():
     market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
     market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
     market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
+    
+    ngram_min = market_plot.plot_top_n_trigram(market_ngram_min_cleaned)
+    ngram_statement = market_plot.plot_top_n_trigram(market_ngram_statement_cleaned)
+
     context = {'market_sentiments_drill1': market_sentiments_drill1,
                'market_sentiments_drill2': market_sentiments_drill2,
-               'market_sentiments_drill3': market_sentiments_drill3}
+               'market_sentiments_drill3': market_sentiments_drill3, 
+               'ngram_min': ngram_min, 
+               'ngram_statement':ngram_statement}
     return render_template('market-consensus.html', context=context)
 
 

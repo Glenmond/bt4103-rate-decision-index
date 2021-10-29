@@ -28,7 +28,16 @@ styling here
         </div>
     </div>
     <hr>
-
+    <div class=2"row">
+        <div class="col">
+            <div class='chart' id="market-4">
+            </div>
+        </div>
+        <div class="col">
+            <div class='chart' id="market-5">
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -45,6 +54,16 @@ styling here
     //Parse your Json variable here
     var graphs = {{ context.market_sentiments_drill3 | safe }};
     Plotly.plot('market-3', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.ngram_min | safe }};
+    Plotly.plot('market-4', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.ngram_statement| safe }};
+    Plotly.plot('market-5', graphs, {});
 </script>
 
 {% endblock my_content %}
