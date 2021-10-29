@@ -25,7 +25,7 @@ market_data = utils.load_market_data()
 market_data_cleaned = utils.clean_market(market_data)
 
 #macro
-gdp_data = utils.load_macro_data()
+gdp_data, employment_data, inflation_data = utils.load_macro_data()
 
 #fedfundfuture
 fff_data, fake_data = utils.load_fff_data()
@@ -136,7 +136,11 @@ def plot_market_consensus():
 def plot_macroeconomic_indicators():
     #ploting
     plot_gdp_index = macro_plot.plot_gdp_index(gdp_data)
-    context = {'plot_gdp_index': plot_gdp_index}
+    plot_employment_index = macro_plot.plot_employment_index(employment_data)
+    plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
+    context = {'plot_gdp_index': plot_gdp_index, 
+               'plot_employment_index': plot_employment_index, 
+               'plot_inflation_index': plot_inflation_index}
     return render_template('macroeconomic-indicators.html', context=context)
 
     

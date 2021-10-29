@@ -15,7 +15,9 @@ def load_market_data():
 
 def load_macro_data():
     gdp_sub_index = pd.read_csv("web/data/macro_gdp_data.csv")
-    return gdp_sub_index
+    employment_sub_index = pd.read_csv("web/data/macro_employment_data.csv")
+    inflation_sub_index = pd.read_csv("web/data/macro_inflation_data.csv")
+    return gdp_sub_index, employment_sub_index, inflation_sub_index
 
 def load_fff_data():
     fff_data = pd.read_csv("web/data/fff_result.csv")
