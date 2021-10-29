@@ -98,56 +98,6 @@ def display_market_sentiments_drill_down_3(market_data):
     return plot_json
 
 
-    '''
-    Placeholder function for plots
-    '''
-    df = market_data
-    x = df['Date']
-
-    fig = go.Figure()
-
-    fig.add_trace(go.Line(x=x, y=df['GDPC1'],name='GDP', marker=dict(color="Black"))),
-    fig.add_trace(go.Line(x=x, y=df['PCEC96'],name='Domestic Consumption', marker=dict(color="lightcoral"))),
-    fig.add_trace(go.Line(x=x, y=df['GPDIC1'], name='Domestic Investment', marker=dict(color="sandybrown")))
-    fig.add_trace(go.Line(x=x, y=df['GCEC1'], name='Government Expenditure', marker=dict(color="darkseagreen")))
-    fig.add_trace(go.Line(x=x, y=df['NETEXC'], name='Net Export', marker=dict(color="cornflowerblue")))
-
-    fig.update_layout(title_text='GDP and its components',
-                    xaxis_title='Date', yaxis_title='Value')
-    fig.update_layout(
-        updatemenus=[
-            dict(active=0,
-                buttons=list([
-                dict(label="All",
-                    method="update",
-                    args=[{"visible":[True,True,True,True,True]},
-                        {"title":"ALL"}]),
-                dict(label="Domestic Consumption",
-                    method="update",
-                    args=[{"visible":[True, True, False,False,False]},
-                        {"title":"Domestic Consumption"}]),
-                dict(label="Domestic Investment",
-                    method="update",
-                    args=[{"visible":[True,False,True,False,False]},
-                        {"title":"Domestic Investment"}]),
-                dict(label="Government Expenditure",
-                    method="update",
-                    args=[{"visible":[True,False,False,True,False]},
-                        {"title":"Government Expenditure"}]),
-                dict(label="Net Export",
-                    method="update",
-                    args=[{"visible":[True,False,False,False,True]},
-                        {"title":"Net Export"}])
-            ]),
-            )
-        ],
-        #width=500, height=400
-    )
-    fig.update_layout(width=500, height=400)
-    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return plot_json
-
-
 def plot_top_n_trigram(data):
     corpus = data
     n=3
