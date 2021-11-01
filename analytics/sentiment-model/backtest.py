@@ -40,7 +40,6 @@ class Backtest():
         
         for name in self.docs:
             df = self.classify(name)
-            df = self.scale(df)
             self.update(df, name)
     
     def classify(self, name):
@@ -127,6 +126,7 @@ class Backtest():
 
         df = pd.concat([old_df, curr_df])
         df.reset_index(inplace=True, drop=True)
+        df = self.scale(df)
 
         self.save_df(name, df)
         
