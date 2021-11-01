@@ -4,7 +4,7 @@ import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot
-from web.fff_model.main import Main
+from web.models.fff_model.main import Main
 
 import json
 from werkzeug.utils import secure_filename

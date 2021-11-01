@@ -1,5 +1,5 @@
-from web.fff_model.backtest import Backtest
-from web.fff_model.report import Report
+from web.models.fff_model.backtest import Backtest
+from web.models.fff_model.report import Report
 
 class Main():
     
