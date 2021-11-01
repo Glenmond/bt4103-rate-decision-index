@@ -181,9 +181,3 @@ class MacroModel(Model):
         print(f"\tThe R2 score is {r2}")
         print(f"\tThe Adjusted R2 score is {adj_r2}")
         print(f"\tThe RMSE score is {rmse}")
-
-
-
-        
-
-
