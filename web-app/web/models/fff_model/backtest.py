@@ -4,8 +4,8 @@ from calendar import monthrange
 from datetime import datetime,timedelta
 import re
 import numpy as np
-from web.fff_model.backtestloader import BacktestLoader
-from web.fff_model.fff_model import FederalFundsFuture
+from web.models.fff_model.backtestloader import BacktestLoader
+from web.models.fff_model.fff_model import FederalFundsFuture
 
 
 class Backtest():
