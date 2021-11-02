@@ -39,7 +39,7 @@ class MacroData():
         # Preprocess the data obtained from the API call
 
         # Add the HD index
-        hd = pd.read_csv('./models/final_df.csv')
+        hd = pd.read_csv('./macro_model/final_df.csv')
         hd.index = hd['Date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
         hd = hd.drop("Date", axis=1)
@@ -100,9 +100,10 @@ class MacroData():
 
 
 class MacroModel(Model):
-    def __init__(self, data: MacroData):
+    def __init__(self, data: MacroData, shift_coef = 1.7117595779058272):
         self.data = data
         self.scaler = data.scaler
+        self.shift_coef = shift_coef
 
         # Initialize model results as None first
         self.fitted_model = None
@@ -113,14 +114,15 @@ class MacroModel(Model):
         self.testing_results = None      
 
     def fit_data(self):
-        exog = self.data.X_train
+        exog = self.data.X_train.copy().drop('shifted_target', axis=1)
         endog = self.data.y_train
 
         try:
             # add a constant term for the regression
             exog = sm.add_constant(exog) 
             # this is the same as OLS
-            model = sm.GLM(endog,exog, family = sm.families.Gaussian(sm.families.links.identity()))
+            model = sm.GLM(endog,exog, family = sm.families.Gaussian(sm.families.links.identity()), 
+                            offset = self.shift_coef * self.data.X_train['shifted_target'] )
             model_results = model.fit()
             self.fitted_model = model_results
             self.model_details = model_results.summary()
@@ -132,7 +134,10 @@ class MacroModel(Model):
         # convert into pd DataFrame format
         
         try:
-            y_pred_res = self.fitted_model.get_prediction(sm.add_constant(data))
+            data_to_pred = data.copy().drop('shifted_target', axis=1)
+
+
+            y_pred_res = self.fitted_model.get_prediction(sm.add_constant(data_to_pred), offset = self.shift_coef * data['shifted_target'])
             y_pred = y_pred_res.predicted_mean
             y_pred = np.array([[x] for x in y_pred])
             y_pred = [np.array([0]) if x < 0 else x for x in y_pred]
