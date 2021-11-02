@@ -1,19 +1,21 @@
-import pandas
-class Model():
-    def __init__(self, country: str):
-        self.country = country
-        # handle the input for the data(API?, DB?), using country to get the country's data
-        # is our data going to be in a pandas dataset?
-        # TODO: data input into the model
+from abc import abstractmethod
 
+class Model():
+    @abstractmethod
     def preprocess(self):
         pass
         # TODO: handle data preprocessing
+
+    @abstractmethod
+    def fit_model(self):
+        pass
     
-    def predict(self):
+    @abstractmethod
+    def predict(self, data):
         pass
         # TODO: handle how prediction is made, using input data
 
+    '''@abstractmethod
     def create_index(self):
         pass
-        # TODO: handle how an index is created using our predictions 
+        # TODO: handle how an index is created using our predictions''' 
