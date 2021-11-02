@@ -83,7 +83,7 @@ put your custom script or styling here
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.macro_ts_plot | safe }};
+    var graphs = {{ context.plot_gdp_index | safe }};
     Plotly.plot('home-2', graphs, {});
 </script>
 <script>
@@ -108,7 +108,7 @@ put your custom script or styling here
 </script>
 <script>
     //PLACEHOLDER TO BE REPLACED WITH ACTUAL OVERALL INDEX
-    var graphs = {{ context.market_sentiments_drill1 | safe }};
+    var graphs = {{ context.macro_ts_plot | safe }};
     Plotly.plot('home-5', graphs, {});
 </script>
 <script>

@@ -143,7 +143,7 @@ def plot_market_consensus():
     market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
     #market_ts_plot = market_plot.plot_market_ts(market_plot)
     ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min)
-    ngram_statement = market_plot.get_top_n_gram_news(market_ngram_statement)
+    ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement)
 
     context = {'market_sentiments_drill1': market_sentiments_drill1,
                'market_sentiments_drill2': market_sentiments_drill2,

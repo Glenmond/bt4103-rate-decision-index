@@ -285,7 +285,132 @@ def get_top_n_gram_mins(data):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
+def get_top_n_gram_st(data):
+    st_df=data
+    ## Data
+    #n=1
+    vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(st_df)])
+    bag_of_words = vec.transform([concat_list(st_df)])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot_1 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
 
+    #n=2
+    vec = CountVectorizer(ngram_range=(2, 2)).fit([concat_list(st_df)])
+    bag_of_words = vec.transform([concat_list(st_df)])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot_2 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+
+    #n=3
+    vec = CountVectorizer(ngram_range=(3, 3)).fit([concat_list(st_df)])
+    bag_of_words = vec.transform([concat_list(st_df)])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot_3 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+
+    #n=4
+    vec = CountVectorizer(ngram_range=(4, 4)).fit([concat_list(st_df)])
+    bag_of_words = vec.transform([concat_list(st_df)])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot_4 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+
+    #n=5
+    vec = CountVectorizer(ngram_range=(5, 5)).fit([concat_list(st_df)])
+    bag_of_words = vec.transform([concat_list(st_df)])
+    sum_words = bag_of_words.sum(axis=0) 
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+    df_plot_5 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+
+    ## Plot
+    plot = go.Figure(data=[go.Bar(
+        name='Top 10 Most Common Uni-gram in FOMC Statements',
+        x=df_plot_1.Words.tolist(),
+        y=df_plot_1.Count.tolist(),
+        marker_color='#FF69B4' #change color of bars
+    ),
+        go.Bar(
+        name='Top 10 Most Common Bi-gram in FOMC Statements',
+        x=df_plot_2.Words.tolist(),
+        y=df_plot_2.Count.tolist(),
+        marker_color='#F08080' #change color of bars
+    ),
+        go.Bar(
+        name='Top 10 Most Common Tri-gram in FOMC Statements',
+        x=df_plot_3.Words.tolist(),
+        y=df_plot_3.Count.tolist(),
+        marker_color='#FFA07A' #change color of bars
+    ),
+        go.Bar(
+        name='Top 10 Most Common 4-gram in FOMC Statements',
+        x=df_plot_4.Words.tolist(),
+        y=df_plot_4.Count.tolist(),
+        marker_color='#FFB6C1' #change color of bars
+    ),
+        go.Bar(
+        name='Top 10 Most Common 5-gram in FOMC Statements',
+        x=df_plot_5.Words.tolist(),
+        y=df_plot_5.Count.tolist(),
+        marker_color='#FFE4E1' #change color of bars
+    )
+    ])
+    
+    # Drop Down Menu
+    plot.update_layout(
+        updatemenus=[
+            dict(
+                active=0,
+                buttons=list([
+                    dict(label="All",
+                         method="update",
+                         args=[{"visible": [True, True, True, True, True]},
+                               {"title": "Most Common Words and Phrases in FOMC Statements"}]),
+                    dict(label="1",
+                         method="update",
+                         args=[{"visible": [True, False, False, False, False]},
+                               {"title": "Top 10 Most Common Uni-gram in FOMC Statements",
+                                }]),
+                    dict(label="2",
+                         method="update",
+                         args=[{"visible": [False, True, False, False, False]},
+                               {"title": "Top 10 Most Common Bi-gram in FOMC Statements",
+                                }]),
+                    dict(label="3",
+                         method="update",
+                         args=[{"visible": [False, False, True, False, False]},
+                               {"title": "Top 10 Most Common Tri-gram in FOMC Statements",
+                                }]),
+                    dict(label="4",
+                         method="update",
+                         args=[{"visible": [False, False, False, True, False]},
+                               {"title": "Top 10 Most Common 4-gram in FOMC Statements",
+                                }]),
+                    dict(label="5",
+                         method="update",
+                         args=[{"visible": [False, False, False, False, True]},
+                               {"title": "Top 10 Most Common 5-gram in FOMC Statements",
+                                }]),
+                ]),
+            )
+        ])
+    
+    # Aesthetic 
+    plot.update_layout(
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",
+        title_text='Most Common Words and Phrases in FOMC Statements', 
+        title_x=0.5
+    )
+    plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
 
 def get_top_n_gram_news(data):
     news_df =data
@@ -413,6 +538,7 @@ def get_top_n_gram_news(data):
     )
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
+
 
 
 def plot_hd_ts(data):
