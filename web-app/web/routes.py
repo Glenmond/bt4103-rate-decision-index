@@ -100,14 +100,16 @@ def plot_home():
     #market
     plot_market_senti_main = home_plot.plot_market(market_data)
     plot_market_average = home_plot.plot_market_average(market_data)
-    market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
+    market_sentiments_drill1 = home_plot.display_market_sentiments_drill_down_4(market_data_cleaned)
     
     
     #macro
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
+    plot_macro_average = home_plot.plot_market_average2(market_data)
     
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
+    plot_fff_average = home_plot.plot_market_average3(market_data)
 
     # gauge
     plot_gauge = home_plot.plot_gauge()
@@ -117,6 +119,8 @@ def plot_home():
                "fedfundfutures": fedfundfutures,
                "plot_market_senti_main": plot_market_senti_main,
                "plot_market_average": plot_market_average,
+               "plot_macro_average": plot_macro_average,
+               "plot_fff_average": plot_fff_average,
                'plot_gdp_index': plot_gdp_index, 
                'plot_fff': plot_fff,
                'market_sentiments_drill1': market_sentiments_drill1,
