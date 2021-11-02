@@ -3,10 +3,11 @@ import sys
 
 from dataloader import DataLoader
 from datapreprocessor import DataPreprocessor
+from dictmodel import DictionaryModel
 from backtest import Backtest
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = sys.argv[1:]
     from_year = int(args[0])
 
@@ -19,5 +20,8 @@ if __name__ == '__main__':
 
     bt = Backtest(datapreprecessor.data, from_year)
     bt.predict()
+
+    dict_based = DictionaryModel(bt.data, from_year)
+    dict_based.predict()
 
     print(f"===== Modelling Process Completed =====".title())
