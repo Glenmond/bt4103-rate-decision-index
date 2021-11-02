@@ -50,26 +50,30 @@ pip install -r requirements.txt
 ```
 ## 3. Running Instructions
 #### To Run Notebook (Local)
-#### 3a) Sentiment Model
+#### 3a) Macroeconomics Model
+
+(insert your explanation here)
+
+#### 3b) Sentiment Model
 ##### Step 1: Download input data
 1. Move to data directory
    ```
    cd analytics/data
    ```
-2. Get data from FOMC Website. Specify document type. You can also specify from year.
+2. Get data from FOMC Website and New York Times. Specify document type. You can also specify from year.
    ```
-   python import_fomc_data.py all 2020
+   python import_data.py all 2021
    ```
-    Note: You can specify and change the from_year date. (ie, type `python import_fomc_data.py all 2010` for data from
+    Note: You can specify and change the from_year date. (ie, type `python import_data.py all 2010` for data from
     year 2010 onwards.)
 ##### Step 2: Run sentiment models
-1. Move to sentiment-model directory
+1. Move to sentiment_model directory
    ```
-   cd ../sentiment-model
+   cd ../sentiment_model
    ```
 2. Get data from FOMC Website. Specify document type. You can also specify from year.
    ```
-   python main.py 2020
+   python main.py 2021
    ```
    Note: You can specify and change the from_year date. (ie, type `python main.py 2010` for data from
    year 2010 onwards.)
@@ -79,9 +83,6 @@ pip install -r requirements.txt
 2. Run the jupyter notebooks 
    `jupyter notebook`
 3. Open and run notebooks No.1 to No.4 for analysis
-#### 3b) Macroeconomics Model
-
-(insert your explanation here)
 
 #### 3c) Feds Futures Probability Model
  
