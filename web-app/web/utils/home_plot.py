@@ -141,9 +141,7 @@ def plot_market(market_data):
         #template='plotly_dark'
         )
     
-
-    
-    fig.update_layout(width=650, height=450)
+    fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
@@ -187,7 +185,9 @@ def plot_market_average(market_data):
     date = '2000-04-30'
     df_senti = market_data
     
-    avg = get_average_sentiment(market_data)
+    avg = round(get_average_sentiment(market_data),4)
+    
+    #avg = get_average_sentiment(market_data)
     
     word = ""
     if avg > 0:
@@ -199,10 +199,10 @@ def plot_market_average(market_data):
         
     layout = go.Layout(
         margin=go.layout.Margin(
-        l=120, #left margin
-        r=40, #right margin
+        l=0, #left margin
+        r=100, #right margin
         b=0, #bottom margin
-        t=0  #top margin
+        t=50  #top margin
         )
     )
     
@@ -219,14 +219,15 @@ def plot_market_average(market_data):
     
     fig.add_trace(go.Indicator(
         title = {'text': word, 
-                 'font.size': 20,
-                 'font.family': 'Courier New'},
+                 'font.size': 16,
+                 'font.family': 'Courier New Bold',
+                 'font.color':'saddlebrown'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
-        domain = {'row': 0, 'column': 1}))
+        domain = {'row': 1, 'column': 0}))
     
     fig.update_layout(
-        grid = {'rows': 1, 'columns': 2, 'pattern': "independent"}, 
+        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black")
@@ -279,7 +280,7 @@ def plot_gdp_index(home_data):
     fig.add_trace(go.Line(x=x, y=df['GCEC1'], name='Expenditure', marker=dict(color="darkseagreen")))
     fig.add_trace(go.Line(x=x, y=df['NETEXC'], name='Net Export', marker=dict(color="cornflowerblue")))
 
-    fig.update_layout(title_text='GDP and its components',
+    fig.update_layout(title_text='Macroeconomic Indicators',
                     xaxis_title='Date', yaxis_title='Value')
     fig.update_layout(
         updatemenus=[
@@ -289,22 +290,22 @@ def plot_gdp_index(home_data):
                     method="update",
                     args=[{"visible":[True,True,True,True,True]},
                         {"title":"ALL"}]),
-                dict(label="Domestic Consumption",
+                dict(label="Employment",
                     method="update",
                     args=[{"visible":[True, True, False,False,False]},
-                        {"title":"Domestic Consumption"}]),
-                dict(label="Domestic Investment",
+                        {"title":"Employment"}]),
+                dict(label="Median CPI",
                     method="update",
                     args=[{"visible":[True,False,True,False,False]},
-                        {"title":"Domestic Investment"}]),
-                dict(label="Government Expenditure",
+                        {"title":"Median CPI"}]),
+                dict(label="Real GDP",
                     method="update",
                     args=[{"visible":[True,False,False,True,False]},
-                        {"title":"Government Expenditure"}]),
-                dict(label="Net Export",
+                        {"title":"Real GDP"}]),
+                dict(label="Bond Yields",
                     method="update",
                     args=[{"visible":[True,False,False,False,True]},
-                        {"title":"Net Export"}])
+                        {"title":"Bond Yields"}])
             ]),
             direction="down",
             pad={"r": 5, "t": 5},
@@ -319,4 +320,154 @@ def plot_gdp_index(home_data):
     #fig.update_xaxes(rangeslider_visible=True)
     #fig.update_layout(width=600, height=400)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
+
+#to remobe
+def plot_market_average2(market_data):
+    date = '2000-04-30'
+    df_senti = market_data
+    
+    avg = round(get_average_sentiment(market_data),4)
+    
+    #avg = get_average_sentiment(market_data)
+    
+    word = ""
+    if avg > 0:
+        word = "Overall Hawkish"
+    elif avg < 0:
+        word = "Overall Dovish"
+    elif avg == 0:
+        word = "Overall Neutral"
+        
+    layout = go.Layout(
+        margin=go.layout.Margin(
+        l=0, #left margin
+        r=100, #right margin
+        b=0, #bottom margin
+        t=50  #top margin
+        )
+    )
+    
+    fig = go.Figure(layout=layout)
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = avg,
+        number = {'valueformat':'a'},
+        title = {'text': "Macroeconomic Indicators Score for" + " " + date, 
+                 'font.size': 25,
+                 'font.family': 'Times New Roman Bold'},
+        domain = {'row': 0, 'column': 0}))
+    
+    fig.add_trace(go.Indicator(
+        title = {'text': word, 
+                 'font.size': 16,
+                 'font.family': 'Courier New Bold',
+                 'font.color':'saddlebrown'},
+        mode = 'delta',
+        delta = {'reference': 0, 'font.size': 1},
+        domain = {'row': 1, 'column': 0}))
+    
+    fig.update_layout(
+        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
+        paper_bgcolor = "white", 
+        font_family="Times New Roman Bold",
+        font_color="black")
+    
+
+    fig.update_layout(width=600, height=125)
+    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
+
+#to remove 
+def plot_market_average3(market_data):
+    date = '2000-04-30'
+    df_senti = market_data
+    
+    avg = round(get_average_sentiment(market_data),4)
+    
+    #avg = get_average_sentiment(market_data)
+    
+    word = ""
+    if avg > 0:
+        word = "Overall Hawkish"
+    elif avg < 0:
+        word = "Overall Dovish"
+    elif avg == 0:
+        word = "Overall Neutral"
+        
+    layout = go.Layout(
+        margin=go.layout.Margin(
+        l=0, #left margin
+        r=100, #right margin
+        b=0, #bottom margin
+        t=50  #top margin
+        )
+    )
+    
+    fig = go.Figure(layout=layout)
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = avg,
+        number = {'valueformat':'a'},
+        title = {'text': "Fed Fund Futures Score for" + " " + date, 
+                 'font.size': 25,
+                 'font.family': 'Times New Roman Bold'},
+        domain = {'row': 0, 'column': 0}))
+    
+    fig.add_trace(go.Indicator(
+        title = {'text': word, 
+                 'font.size': 16,
+                 'font.family': 'Courier New Bold',
+                 'font.color':'saddlebrown'},
+        mode = 'delta',
+        delta = {'reference': 0, 'font.size': 1},
+        domain = {'row': 1, 'column': 0}))
+    
+    fig.update_layout(
+        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
+        paper_bgcolor = "white", 
+        font_family="Times New Roman Bold",
+        font_color="black")
+    
+
+    fig.update_layout(width=600, height=125)
+    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
+ 
+
+#to remove
+def display_market_sentiments_drill_down_4(market_data):
+    df_senti=market_data
+    #Statement
+    fig_statement = px.line(df_senti, x='Date', y='Score_Statement',
+                            labels={"Score_Statement": "Probability of Rate Decision Indicator"})
+
+    fig_statement.update_layout(
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",
+        title_text='Time Series of Probability of Rate Decision Indicator', 
+        title_x=0.5
+    )
+
+    fig_statement.update_xaxes(rangeslider_visible=True)
+    fig_statement.update_yaxes(range=[-1.1, 1.1])
+
+    fig_statement.update_xaxes(
+        rangeslider_visible=True,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="YTD", step="year", stepmode="todate"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
+                dict(step="all")
+            ])
+        )
+    )
+    
+    plot_json = json.dumps(fig_statement, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json

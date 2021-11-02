@@ -10,25 +10,41 @@ styling here
 
 <!-- Plotly plot placeholder -->
 <div class="container-fluid">
-    Market Consensus Drill Down
-
+    <h2 style="color:navy; margin:10px; border:1px">Market Consensus Drill Down</h2>
     <!-- first row, first column-->
     <div class=2"row">
+        <h4 style="color:navy; margin:10px;">FOMC Statement Sentiments</h4>
         <div class="chart" id="market-1">
         </div>
     </div>
     <hr>
     <div class=2"row">
+        <h4 style="color:navy; margin:10px;">FOMC Minutes Sentiments</h4>
         <div class='chart' id="market-2">
         </div>
     </div>
     <hr>
     <div class=2"row">
+        <h4 style="color:navy; margin:10px;">News Articles Sentiments</h4>
         <div class='chart' id="market-3">
         </div>
     </div>
     <hr>
-
+    <h4 style="color:navy; margin:10px;">Analysis on Data Collected</h4>
+  <div class="row">
+        <div class="col">
+            <h5 style="color:navy; margin:10px;">Ngram Plot for FOMC Meeting Minutes</h5>
+            <div class="chart" id="market-4">
+            </div>
+        </div>
+        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY-->
+        <div class="col">
+            <h5 style="color:navy; margin:10px;">Ngram Plot for FOMC Statement Minutes</h5>
+            <div class="chart" id="market-5">
+            </div>
+        </div>
+    </div>
+    <hr>
 </div>
 
 <script>
@@ -45,6 +61,16 @@ styling here
     //Parse your Json variable here
     var graphs = {{ context.market_sentiments_drill3 | safe }};
     Plotly.plot('market-3', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.ngram_min | safe }};
+    Plotly.plot('market-4', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.ngram_statement| safe }};
+    Plotly.plot('market-5', graphs, {});
 </script>
 
 {% endblock my_content %}
