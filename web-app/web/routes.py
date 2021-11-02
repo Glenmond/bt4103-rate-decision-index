@@ -24,12 +24,17 @@ main = Main()
 market_data = utils.load_market_data()
 market_data_cleaned = utils.clean_market(market_data)
 
-market_ngram_min, market_ngram_statement = utils.load_ngram_market_data()
-market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
-market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
+
+market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
+#market_ngram_min, market_ngram_statement, market_ngram_news = utils.load_ngram_market_data()
+#market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
+#market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
 
 #macro
 gdp_data, employment_data, inflation_data = utils.load_macro_data()
+macro_ts_train, macro_ts_test= utils.load_macro_ts()
+macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
+
 
 #fedfundfuture
 fff_data, fake_data = utils.load_fff_data()
@@ -106,6 +111,7 @@ def plot_home():
     #macro
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
     plot_macro_average = home_plot.plot_market_average2(market_data)
+    macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
     
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
@@ -124,7 +130,8 @@ def plot_home():
                'plot_gdp_index': plot_gdp_index, 
                'plot_fff': plot_fff,
                'market_sentiments_drill1': market_sentiments_drill1,
-               "plot_gauge": plot_gauge}
+               "plot_gauge": plot_gauge,
+               'macro_ts_plot':macro_ts_plot}
     return render_template('home.html', context=context)
 
 
@@ -134,13 +141,14 @@ def plot_market_consensus():
     market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
     market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
     market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
-    
-    ngram_min = market_plot.plot_top_n_trigram(market_ngram_min_cleaned)
-    ngram_statement = market_plot.plot_top_n_trigram(market_ngram_statement_cleaned)
+    market_ts_plot = market_plot.plot_hd_ts(market_data_cleaned)
+    ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min)
+    ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement)
 
     context = {'market_sentiments_drill1': market_sentiments_drill1,
                'market_sentiments_drill2': market_sentiments_drill2,
                'market_sentiments_drill3': market_sentiments_drill3, 
+               'market_ts_plot':market_ts_plot,
                'ngram_min': ngram_min, 
                'ngram_statement':ngram_statement}
     return render_template('market-consensus.html', context=context)
