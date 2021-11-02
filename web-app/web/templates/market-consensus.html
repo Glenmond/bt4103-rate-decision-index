@@ -49,7 +49,7 @@ styling here
 
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.market_sentiments_drill1 | safe }};
+    var graphs = {{ context.market_ts_plot | safe }};
     Plotly.plot('market-1', graphs, {});
 </script>
 <script>

@@ -471,3 +471,56 @@ def display_market_sentiments_drill_down_4(market_data):
     
     plot_json = json.dumps(fig_statement, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
+
+def plot_fed_rates_ts(data):
+    df_plot=data
+    plot = go.Figure(data=[go.Scatter(
+        name='Actual',
+        x=df_plot.Date.tolist(),
+        y=df_plot.actual_values.tolist(),
+        marker_color='#FA8072' #change color of line
+    ),
+        go.Scatter(
+        name='Predicted',
+        x=df_plot.Date.tolist(),
+        y=df_plot.predicted.tolist(),
+        marker_color='#4682B4' #change color of line
+    )
+    ])
+
+    plot.update_layout(
+        updatemenus=[
+            dict(
+                active=0,
+                buttons=list([
+                    dict(label="Both",
+                         method="update",
+                         args=[{"visible": [True, True]},
+                               {"title": "Time Series of Both Actual and Predicted Federal Funds Rates"}]),
+                    dict(label="Actual",
+                         method="update",
+                         args=[{"visible": [True, False]},
+                               {"title": "Time Series of Actual Federal Funds Rates",
+                                }]),
+                    dict(label="Predicted",
+                         method="update",
+                         args=[{"visible": [False, True]},
+                               {"title": "Time Series of Predicted Federal Funds Rates",
+                                }]),
+                ]),
+            )
+        ])
+
+    plot.update_layout(
+            font_family="Courier New",
+            font_color="black",
+            title_font_family="Times New Roman Bold",
+            title_font_color="black",
+            title_text='Time Series of Both Actual and Predicted Federal Funds Rates', 
+            title_x=0.5
+        )
+    plot.update_xaxes(rangeslider_visible=True)
+
+    plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
+
