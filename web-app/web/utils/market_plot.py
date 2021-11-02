@@ -606,4 +606,5 @@ def plot_hd_ts(data):
     plot.update_yaxes(range=[-1.1, 1.1])
 
 
-    plot.show()
+    plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
