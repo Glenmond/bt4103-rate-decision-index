@@ -14,10 +14,11 @@ import plotly.express as px
 import json
 from web.utils.utils import load_fff_data
 
-def plot_fff_results(fff_data):
+def plot_fff_results(data):
     '''
     Placeholder function for plots
     '''
+    fff_data = data.copy()
     fff_data['Date'] = pd.to_datetime(fff_data['Date'])
     titles = ["Model Results"]  + list(y.strftime("%d %B %Y FOMC Meeting") for y in fff_data['Date'])
 

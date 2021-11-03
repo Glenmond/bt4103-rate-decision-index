@@ -37,17 +37,17 @@ styling here
 <!-- Script to execute the Json ( we can create it also with looping) -->
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_fff | safe }};
+    var graphs = {{ context.plot_fff_results | safe }};
     Plotly.plot('fff-1', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_fff | safe }};
+    var graphs = {{ context.plot_fff_results | safe }};
     Plotly.plot('fff-2', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_fff | safe }};
+    var graphs = {{ context.plot_fff_results | safe }};
     Plotly.plot('fff-3', graphs, {});
 </script>
 {% endblock my_content %}
