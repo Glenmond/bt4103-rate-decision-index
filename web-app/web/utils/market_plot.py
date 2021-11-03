@@ -167,7 +167,7 @@ def get_top_n_gram_mins(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_1 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_1 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=2
     vec = CountVectorizer(ngram_range=(2, 2)).fit([concat_list(mins_df)])
@@ -175,7 +175,7 @@ def get_top_n_gram_mins(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_2 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_2 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=3
     vec = CountVectorizer(ngram_range=(3, 3)).fit([concat_list(mins_df)])
@@ -183,7 +183,7 @@ def get_top_n_gram_mins(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_3 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_3 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=4
     vec = CountVectorizer(ngram_range=(4, 4)).fit([concat_list(mins_df)])
@@ -191,7 +191,7 @@ def get_top_n_gram_mins(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_4 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_4 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=5
     vec = CountVectorizer(ngram_range=(5, 5)).fit([concat_list(mins_df)])
@@ -199,7 +199,7 @@ def get_top_n_gram_mins(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_5 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_5 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
@@ -294,7 +294,7 @@ def get_top_n_gram_st(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_1 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_1 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=2
     vec = CountVectorizer(ngram_range=(2, 2)).fit([concat_list(st_df)])
@@ -302,7 +302,7 @@ def get_top_n_gram_st(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_2 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_2 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=3
     vec = CountVectorizer(ngram_range=(3, 3)).fit([concat_list(st_df)])
@@ -310,7 +310,7 @@ def get_top_n_gram_st(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_3 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_3 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=4
     vec = CountVectorizer(ngram_range=(4, 4)).fit([concat_list(st_df)])
@@ -318,7 +318,7 @@ def get_top_n_gram_st(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_4 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_4 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=5
     vec = CountVectorizer(ngram_range=(5, 5)).fit([concat_list(st_df)])
@@ -326,7 +326,7 @@ def get_top_n_gram_st(data):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_5 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_5 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
