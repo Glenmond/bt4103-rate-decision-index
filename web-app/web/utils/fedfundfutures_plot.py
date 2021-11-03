@@ -14,7 +14,7 @@ import plotly.express as px
 import json
 from web.utils.utils import load_fff_data
 
-def plot_fff(fff_data):
+def plot_fff_results(fff_data):
     '''
     Placeholder function for plots
     '''

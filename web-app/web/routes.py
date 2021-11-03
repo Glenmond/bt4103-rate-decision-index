@@ -169,7 +169,7 @@ def plot_macroeconomic_indicators():
 @app.route("/fedfundfutures")
 def plot_fedfundfutures():
     #ploting - add plots here and in context
-    plot_fff = fedfundfutures_plot.plot_fff(fff_data)
-    context = {'plot_fff': plot_fff} 
+    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data)
+    context = {'plot_fff_results': plot_fff_results} 
     return render_template('fedfundfutures.html', context=context)
 
