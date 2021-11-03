@@ -5,6 +5,7 @@ import datetime
 import pandas as pd
 import pickle
 import json
+from web.macro_model_2.import_data import fetch_data
 
 def isNaN(num):
     return num != num
@@ -38,6 +39,14 @@ def load_macro_data():
     employment_sub_index = pd.read_csv("web/data/macro_employment_data.csv")
     inflation_sub_index = pd.read_csv("web/data/macro_inflation_data.csv")
     return gdp_sub_index, employment_sub_index, inflation_sub_index
+
+def load_macro_model_data():
+    try: # so that we do not need the FRED API call every time we try to access
+        data = pd.read_pickle('web/macro_model_2/macro_data_pickle')
+    except Exception:       
+        data = fetch_data()
+        data.to_pickle('web/macro_model_2/macro_data_pickle')
+    return data
 
 def load_fff_data():
     fff_data = pd.read_csv("web/data/fff_result.csv")

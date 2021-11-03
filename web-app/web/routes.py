@@ -34,7 +34,7 @@ market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
 gdp_data, employment_data, inflation_data = utils.load_macro_data()
 macro_ts_train, macro_ts_test= utils.load_macro_ts()
 macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
-
+macro_main_data = utils.load_macro_model_data()
 
 #fedfundfuture
 fff_data, fake_data = utils.load_fff_data()
@@ -160,9 +160,11 @@ def plot_macroeconomic_indicators():
     plot_gdp_index = macro_plot.plot_gdp_index(gdp_data)
     plot_employment_index = macro_plot.plot_employment_index(employment_data)
     plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
+    plot_main_model = macro_plot.plot_main_plot(macro_main_data)
     context = {'plot_gdp_index': plot_gdp_index, 
                'plot_employment_index': plot_employment_index, 
-               'plot_inflation_index': plot_inflation_index}
+               'plot_inflation_index': plot_inflation_index, 
+               'plot_main_model': plot_main_model}
     return render_template('macroeconomic-indicators.html', context=context)
 
     
