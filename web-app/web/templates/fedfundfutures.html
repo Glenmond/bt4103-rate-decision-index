@@ -8,25 +8,28 @@ styling here
 
 {% block my_content %}
 <!-- Plotly plot placeholder -->
-<div class="container-fluid">
-    <h3>Fed Fund Futures</h3>
+<div class="container-fluid h-100">
+    <h2 style="color:navy; margin:10px; border:1px">Federal Funds Futures Model</h2>
 
     <!-- first row, first column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
-    <div class="row">
-        <div class="col">
+    <h4 style="color:navy; margin:10px;">Model Predictions</h4>
+    <div class=2"row h-33">
             <div class="chart" id="fff-1">
             </div>
-        </div>
-        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY-->
-        <div class="col">
-            <div class="chart" id="fff-3">
-            </div>
-        </div>
+        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
     </div>
     <hr>
     <!-- second row, first column-->
-    <div class="row">
-        <div id="fff-2">
+    <h4 style="color:navy; margin:10px;">Federal Dot Plot vs Model Predictions</h4>
+    <div class=2"row h-33">
+        <div id="macro-2">
+        </div>
+    </div>
+    <hr>
+        <!-- second row, first column-->
+    <h4 style="color:navy; margin:10px;">Is the market moving ahead of the curve?</h4>
+    <div class=2"row h-33">
+        <div id="macro-3">
         </div>
     </div>
 </div>
@@ -34,17 +37,17 @@ styling here
 <!-- Script to execute the Json ( we can create it also with looping) -->
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_gdp_index | safe }};
+    var graphs = {{ context.plot_fff | safe }};
     Plotly.plot('fff-1', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_gdp_index | safe }};
+    var graphs = {{ context.plot_fff | safe }};
     Plotly.plot('fff-2', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_gdp_index | safe }};
+    var graphs = {{ context.plot_fff | safe }};
     Plotly.plot('fff-3', graphs, {});
 </script>
 {% endblock my_content %}
