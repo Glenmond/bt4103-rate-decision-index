@@ -32,9 +32,11 @@ market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
 
 #macro
 gdp_data, employment_data, inflation_data = utils.load_macro_data()
-macro_ts_train, macro_ts_test= utils.load_macro_ts()
+macro_ts_train, macro_ts_test, macro_X_train, macro_X_test = utils.load_macro_ts()
 macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
 macro_main_data = utils.load_macro_model_data()
+
+macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
 
 #fedfundfuture
 fff_data, fake_data = utils.load_fff_data()
@@ -112,6 +114,7 @@ def plot_home():
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
     plot_macro_average = home_plot.plot_market_average2(market_data)
     macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+    macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data)
     
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
@@ -131,7 +134,8 @@ def plot_home():
                'plot_fff': plot_fff,
                'market_sentiments_drill1': market_sentiments_drill1,
                "plot_gauge": plot_gauge,
-               'macro_ts_plot':macro_ts_plot}
+               'macro_ts_plot':macro_ts_plot,
+               'macro_maindashboard_plot':macro_maindashboard_plot}
     return render_template('home.html', context=context)
 
 

@@ -31,8 +31,10 @@ def load_ngram_market_data():
     
 def load_macro_ts():
     df_trainres = pd.read_csv('web/data/overall_train_results.csv')
-    df_testres = pd.read_csv('web/data/overall_test_results.csv') 
-    return df_trainres, df_testres
+    df_testres = pd.read_csv('web/data/overall_test_results.csv')
+    df_x_test = pd.read_csv('web/data/X_test_ME.csv') 
+    df_x_train = pd.read_csv('web/data/X_train_ME.csv') 
+    return df_trainres, df_testres, df_x_train, df_x_test
     
 def load_macro_data():
     gdp_sub_index = pd.read_csv("web/data/macro_gdp_data.csv")
@@ -113,6 +115,38 @@ def clean_macro_ts(y_train, y_test):
     df_overall.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
     return df_overall
 
+def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
+    #import predicted data
+    #df_trainres_pred = pd.read_csv(y_train) #y_train  ('overall_train_results.csv')
+    #df_testres_pred = pd.read_csv(y_test) #y_test  ('overall_test_results.csv')
+    comb_pred = [y_train, y_test]
+    df_overall_pred = pd.concat(comb_pred)
+    df_overall_pred.reset_index(inplace=True)
+    df_overall_pred.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
+
+    df_overall_pred['Date'] = pd.to_datetime(df_overall_pred['Date'])
+    df_temp_pred = df_overall_pred.sort_values(by=['Date'])
+    df_temp_pred.reset_index(inplace=True)
+    df_fin_pred = df_temp_pred[["Date", "actual_values", "predicted"]]
+    
+    #import feature data
+    #df_trainres = pd.read_csv(x_train) #x_train  ('X_train_ME.csv')
+    #df_testres = pd.read_csv(x_test) #x_test  ('X_test_ME.csv')
+    comb = [x_train, x_test]
+    df_overall = pd.concat(comb)
+    df_overall.reset_index(inplace=True)
+    df_overall.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
+    df_overall['Date'] = pd.to_datetime(df_overall['Date'])
+    df_temp = df_overall.sort_values(by=['Date'])
+    df_temp2 = df_temp[["Date", "T10Y3M", "EMRATIO_MEDWAGES", "EMRATIO", "GDPC1", "MEDCPI", "MEDCPI_PPIACO", "HD_index", "shifted_target"]]
+    df_temp2.reset_index(inplace=True)
+    df_fin = df_temp2[["Date", "T10Y3M", "EMRATIO_MEDWAGES", "EMRATIO", "GDPC1", "MEDCPI", "MEDCPI_PPIACO", "HD_index", "shifted_target"]]
+    # df_fin2 = df_fin.set_index('Date')
+    
+    #merging feature and predicted data
+    df_plot = pd.merge(df_fin, df_fin_pred, on="Date")
+    # df_plot_fin = df_plot.set_index('Date')
+    return df_plot
 
 #helper function
 def guess_date(string):
