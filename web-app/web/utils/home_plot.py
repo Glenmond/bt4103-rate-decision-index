@@ -606,7 +606,7 @@ def display_market_sentiments_drill_down_4(market_data):
             ])
         )
     )
-    
+    fig_statement.update_layout(width=600, height=450)
     plot_json = json.dumps(fig_statement, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 

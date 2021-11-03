@@ -203,31 +203,31 @@ def get_top_n_gram_mins(data):
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
-        name='Top 10 Most Common Uni-gram in FOMC Minutes',
+        name='Top 5 Most Common Uni-gram in FOMC Minutes',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
         marker_color='#FF69B4' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Bi-gram in FOMC Minutes',
+        name='Top 5 Most Common Bi-gram in FOMC Minutes',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
         marker_color='#F08080' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Tri-gram in FOMC Minutes',
+        name='Top 5 Most Common Tri-gram in FOMC Minutes',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
         marker_color='#FFA07A' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 4-gram in FOMC Minutes',
+        name='Top 5 Most Common 4-gram in FOMC Minutes',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
         marker_color='#FFB6C1' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 5-gram in FOMC Minutes',
+        name='Top 5 Most Common 5-gram in FOMC Minutes',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
         marker_color='#FFE4E1' #change color of bars
@@ -247,27 +247,27 @@ def get_top_n_gram_mins(data):
                     dict(label="1",
                          method="update",
                          args=[{"visible": [True, False, False, False, False]},
-                               {"title": "Top 10 Most Common Uni-gram in FOMC Minutes",
+                               {"title": "Top 5 Most Common Uni-gram in FOMC Minutes",
                                 }]),
                     dict(label="2",
                          method="update",
                          args=[{"visible": [False, True, False, False, False]},
-                               {"title": "Top 10 Most Common Bi-gram in FOMC Minutes",
+                               {"title": "Top 5 Most Common Bi-gram in FOMC Minutes",
                                 }]),
                     dict(label="3",
                          method="update",
                          args=[{"visible": [False, False, True, False, False]},
-                               {"title": "Top 10 Most Common Tri-gram in FOMC Minutes",
+                               {"title": "Top 5 Most Common Tri-gram in FOMC Minutes",
                                 }]),
                     dict(label="4",
                          method="update",
                          args=[{"visible": [False, False, False, True, False]},
-                               {"title": "Top 10 Most Common 4-gram in FOMC Minutes",
+                               {"title": "Top 5 Most Common 4-gram in FOMC Minutes",
                                 }]),
                     dict(label="5",
                          method="update",
                          args=[{"visible": [False, False, False, False, True]},
-                               {"title": "Top 10 Most Common 5-gram in FOMC Minutes",
+                               {"title": "Top 5 Most Common 5-gram in FOMC Minutes",
                                 }]),
                 ]),
             )
@@ -330,31 +330,31 @@ def get_top_n_gram_st(data):
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
-        name='Top 10 Most Common Uni-gram in FOMC Statements',
+        name='Top 5 Most Common Uni-gram in FOMC Statements',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
         marker_color='#FF69B4' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Bi-gram in FOMC Statements',
+        name='Top 5 Most Common Bi-gram in FOMC Statements',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
         marker_color='#F08080' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Tri-gram in FOMC Statements',
+        name='Top 5 Most Common Tri-gram in FOMC Statements',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
         marker_color='#FFA07A' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 4-gram in FOMC Statements',
+        name='Top 5 Most Common 4-gram in FOMC Statements',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
         marker_color='#FFB6C1' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 5-gram in FOMC Statements',
+        name='Top 5 Most Common 5-gram in FOMC Statements',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
         marker_color='#FFE4E1' #change color of bars
@@ -374,27 +374,27 @@ def get_top_n_gram_st(data):
                     dict(label="1",
                          method="update",
                          args=[{"visible": [True, False, False, False, False]},
-                               {"title": "Top 10 Most Common Uni-gram in FOMC Statements",
+                               {"title": "Top 5 Most Common Uni-gram in FOMC Statements",
                                 }]),
                     dict(label="2",
                          method="update",
                          args=[{"visible": [False, True, False, False, False]},
-                               {"title": "Top 10 Most Common Bi-gram in FOMC Statements",
+                               {"title": "Top 5 Most Common Bi-gram in FOMC Statements",
                                 }]),
                     dict(label="3",
                          method="update",
                          args=[{"visible": [False, False, True, False, False]},
-                               {"title": "Top 10 Most Common Tri-gram in FOMC Statements",
+                               {"title": "Top 5 Most Common Tri-gram in FOMC Statements",
                                 }]),
                     dict(label="4",
                          method="update",
                          args=[{"visible": [False, False, False, True, False]},
-                               {"title": "Top 10 Most Common 4-gram in FOMC Statements",
+                               {"title": "Top 5 Most Common 4-gram in FOMC Statements",
                                 }]),
                     dict(label="5",
                          method="update",
                          args=[{"visible": [False, False, False, False, True]},
-                               {"title": "Top 10 Most Common 5-gram in FOMC Statements",
+                               {"title": "Top 5 Most Common 5-gram in FOMC Statements",
                                 }]),
                 ]),
             )
@@ -457,31 +457,31 @@ def get_top_n_gram_news(data):
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
-        name='Top 10 Most Common Uni-gram in the News',
+        name='Top 5 Most Common Uni-gram in the News',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
         marker_color='#FF69B4' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Bi-gram in the News',
+        name='Top 5 Most Common Bi-gram in the News',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
         marker_color='#F08080' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common Tri-gram in the News',
+        name='Top 5 Most Common Tri-gram in the News',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
         marker_color='#FFA07A' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 4-gram in the News',
+        name='Top 5 Most Common 4-gram in the News',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
         marker_color='#FFB6C1' #change color of bars
     ),
         go.Bar(
-        name='Top 10 Most Common 5-gram in the News',
+        name='Top 5 Most Common 5-gram in the News',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
         marker_color='#FFE4E1' #change color of bars
@@ -501,27 +501,27 @@ def get_top_n_gram_news(data):
                     dict(label="1",
                          method="update",
                          args=[{"visible": [True, False, False, False, False]},
-                               {"title": "Top 10 Most Common Uni-gram in the News",
+                               {"title": "Top 5 Most Common Uni-gram in the News",
                                 }]),
                     dict(label="2",
                          method="update",
                          args=[{"visible": [False, True, False, False, False]},
-                               {"title": "Top 10 Most Common Bi-gram in the News",
+                               {"title": "Top 5 Most Common Bi-gram in the News",
                                 }]),
                     dict(label="3",
                          method="update",
                          args=[{"visible": [False, False, True, False, False]},
-                               {"title": "Top 10 Most Common Tri-gram in the News",
+                               {"title": "Top 5 Most Common Tri-gram in the News",
                                 }]),
                     dict(label="4",
                          method="update",
                          args=[{"visible": [False, False, False, True, False]},
-                               {"title": "Top 10 Most Common 4-gram in the News",
+                               {"title": "Top 5 Most Common 4-gram in the News",
                                 }]),
                     dict(label="5",
                          method="update",
                          args=[{"visible": [False, False, False, False, True]},
-                               {"title": "Top 10 Most Common 5-gram in the News",
+                               {"title": "Top 5 Most Common 5-gram in the News",
                                 }]),
                 ]),
             )
