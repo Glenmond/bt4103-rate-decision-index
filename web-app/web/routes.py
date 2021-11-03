@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
-from web.utils import utils, home_plot, macro_plot, market_plot
+from web.utils import utils, home_plot, macro_plot, market_plot, fedfundfutures_plot
 from web.models.fff_model.main import Main
 
 import json
@@ -24,8 +24,17 @@ main = Main()
 market_data = utils.load_market_data()
 market_data_cleaned = utils.clean_market(market_data)
 
+
+market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
+#market_ngram_min, market_ngram_statement, market_ngram_news = utils.load_ngram_market_data()
+#market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
+#market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
+
 #macro
-gdp_data = utils.load_macro_data()
+gdp_data, employment_data, inflation_data = utils.load_macro_data()
+macro_ts_train, macro_ts_test= utils.load_macro_ts()
+macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
+
 
 #fedfundfuture
 fff_data, fake_data = utils.load_fff_data()
@@ -96,14 +105,17 @@ def plot_home():
     #market
     plot_market_senti_main = home_plot.plot_market(market_data)
     plot_market_average = home_plot.plot_market_average(market_data)
-    market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
+    market_sentiments_drill1 = home_plot.display_market_sentiments_drill_down_4(market_data_cleaned)
     
     
     #macro
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
+    plot_macro_average = home_plot.plot_market_average2(market_data)
+    macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
     
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
+    plot_fff_average = home_plot.plot_market_average3(market_data)
 
     # gauge
     plot_gauge = home_plot.plot_gauge()
@@ -113,10 +125,13 @@ def plot_home():
                "fedfundfutures": fedfundfutures,
                "plot_market_senti_main": plot_market_senti_main,
                "plot_market_average": plot_market_average,
+               "plot_macro_average": plot_macro_average,
+               "plot_fff_average": plot_fff_average,
                'plot_gdp_index': plot_gdp_index, 
                'plot_fff': plot_fff,
                'market_sentiments_drill1': market_sentiments_drill1,
-               "plot_gauge": plot_gauge}
+               "plot_gauge": plot_gauge,
+               'macro_ts_plot':macro_ts_plot}
     return render_template('home.html', context=context)
 
 
@@ -126,9 +141,16 @@ def plot_market_consensus():
     market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
     market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
     market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
+    market_ts_plot = market_plot.plot_hd_ts(market_data_cleaned)
+    ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min)
+    ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement)
+
     context = {'market_sentiments_drill1': market_sentiments_drill1,
                'market_sentiments_drill2': market_sentiments_drill2,
-               'market_sentiments_drill3': market_sentiments_drill3}
+               'market_sentiments_drill3': market_sentiments_drill3, 
+               'market_ts_plot':market_ts_plot,
+               'ngram_min': ngram_min, 
+               'ngram_statement':ngram_statement}
     return render_template('market-consensus.html', context=context)
 
 
@@ -136,15 +158,18 @@ def plot_market_consensus():
 def plot_macroeconomic_indicators():
     #ploting
     plot_gdp_index = macro_plot.plot_gdp_index(gdp_data)
-    context = {'plot_gdp_index': plot_gdp_index}
+    plot_employment_index = macro_plot.plot_employment_index(employment_data)
+    plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
+    context = {'plot_gdp_index': plot_gdp_index, 
+               'plot_employment_index': plot_employment_index, 
+               'plot_inflation_index': plot_inflation_index}
     return render_template('macroeconomic-indicators.html', context=context)
 
     
 @app.route("/fedfundfutures")
 def plot_fedfundfutures():
     #ploting - add plots here and in context
-    # placeholder, to decide what to add into the drill down
-    plot_gdp_index = macro_plot.plot_gdp_index(fake_data)
-    context = {'plot_gdp_index': plot_gdp_index} 
+    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data)
+    context = {'plot_fff_results': plot_fff_results} 
     return render_template('fedfundfutures.html', context=context)
 
