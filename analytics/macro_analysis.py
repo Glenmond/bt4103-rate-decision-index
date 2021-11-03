@@ -21,12 +21,19 @@ except Exception:
     data.to_pickle('./macro_model/macro_data_pickle')
 
 macro_data = MacroData(data)
-macro_model = MacroModel(macro_data)
 
-macro_model.fit_data()
+try:
+    with open('./macro_model/macro_model_pickle' , 'rb') as f:
+        macro_model = pickle.load(f)
+except Exception:
+    macro_model = MacroModel(macro_data)
+    macro_model.fit_data()
+    with open('./macro_model/macro_model_pickle', 'wb') as files:
+        pickle.dump(macro_model, files)
 
 #macro_model.assess_val_set_performance()
 #macro_model.assess_test_set_performance()
+print(macro_model.fitted_model.params)
 
 app = dash.Dash()
 
@@ -91,8 +98,8 @@ app.layout = html.Div([
                 dcc.Graph(id='plot', figure=fig)
 ])
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+#if __name__ == '__main__':
+#    app.run_server(debug=True)
     
 
     
