@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
-from web.utils import utils, home_plot, macro_plot, market_plot
+from web.utils import utils, home_plot, macro_plot, market_plot, fedfundfutures_plot
 from web.models.fff_model.main import Main
 
 import json
@@ -169,8 +169,7 @@ def plot_macroeconomic_indicators():
 @app.route("/fedfundfutures")
 def plot_fedfundfutures():
     #ploting - add plots here and in context
-    # placeholder, to decide what to add into the drill down
-    plot_gdp_index = macro_plot.plot_gdp_index(fake_data)
-    context = {'plot_gdp_index': plot_gdp_index} 
+    plot_fff = fedfundfutures_plot.plot_fff(fff_data)
+    context = {'plot_fff': plot_fff} 
     return render_template('fedfundfutures.html', context=context)
 

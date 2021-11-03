@@ -14,50 +14,72 @@ import plotly.express as px
 import json
 from web.utils.utils import load_fff_data
 
-def plot_gdp_index(fff_data):
+def plot_fff(fff_data):
     '''
     Placeholder function for plots
     '''
-    df = fff_data
-    x = df['Date']
+    fff_data['Date'] = pd.to_datetime(fff_data['Date'])
+    titles = ["Model Results"]  + list(y.strftime("%d %B %Y FOMC Meeting") for y in fff_data['Date'])
 
-    fig = go.Figure()
+    fig = make_subplots(
+        rows=6, cols=2,
+        shared_xaxes=True,
+        subplot_titles = titles,
+        vertical_spacing=0.03,
+        horizontal_spacing=0.3,
+        specs=[[{"type": "table", "colspan": 2}, None],
+            [{"type": "bar"},{"type": "bar"}],
+            [{"type": "bar"},{"type": "bar"}],
+            [{"type": "bar"},{"type": "bar"}],
+            [{"type": "bar"},{"type": "bar"}],
+            [{"type": "bar"},{"type": "bar"}]]
+    )
+    #table_df = fff_data.copy().round(2).reset_index()
+    table_df = fff_data.copy().round(2)
+    table_df['Date'] = pd.to_datetime(table_df['Date']).apply(lambda x: x.strftime("%Y-%m-%d"))
+    fig.add_trace(
+        go.Table(
+            header=dict(
+                values=["Date", "0-25<br>BPS", "25-50<br>BPS",
+                        "50-75<br>BPS", "75-100<br>BPS", "100-125<br>BPS",
+                        "125-150<br>BPS", "150-175<br>BPS", "175-200<br>BPS"],
+                font=dict(size=10),
+                align="left"
+            ),
+            cells=dict(
+                values=[table_df[k].tolist() for k in table_df.columns],
+                align = "left")
+        ),
+        row=1, col=1
+    )
 
-    fig.add_trace(go.Line(x=x, y=df['GDPC1'],name='GDP', marker=dict(color="Black"))),
-    fig.add_trace(go.Line(x=x, y=df['PCEC96'],name='Domestic Consumption', marker=dict(color="lightcoral"))),
-    fig.add_trace(go.Line(x=x, y=df['GPDIC1'], name='Domestic Investment', marker=dict(color="sandybrown")))
-    fig.add_trace(go.Line(x=x, y=df['GCEC1'], name='Government Expenditure', marker=dict(color="darkseagreen")))
-    fig.add_trace(go.Line(x=x, y=df['NETEXC'], name='Net Export', marker=dict(color="cornflowerblue")))
+    rows = 2
+    cols = 1
+    df = fff_data.copy().round(3)
+    for dt in df.index:
+        monthdf = df.loc[[dt]].T
+        monthdf.columns = ['value']
+        fig.add_trace(
+            go.Bar(
+                y = monthdf.index,
+                x = monthdf.value,
+                text = monthdf.value,
+                name = str(dt),
+                showlegend=True,
+                orientation="h",  
+            ),
+            row=rows, col=cols,
+        )
+        if cols == 1:
+            cols+=1
+        elif cols == 2:
+            cols = 1
+            rows +=1
 
-    fig.update_layout(title_text='GDP and its components',
-                    xaxis_title='Date', yaxis_title='Value')
     fig.update_layout(
-        updatemenus=[
-            dict(active=0,
-                buttons=list([
-                dict(label="All",
-                    method="update",
-                    args=[{"visible":[True,True,True,True,True]},
-                        {"title":"ALL"}]),
-                dict(label="Domestic Consumption",
-                    method="update",
-                    args=[{"visible":[True, True, False,False,False]},
-                        {"title":"Domestic Consumption"}]),
-                dict(label="Domestic Investment",
-                    method="update",
-                    args=[{"visible":[True,False,True,False,False]},
-                        {"title":"Domestic Investment"}]),
-                dict(label="Government Expenditure",
-                    method="update",
-                    args=[{"visible":[True,False,False,True,False]},
-                        {"title":"Government Expenditure"}]),
-                dict(label="Net Export",
-                    method="update",
-                    args=[{"visible":[True,False,False,False,True]},
-                        {"title":"Net Export"}])
-            ]),
-            )
-        ],
+        height=2000,
+        showlegend=False,
+        title_text="Target Rate Predictions for FOMC Meetings",
     )
     #fig.update_layout(width=1500, height=500)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
