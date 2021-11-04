@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 
 from scipy.stats import zscore
-from .fomc_data.FomcStatement import FomcStatement
-from .fomc_data.FomcMinutes import FomcMinutes
-from .news_data.News import News
+from fomc_data.FomcStatement import FomcStatement
+from fomc_data.FomcMinutes import FomcMinutes
+from news_data.News import News
 from fredapi import Fred
 
 batch_id = datetime.date.today().strftime("%y%m%d")
