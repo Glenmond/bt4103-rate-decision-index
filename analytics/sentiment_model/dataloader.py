@@ -5,16 +5,16 @@ import datetime
 batch_id = datetime.date.today().strftime("%y%m%d")
 
 directory = {
-    "statements": f"../data/db/pickle/extract/{batch_id}_statement.pickle",
-    "minutes": f"../data/db/pickle/extract/{batch_id}_minutes.pickle",
-    "news": f"../data/db/pickle/extract/{batch_id}_news.pickle",
-    "model": "../data/db/pickle/model/model.pickle",
-    "vectorizer": "../data/db/pickle/model/vectorizer.pickle",
+    "statements": f"../data/sentiment_data/extract/{batch_id}_statement.pickle",
+    "minutes": f"../data/sentiment_data/extract/{batch_id}_minutes.pickle",
+    "news": f"../data/sentiment_data/extract/{batch_id}_news.pickle",
+    "model": "../data/sentiment_data/model/model.pickle",
+    "vectorizer": "../data/sentiment_data/model/vectorizer.pickle",
     # historical dataframes: for updating
     "historical": {
-        "statements": f"../data/db/pickle/historical/st_df.pickle",
-        "minutes": f"../data/db/pickle/historical/mins_df.pickle",
-        "news": f"../data/db/pickle/historical/news_df.pickle",
+        "statements": f"../data/sentiment_data/historical/st_df.pickle",
+        "minutes": f"../data/sentiment_data/historical/mins_df.pickle",
+        "news": f"../data/sentiment_data/historical/news_df.pickle",
     },
 }
 

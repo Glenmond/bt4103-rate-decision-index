@@ -140,4 +140,4 @@ class Backtest:
         """
         print(f"===== save {name} to historical pickle =====".title())
         rename_dict = {"statements": "st", "minutes": "mins", "news": "news"}
-        df.to_pickle(f"../data/db/pickle/historical/{rename_dict[name]}_df.pickle")
+        df.to_pickle(f"../data/sentiment_data/historical/{rename_dict[name]}_df.pickle")
