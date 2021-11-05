@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 
-from data import fetch_data
+from extract import fetch_data
 from macro_model import MacroModel, MacroData
 
 conf_int_95_line_colour = 'rgba(255, 0, 0, 0.1)'
