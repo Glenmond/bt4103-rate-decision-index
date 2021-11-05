@@ -340,5 +340,5 @@ class DataPreprocessor:
         rename_dict = {"statements": "st", "minutes": "mins", "news": "news"}
 
         df.to_pickle(
-            f"../data/db/pickle/preprocess/{self.batch_id}_{rename_dict[name]}_df.pickle"
+            f"../data/sentiment_data/preprocess/{self.batch_id}_{rename_dict[name]}_df.pickle"
         )
