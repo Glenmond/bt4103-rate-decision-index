@@ -1,12 +1,9 @@
 import pandas as pd
 import os
 from datetime import datetime,timedelta
-import re
 import yfinance as yf
-from bs4 import BeautifulSoup
-import requests
-from selenium import webdriver
-import time
+
+from analytics.extract.import_data import download_fed_futures_historical, download_fomc_dates
 
 class BacktestLoader():
     def __init__(self):
@@ -32,43 +29,7 @@ class BacktestLoader():
     def load_futures_historical(self):
         # Futures: full historical + forward data
         # download from barchart
-        futures = pd.read_csv("data/historical-prices.csv")
-        futures = futures[:-1]
-        futures['Exp Date'] = pd.to_datetime(futures['Exp Date'])
-        futures = futures.set_index("Exp Date")
-
-        # options = webdriver.ChromeOptions() ;
-        # options.add_argument("--disable-notifications")
-        # prefs = {"download.default_directory" : "/Users/erica/Desktop/capstone/data_historical",
-        #         'download.prompt_for_download': False,
-        #         'download.directory_upgrade': True,
-        #         'safebrowsing.enabled': False,
-        #         'safebrowsing.disable_download_protection': True};
-        # options.add_experimental_option("prefs",prefs);
-        
-        # driver = webdriver.Chrome(executable_path='./chromedriver', options=options)
-
-        # driver.get('https://www.barchart.com/futures/quotes/ZQQ22/historical-prices?viewName=main&orderBy=percentChange1y&orderDir=desc&page=1');
-        # driver.implicitly_wait(5)
-        # popup = driver.find_element_by_xpath("""/html/body/div[4]/i""")
-        # popup.click()
-
-        # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
-        # button.click();
-
-        # username = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[1]/input""")
-        # username.send_keys("fohigix903@stvbz.com")
-        # password = driver.find_element_by_xpath("""//*[@id="login-form-password"]""")
-        # password.send_keys("bestpassword")
-        # login_button = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[4]/button""")
-        # login_button.click()
-
-        # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
-        # button.click()
-        # print("download")
-        # time.sleep(10)
-        # driver.close()
-        
+        futures = download_fed_futures_historical()        
         return futures
     
     def load_meeting_futures_data(self, meeting_date,period='max'):
@@ -80,41 +41,9 @@ class BacktestLoader():
         return df
     
     def get_fomc_dates(self):
-        page = requests.get("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm")
-        soup = BeautifulSoup(page.content, 'html.parser')
-        soupy = soup.find_all("div", class_="panel panel-default")
-        result = []
-        for s in soupy:
-            year = s.find("div", class_ = "panel-heading").get_text()
-            year = re.findall(r'\d+', year)[0]
-
-            year_meetings = s.find_all("div", class_=["row fomc-meeting","fomc-meeting--shaded row fomc-meeting"])
-            for meeting in year_meetings:
-                meeting_month = meeting.find("div", class_="fomc-meeting__month").get_text()
-                meeting_day = meeting.find("div", class_="fomc-meeting__date").get_text()
-
-                if re.search(r"\(([^)]+)", meeting_day):
-                    continue
-                meeting_month = meeting_month.split("/")[0]
-                meeting_day = meeting_day.split("-")[0]
-
-                try: 
-                    d = datetime.strptime(f"{meeting_day} {meeting_month} {year}", '%d %B %Y')
-                except:
-                    d = datetime.strptime(f"{meeting_day} {meeting_month} {year}", '%d %b %Y')
-                result.append(d.strftime('%Y-%m-%d'))
-        result.sort()
-        df = pd.DataFrame(result)
-        df.columns = ['Date']
-        df['Date'] = pd.to_datetime(df['Date'])
-        df = df.set_index("Date")
-
-        if not os.path.exists("data"):
-            os.mkdir("data")
-        df.to_csv("data/fomc_dates.csv")
+        df = download_fomc_dates()
         return df
             
-
     def get_targets_data(self, date:datetime):
         upper_target = self.upper_target.loc[date]
         lower_target = self.lower_target.loc[date]
