@@ -25,7 +25,7 @@ market_data = utils.load_market_data()
 market_data_cleaned = utils.clean_market(market_data)
 
 
-market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
+market_ngram_statement, market_ngram_min = utils.load_ngram_market_data(year=2004)
 #market_ngram_min, market_ngram_statement, market_ngram_news = utils.load_ngram_market_data()
 #market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
 #market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
@@ -106,7 +106,7 @@ def plot_home():
     #ploting
     #market
     plot_market_senti_main = home_plot.plot_market(market_data, date='2004-09-30')
-    plot_market_average = home_plot.plot_market_average(market_data, date='2004-09-30')
+    plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
     market_sentiments_drill1 = home_plot.display_market_sentiments_drill_down_4(market_data_cleaned)
     
     
@@ -114,8 +114,9 @@ def plot_home():
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
     #plot_macro_average = home_plot.plot_market_average2(market_data)
     macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
-    macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-01')
-    macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-01')
+    print(macro_maindashboard_data.head())
+    macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
+    macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
     #plot_fff_average = home_plot.plot_market_average3(market_data)
@@ -166,10 +167,12 @@ def plot_macroeconomic_indicators():
     plot_employment_index = macro_plot.plot_employment_index(employment_data)
     plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
     plot_main_model = macro_plot.plot_main_plot(macro_main_data)
+    plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
     context = {'plot_gdp_index': plot_gdp_index, 
                'plot_employment_index': plot_employment_index, 
                'plot_inflation_index': plot_inflation_index, 
-               'plot_main_model': plot_main_model}
+               'plot_main_model': plot_main_model, 
+               'plot_indicators_ts':plot_indicators_ts}
     return render_template('macroeconomic-indicators.html', context=context)
 
     
