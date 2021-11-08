@@ -58,7 +58,13 @@ put your custom script or styling here
             </div>
         </div>
         <div class="col-md-4">
-            <div id="home-2">
+            <div class="row">
+                <div id="home-7">
+                </div>
+            </div>
+            <div class="row">
+                <div id="home-2">
+                </div>
             </div>
         </div>
         <div class="col-md-4">
@@ -87,6 +93,11 @@ put your custom script or styling here
     //Parse your Json variable here
     var graphs = {{ context.macro_maindashboard_plot| safe }};
     Plotly.plot('home-2', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.macro_pie_chart| safe }};
+    Plotly.plot('home-7', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
