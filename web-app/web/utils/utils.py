@@ -15,8 +15,8 @@ def load_market_data():
     market_data = pd.read_csv("web/data/ms_result.csv")
     return market_data
 
-def load_ngram_market_data():
-    in_year=2003
+def load_ngram_market_data(year):
+    in_year=year
     file = open("web/data/st_df.pickle", "rb")
     mins_df = pickle.load(file)
     out = mins_df.loc[mins_df.date.dt.year == in_year]
@@ -146,6 +146,7 @@ def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
     #merging feature and predicted data
     df_plot = pd.merge(df_fin, df_fin_pred, on="Date")
     # df_plot_fin = df_plot.set_index('Date')
+    df_plot['Date'] = df_plot['Date'] - pd.tseries.offsets.MonthEnd(-1)
     return df_plot
 
 #helper function

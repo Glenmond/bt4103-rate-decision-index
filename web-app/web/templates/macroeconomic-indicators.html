@@ -19,6 +19,11 @@ styling here
             </div>
         <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
     </div>
+        <div class=2"row h-33">
+            <div class="chart" id="macro-5">
+            </div>
+        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+    </div>
     <hr>
     <h3 style="color:navy; margin:10px;">Macroeconomics Indicators Sub Index</h3>
     <h4 style="color:navy; margin:10px;">GDP Economic Indicator</h4>
@@ -63,5 +68,10 @@ styling here
     //Parse your Json variable here
     var graphs = {{ context.plot_main_model| safe }};
     Plotly.plot('macro-4', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_indicators_ts| safe }};
+    Plotly.plot('macro-5', graphs, {});
 </script>
 {% endblock my_content %}
