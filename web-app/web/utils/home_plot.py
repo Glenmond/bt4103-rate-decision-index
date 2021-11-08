@@ -52,45 +52,27 @@ def plot_gauge():
     return plot_json
 
 
-def plot_market(market_data):
+def plot_market(market_data, date):
     #currently is static and hard coded. 
     # need to implment date picker for entire dashboard for home page
-    date = '2000-04-30'
     df_senti = market_data
-    
-    layout = go.Layout(
-        margin=go.layout.Margin(
-        l=150, #left margin
-        r=0, #right margin
-        b=30, #bottom margin
-        t=30  #top margin
-        )
-    )
-    
-    fig = go.Figure(layout=layout)
-    
-    fig.add_trace(go.Indicator(
-        title = {'text': "Sentiments for " + date, 
-                 'font.size': 30,
-                 'align': 'center'},
-        mode = 'delta',
-        delta = {'reference': 0, 'font.size': 1},
-        domain = {'row': 0, 'column': 0}))
-    
+    fig = go.Figure()
     #Statement
     fig.add_trace(go.Indicator(
         mode = "number+delta",
-        value = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement,
-        delta = {'position': "bottom", 'reference': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Statement},
-        title = {'text':"FOMC Statement Sentiments Score", 
-                 'font.size': 20},
+        value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement).round(4),
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Statement).round(4)},
+        title = {'text':"FOMC STATEMENT SENTIMENTS SCORE"+'<br>'+ '='*len("FOMC Statement Sentiments Score"), 
+                 'font.size': 20, 
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
     
     fig.add_trace(go.Indicator(
-        title = {'text': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Statement_Sentiments, 
-                 'font.size': 15,
+        title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Statement_Sentiments+">", 
+                 'font.size': 17,
                  'font.family': 'Courier New', 
-                 'align': 'left'},
+                 'align': 'right'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 1, 'column': 1}))
@@ -98,56 +80,65 @@ def plot_market(market_data):
     #Minutes
     fig.add_trace(go.Indicator(
         mode = "number+delta",
-        value = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes,
-        delta = {'position': "bottom", 'reference': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Minutes},
-        title = {'text':"FOMC Minutes Sentiments Score",
-                 'font.size': 20},
-        domain = {'row': 2, 'column': 0}))
-    
-    fig.add_trace(go.Indicator(
-        title = {'text': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Minutes_Sentiments, 
-                 'font.size': 15,
-                 'font.family': 'Courier New', 
-                 'align': 'left'},
-        mode = 'delta',
-        delta = {'reference': 0, 'font.size': 1},
-        domain = {'row': 2, 'column': 1}))
-
-    #News
-    fig.add_trace(go.Indicator(
-        mode = "number+delta",
-        value = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News,
-        delta = {'position': "bottom", 'reference': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_News},
-        title = {'text':"News Sentiments Score", 
-                 'font.size': 20},
+        value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes).round(4),
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Minutes).round(4)},
+        title = {'text':"FOMC MINUTES SENTIMENTS SCORE"+'<br>'+ '='*len("FOMC Minutes Sentiments Score"),
+                 'font.size': 20, 
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
         domain = {'row': 3, 'column': 0}))
     
     fig.add_trace(go.Indicator(
-        title = {'text': df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].News_Sentiments, 
-                 'font.size': 15,
-                 'font.family': 'Courier New',
-                 'align': 'left'},
+        title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Minutes_Sentiments+">", 
+                 'font.size': 17,
+                 'font.family': 'Courier New', 
+                 'align': 'right'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 3, 'column': 1}))
 
+    #News
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News).round(4),
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_News).round(4)},
+        title = {'text':"NEWS SENTIMENTS SCORE"+'<br>'+ '='*len("News Sentiments Score"), 
+                 'font.size': 20, 
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 5, 'column': 0}))
     
+    fig.add_trace(go.Indicator(
+        title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].News_Sentiments+">", 
+                 'font.size': 17,
+                 'font.family': 'Courier New',
+                 'align': 'right'},
+        mode = 'delta',
+        delta = {'reference': 0, 'font.size': 1},
+        domain = {'row': 5, 'column': 1}))
+
     
     fig.update_layout(
-        grid = {'rows': 4, 'columns': 2, 'pattern': "independent"}, 
+        grid = {'rows': 6, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black",
-        #template='plotly_dark'
-        )
+        height=600, width=800,
+        title={
+            'text': "Breakdown of Sentiment Scores for " + date,
+            'y':0.9,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':25},
+        margin=dict(l=150, r=100, t=75, b=20))
     
     fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
 
-def get_average_sentiment(market_data):
-    date = '2000-04-30'
+def get_average_sentiment(market_data, date):
     df_senti = market_data
     #    res = 0
     state_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement
@@ -180,15 +171,9 @@ def get_average_sentiment(market_data):
     
     return ((state_num+min_num+news_num) / 3)
     
+def plot_market_average(market_data, date):
+    avg = get_average_sentiment(market_data, date).round(4)
 
-def plot_market_average(market_data):
-    date = '2000-04-30'
-    df_senti = market_data
-    
-    avg = round(get_average_sentiment(market_data),4)
-    
-    #avg = get_average_sentiment(market_data)
-    
     word = ""
     if avg > 0:
         word = "Overall Hawkish"
@@ -196,44 +181,41 @@ def plot_market_average(market_data):
         word = "Overall Dovish"
     elif avg == 0:
         word = "Overall Neutral"
-        
-    layout = go.Layout(
-        margin=go.layout.Margin(
-        l=0, #left margin
-        r=100, #right margin
-        b=0, #bottom margin
-        t=50  #top margin
-        )
-    )
     
-    fig = go.Figure(layout=layout)
-
+    fig = go.Figure()
     fig.add_trace(go.Indicator(
         mode = "number",
         value = avg,
-        number = {'valueformat':'a'},
-        title = {'text': "Average Sentiment Score for" + " " + date, 
-                 'font.size': 25,
-                 'font.family': 'Times New Roman Bold'},
+        number = {'valueformat':'4dp'},
         domain = {'row': 0, 'column': 0}))
     
     fig.add_trace(go.Indicator(
-        title = {'text': word, 
-                 'font.size': 16,
+        title = {'text': "<"+word+">", 
+                 'font.size': 30,
                  'font.family': 'Courier New Bold',
-                 'font.color':'saddlebrown'},
+                 'font.color':'burlywood',            
+                 'align': 'center'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 1, 'column': 0}))
     
-    fig.update_layout(
-        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
-        paper_bgcolor = "white", 
-        font_family="Times New Roman Bold",
-        font_color="black")
     
-
-    fig.update_layout(width=600, height=100)
+    fig.update_layout(
+        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"},
+        paper_bgcolor = "steelblue", 
+        font_family="Times New Roman Bold",
+        font_color="black",
+        height=600, width=800,
+        title={
+            'text': "Average Sentiment Scores for " + date,
+            'y':0.8,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':30},
+        margin=dict(l=5, r=5, t=5, b=5))
+    
+    fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
        
@@ -322,258 +304,223 @@ def plot_gdp_index(home_data):
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def plot_macro_maindashboard(df_plot):
-    plot = go.Figure(data=[
-        go.Scatter(
-        name='actual_values',
-        x=df_plot.Date.tolist(),
-        y=df_plot.actual_values.tolist(),
-        marker_color='#A52A2A' #change color of line
-    ),
-        go.Scatter(
-        name='predicted',
-        x=df_plot.Date.tolist(),
-        y=df_plot.predicted.tolist(),
-        marker_color='#000000' #change color of line
-    ),  
-        go.Scatter(
-        name='T10Y3M',
-        x=df_plot.Date.tolist(),
-        y=df_plot.T10Y3M.tolist(),
-        marker_color='#FA8072' #change color of line
-    ),
-        go.Scatter(
-        name='EMRATIO_MEDWAGES',
-        x=df_plot.Date.tolist(),
-        y=df_plot.EMRATIO_MEDWAGES.tolist(),
-        marker_color='#4682B4' #change color of line
-    ),
-        go.Scatter(
-        name='EMRATIO',
-        x=df_plot.Date.tolist(),
-        y=df_plot.EMRATIO.tolist(),
-        marker_color='#00008B' #change color of line
-    ),
-        go.Scatter(
-        name='GDPC1',
-        x=df_plot.Date.tolist(),
-        y=df_plot.GDPC1.tolist(),
-        marker_color='#008B8B' #change color of line
-    ),
-        go.Scatter(
-        name='MEDCPI',
-        x=df_plot.Date.tolist(),
-        y=df_plot.MEDCPI.tolist(),
-        marker_color='#006400' #change color of line
-    ),
-        go.Scatter(
-        name='MEDCPI_PPIACO',
-        x=df_plot.Date.tolist(),
-        y=df_plot.MEDCPI_PPIACO.tolist(),
-        marker_color='#8B008B' #change color of line
-    ),
-        go.Scatter(
-        name='HD_index',
-        x=df_plot.Date.tolist(),
-        y=df_plot.HD_index.tolist(),
-        marker_color='#FF8C00' #change color of line
-    ),
-        go.Scatter(
-        name='shifted_target',
-        x=df_plot.Date.tolist(),
-        y=df_plot.shifted_target.tolist(),
-        marker_color='#8FBC8F' #change color of line
-    )
-    ])
+def plot_macro_maindashboard(df_plot, date):
+    #date= '2004-09-01'
+    ## Setting up values
+    #T10Y3M
+    B_T10Y3M = 0.043143
+    X_T10Y3M = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].T10Y3M #change to actual date to date
+    value_T10Y3M = B_T10Y3M * X_T10Y3M
 
-    plot.update_layout(
-        updatemenus=[
-            dict(
-                active=0,
-                buttons=list([
-                    dict(label="All",
-                         method="update",
-                         args=[{"visible": [True, True, True, True, True, True, True, True, True, True]},
-                               {"title": "All Indicators"}]),
-                    dict(label="T10Y3M",
-                         method="update",
-                         args=[{"visible": [True, True, True, False, False, False, False, False, False, False]},
-                               {"title": "T10Y3M",
-                                }]),
-                    dict(label="EMRATIO_MEDWAGES",
-                         method="update",
-                         args=[{"visible": [True, True, False, True, False, False, False, False, False, False]},
-                               {"title": "EMRATIO_MEDWAGES",
-                                }]),
-                    dict(label="EMRATIO",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, True, False, False, False, False, False]},
-                               {"title": "EMRATIO",
-                                }]),
-                    dict(label="GDPC1",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, False, True, False, False, False, False]},
-                               {"title": "GDPC1",
-                                }]),
-                    dict(label="MEDCPI",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, False, False, True, False, False, False]},
-                               {"title": "MEDCPI",
-                                }]),
-                    dict(label="MEDCPI_PPIACO",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, False, False, False, True, False, False]},
-                               {"title": "MEDCPI_PPIACO",
-                                }]),
-                    dict(label="HD_index",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, False, False, False, False, True, False]},
-                               {"title": "HD_index",
-                                }]),
-                    dict(label="shifted_target",
-                         method="update",
-                         args=[{"visible": [True, True, False, False, False, False, False, False, False, True]},
-                               {"title": "shifted_target",
-                                }]),
-                ]),
-            direction="down",
-            pad={"r": 6, "t": 5},
-            showactive=True,
-            x=1.4,
-            xanchor="center",
-            y=1.2,
-            yanchor="bottom"
-            )
-        ])
-
-    plot.update_layout(
-            font_family="Courier New",
-            font_color="black",
-            title_font_family="Times New Roman Bold",
-            title_font_color="black",
-            title_text='All Indicators', 
-            title_x=0.5
-        )
-    plot.update_layout(width=625, height=550)
-    plot.update_xaxes(rangeslider_visible=True)
-
-    plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
-    return plot_json
-
-#to remobe
-def plot_market_average2(market_data):
-    date = '2000-04-30'
-    df_senti = market_data
+    X_T10Y3M_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].T10Y3M
+    value_T10Y3M_prev = B_T10Y3M * X_T10Y3M_prev
     
-    avg = round(get_average_sentiment(market_data),4)
-    
-    #avg = get_average_sentiment(market_data)
-    
-    word = ""
-    if avg > 0:
-        word = "Overall Hawkish"
-    elif avg < 0:
-        word = "Overall Dovish"
-    elif avg == 0:
-        word = "Overall Neutral"
-        
-    layout = go.Layout(
-        margin=go.layout.Margin(
-        l=0, #left margin
-        r=100, #right margin
-        b=0, #bottom margin
-        t=50  #top margin
-        )
-    )
-    
-    fig = go.Figure(layout=layout)
+    #EMRATIO
+    B_EMRATIO = 0.033783
+    B_EMRATIO_MEDWAGES = 0.006322
+    X_EMRATIO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO #change to actual date to date
+    X_EMRATIO_MEDWAGES = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO_MEDWAGES #change to actual date to date
+    X_MEDWAGES = X_EMRATIO_MEDWAGES / X_EMRATIO
+    value_EMRATIO = (B_EMRATIO + (B_EMRATIO_MEDWAGES*X_MEDWAGES)) * X_EMRATIO
 
+    X_EMRATIO_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].EMRATIO
+    X_EMRATIO_MEDWAGES_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].EMRATIO_MEDWAGES #change to actual date to date
+    X_MEDWAGES_prev = X_EMRATIO_MEDWAGES_prev / X_EMRATIO_prev
+    value_EMRATIO_prev = (B_EMRATIO + (B_EMRATIO_MEDWAGES*X_MEDWAGES_prev)) * X_EMRATIO_prev
+
+    #GDP
+    B_GDPC1 = 0.036187
+    X_GDPC1 = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].GDPC1 #change to actual date to date
+    value_GDPC1 = B_GDPC1 * X_GDPC1
+    
+    X_GDPC1_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].GDPC1 #change to actual date to date
+    value_GDPC1_prev = B_GDPC1 * X_GDPC1_prev
+    
+    #MEDCPI
+    B_MEDCPI = 0.063183
+    B_MEDCPI_PPIACO = -0.077871
+    X_MEDCPI = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI #change to actual date to date
+    X_MEDCPI_PPIACO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI_PPIACO #change to actual date to date
+    X_PPIACO = X_MEDCPI_PPIACO / X_MEDCPI
+    value_MEDCPI = (B_MEDCPI + (B_MEDCPI_PPIACO*X_PPIACO)) * X_MEDCPI
+
+    X_MEDCPI_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].MEDCPI #change to actual date to date
+    X_MEDCPI_PPIACO_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].MEDCPI_PPIACO #change to actual date to date
+    X_PPIACO_prev = X_MEDCPI_PPIACO_prev / X_MEDCPI_prev
+    value_MEDCPI_prev = (B_MEDCPI + (B_MEDCPI_PPIACO*X_PPIACO_prev)) * X_MEDCPI_prev
+    
+    #HD index
+    B_HD_index = 0.051086
+    X_HD_index = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].HD_index #change to actual date to date
+    value_HD_index = B_HD_index * X_HD_index
+    
+    X_HD_index_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].HD_index #change to actual date to date
+    value_HD_index_prev = B_HD_index * X_HD_index_prev
+    
+    #shifted_target
+    B_shifted_target = 1.7117595779058272
+    X_shifted_target = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].shifted_target #change to actual date to date
+    value_shifted_target = B_shifted_target * X_shifted_target
+    
+    X_shifted_target_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].shifted_target #change to actual date to date
+    value_shifted_target_prev = B_shifted_target * X_shifted_target_prev
+
+    
+    ## PLotting figures
+    fig = go.Figure()
+
+
+    #T10Y3M Indicator
     fig.add_trace(go.Indicator(
-        mode = "number",
-        value = avg,
-        number = {'valueformat':'a'},
-        title = {'text': "Macroeconomic Indicators Score for" + " " + date, 
-                 'font.size': 25,
-                 'font.family': 'Times New Roman Bold'},
+        mode = "number+delta",
+        value = abs(value_T10Y3M.round(4)),
+        delta = {'position': "right", 'reference':abs(value_T10Y3M_prev.round(4))},
+        title = {'text':"BOND YIELD SPREAD"+'<br>'+ '='*len("Bond Yield Spread"), 
+                 'font.size': 20, 
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
         domain = {'row': 0, 'column': 0}))
-    
+
+    #EMRATIO Indicator
     fig.add_trace(go.Indicator(
-        title = {'text': word, 
-                 'font.size': 16,
-                 'font.family': 'Courier New Bold',
-                 'font.color':'saddlebrown'},
-        mode = 'delta',
-        delta = {'reference': 0, 'font.size': 1},
+        mode = "number+delta",
+        value = abs(value_EMRATIO.round(4)),
+        delta = {'position': "right", 'reference':abs(value_EMRATIO_prev.round(4))},
+        title = {'text':"EMPLOYMENT"+'<br>'+ '='*len("Employment"), 
+                 'font.size': 20,
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 0, 'column': 1}))
+
+    #GDP Indicator
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = abs(value_GDPC1.round(4)),
+        delta = {'position': "right", 'reference':abs(value_GDPC1_prev.round(4))},
+        title = {'text':"DOMESTIC OUTPUT"+'<br>'+ '='*len("Domestic Output"), 
+                 'font.size': 20,
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
-    
+
+    #MEDCPI Indicator
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = abs(value_MEDCPI.round(4)),
+        delta = {'position': "right", 'reference':abs(value_MEDCPI_prev.round(4))},
+        title = {'text':"INFLATION"+'<br>'+ '='*len("Inflation"), 
+                 'font.size': 20,
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 1, 'column': 1}))
+
+    #HD index Indicator
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = abs(value_HD_index.round(4)),
+        delta = {'position': "right", 'reference':abs(value_HD_index_prev.round(4))},
+        title = {'text':"HAWKISH-DOVISH INDEX"+'<br>'+ '='*len("Hawisk-Dovish Index"), 
+                 'font.size': 20,
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 2, 'column': 0}))
+
+    #shifted target Indicator
+    fig.add_trace(go.Indicator(
+        mode = "number+delta",
+        value = abs(value_shifted_target.round(4)),
+        delta = {'position': "right", 'reference':abs(value_shifted_target_prev.round(4))},
+        title = {'text':"PREVIOUS MONTH RATE"+'<br>'+ '='*len("Previous Month Rate"), 
+                 'font.size': 20,
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 2, 'column': 1}))
+
+    #Configure layout
     fig.update_layout(
-        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
+        grid = {'rows': 3, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
-        font_color="black")
+        font_color="black",
+        width=590, height=470,
+        title={
+            'text': "Contribution of Indicators for " + date,
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':25},
+        margin=dict(l=50, r=50, t=100, b=25))
     
-
-    fig.update_layout(width=600, height=125)
+    fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-#to remove 
-def plot_market_average3(market_data):
-    date = '2000-04-30'
-    df_senti = market_data
-    
-    avg = round(get_average_sentiment(market_data),4)
-    
-    #avg = get_average_sentiment(market_data)
-    
-    word = ""
-    if avg > 0:
-        word = "Overall Hawkish"
-    elif avg < 0:
-        word = "Overall Dovish"
-    elif avg == 0:
-        word = "Overall Neutral"
-        
-    layout = go.Layout(
-        margin=go.layout.Margin(
-        l=0, #left margin
-        r=100, #right margin
-        b=0, #bottom margin
-        t=50  #top margin
-        )
-    )
-    
-    fig = go.Figure(layout=layout)
+def plot_contributions_pie(df_plot, date):
+    ## Setting up values
+    #T10Y3M
+    B_T10Y3M = 0.043143
+    X_T10Y3M = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].T10Y3M #change to actual date to date
+    value_T10Y3M = B_T10Y3M * X_T10Y3M
 
-    fig.add_trace(go.Indicator(
-        mode = "number",
-        value = avg,
-        number = {'valueformat':'a'},
-        title = {'text': "Fed Fund Futures Score for" + " " + date, 
-                 'font.size': 25,
-                 'font.family': 'Times New Roman Bold'},
-        domain = {'row': 0, 'column': 0}))
-    
-    fig.add_trace(go.Indicator(
-        title = {'text': word, 
-                 'font.size': 16,
-                 'font.family': 'Courier New Bold',
-                 'font.color':'saddlebrown'},
-        mode = 'delta',
-        delta = {'reference': 0, 'font.size': 1},
-        domain = {'row': 1, 'column': 0}))
-    
+    #EMRATIO
+    B_EMRATIO = 0.033783
+    B_EMRATIO_MEDWAGES = 0.006322
+    X_EMRATIO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO #change to actual date to date
+    X_EMRATIO_MEDWAGES = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO_MEDWAGES #change to actual date to date
+    X_MEDWAGES = X_EMRATIO_MEDWAGES / X_EMRATIO
+    value_EMRATIO = (B_EMRATIO + (B_EMRATIO_MEDWAGES*X_MEDWAGES)) * X_EMRATIO
+
+    #GDP
+    B_GDPC1 = 0.036187
+    X_GDPC1 = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].GDPC1 #change to actual date to date
+    value_GDPC1 = B_GDPC1 * X_GDPC1
+
+    #MEDCPI
+    B_MEDCPI = 0.063183
+    B_MEDCPI_PPIACO = -0.077871
+    X_MEDCPI = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI #change to actual date to date
+    X_MEDCPI_PPIACO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI_PPIACO #change to actual date to date
+    X_PPIACO = X_MEDCPI_PPIACO / X_MEDCPI
+    value_MEDCPI = (B_MEDCPI + (B_MEDCPI_PPIACO*X_PPIACO)) * X_MEDCPI
+
+    #HD index
+    B_HD_index = 0.051086
+    X_HD_index = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].HD_index #change to actual date to date
+    value_HD_index = B_HD_index * X_HD_index
+
+    #shifted_target
+    B_shifted_target = 1.7117595779058272
+    X_shifted_target = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].shifted_target #change to actual date to date
+    value_shifted_target = B_shifted_target * X_shifted_target
+
+    labels = ['Bond Yield Spread', 'Employment', 'Domestic Output', 'Inflation', 'Hawisk-Dovish Index', 'Previous Month Rate']
+    values = [abs(value_T10Y3M), abs(value_EMRATIO), abs(value_GDPC1), abs(value_MEDCPI), abs(value_HD_index), abs(value_shifted_target)]
+    colors = ['saddlebrown', 'salmon', 'peachpuff', 'palevioletred', 'rosybrown', 'mistyrose']
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
+                                 textfont = {'family':'Courier New', 'color':'white'},
+                                 textfont_size=13,
+                                 showlegend=False, 
+                                 marker = dict(colors=colors,line=dict(color='#000000', width=0.2)))])
+    fig.update_traces(textposition='outside', textinfo='label+percent')
     fig.update_layout(
-        grid = {'rows': 2, 'columns': 1, 'pattern': "independent"}, 
-        paper_bgcolor = "white", 
-        font_family="Times New Roman Bold",
-        font_color="black")
+        paper_bgcolor = "steelblue",
+        font_color="black",
+        title={
+            'text': "Weightage of Contributions of Respective Indicators on " + date,
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':18,
+            'font.family': 'Times New Roman Bold'},
+        margin=dict(l=10, r=10, t=50, b=10))
     
-
-    fig.update_layout(width=600, height=125)
+    fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
- 
+
 
 #to remove
 def display_market_sentiments_drill_down_4(market_data):
