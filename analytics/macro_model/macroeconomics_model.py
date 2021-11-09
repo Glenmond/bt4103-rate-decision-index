@@ -1,14 +1,12 @@
 import pandas as pd
 import numpy as np
 import math
-from scipy.stats.mstats import gmean, hmean
+from scipy.stats.mstats import hmean
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
-import statsmodels.formula.api as smf
 import statsmodels.api as sm
-from statsmodels.tools.tools import add_constant
 
 import warnings 
 warnings.filterwarnings('ignore')
@@ -135,7 +133,6 @@ class MacroModel(Model):
         
         try:
             data_to_pred = data.copy().drop('shifted_target', axis=1)
-
 
             y_pred_res = self.fitted_model.get_prediction(sm.add_constant(data_to_pred), offset = self.shift_coef * data['shifted_target'])
             y_pred = y_pred_res.predicted_mean
