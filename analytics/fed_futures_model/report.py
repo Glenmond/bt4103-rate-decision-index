@@ -82,5 +82,6 @@ class Report():
         fig.show()
 
         today = datetime.now().strftime("%y%m%d")
-        fig.write_image(f"../data/fed_futures_data/report/{today}_fff_report.pdf")
+        if save:
+            fig.write_image(f"../data/fed_futures_data/report/{today}_fff_report.pdf")
         
