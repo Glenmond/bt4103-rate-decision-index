@@ -17,112 +17,8 @@ import dash as dcc
 import dash as html
 from web.utils.utils import load_market_data
 from sklearn.feature_extraction.text import CountVectorizer
-
+from datetime import datetime
 ## Time series of market sentiments (drill down)
-
-def display_market_sentiments_drill_down_1(market_data):
-    df_senti=market_data
-    #Statement
-    fig_statement = px.line(df_senti, x='Date', y='Score_Statement',
-                            labels={"Score_Statement": "FOMC Statement Sentiments Score"})
-
-    fig_statement.update_layout(
-        font_family="Courier New",
-        font_color="black",
-        title_font_family="Times New Roman Bold",
-        title_font_color="black",
-        title_text='Time Series of FOMC Statements Sentiments', 
-        title_x=0.5
-    )
-
-    fig_statement.update_xaxes(rangeslider_visible=True)
-    fig_statement.update_yaxes(range=[-1.1, 1.1])
-
-    fig_statement.update_xaxes(
-        rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1, label="1m", step="month", stepmode="backward"),
-                dict(count=6, label="6m", step="month", stepmode="backward"),
-                dict(count=1, label="YTD", step="year", stepmode="todate"),
-                dict(count=1, label="1y", step="year", stepmode="backward"),
-                dict(step="all")
-            ])
-        )
-    )
-    
-    plot_json = json.dumps(fig_statement, cls=plotly.utils.PlotlyJSONEncoder)
-    return plot_json
-
-def display_market_sentiments_drill_down_2(market_data):
-    df_senti=market_data
-    #Minutes
-    fig_minutes = px.line(df_senti, x='Date', y='Score_Minutes',
-                            labels={"Score_Minutes": "FOMC Minutes Sentiments Score"})
-
-    fig_minutes.update_layout(
-        font_family="Courier New",
-        font_color="black",
-        title_font_family="Times New Roman Bold",
-        title_font_color="black",
-        title_text='Time Series of FOMC Minutes Sentiments', 
-        title_x=0.5
-    )
-
-    fig_minutes.update_xaxes(rangeslider_visible=True)
-    fig_minutes.update_yaxes(range=[-1.1, 1.1])
-    
-    fig_minutes.update_xaxes(
-    rangeslider_visible=True,
-    rangeselector=dict(
-        buttons=list([
-            dict(count=1, label="1m", step="month", stepmode="backward"),
-            dict(count=6, label="6m", step="month", stepmode="backward"),
-            dict(count=1, label="YTD", step="year", stepmode="todate"),
-            dict(count=1, label="1y", step="year", stepmode="backward"),
-            dict(step="all")
-        ])
-    )
-    )
-
-    plot_json = json.dumps(fig_minutes, cls=plotly.utils.PlotlyJSONEncoder)
-    return plot_json
-
-def display_market_sentiments_drill_down_3(market_data):
-
-    df_senti=market_data
-    #News
-    fig_news = px.line(df_senti, x='Date', y='Score_News',
-                            labels={"Score_News": "News Sentiments Score"})
-
-    fig_news.update_layout(
-        font_family="Courier New",
-        font_color="black",
-        title_font_family="Times New Roman Bold",
-        title_font_color="black",
-        title_text='Time Series of News Sentiments', 
-        title_x=0.5
-    )
-
-    fig_news.update_xaxes(rangeslider_visible=True)
-    fig_news.update_yaxes(range=[-1.1, 1.1])
-
-    fig_news.update_xaxes(
-        rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1, label="1m", step="month", stepmode="backward"),
-                dict(count=6, label="6m", step="month", stepmode="backward"),
-                dict(count=1, label="YTD", step="year", stepmode="todate"),
-                dict(count=1, label="1y", step="year", stepmode="backward"),
-                dict(step="all")
-            ])
-        )
-    )
-    
-    plot_json = json.dumps(fig_news, cls=plotly.utils.PlotlyJSONEncoder)
-    return plot_json
-
 
 def plot_top_n_trigram(data):
     corpus = data
@@ -158,8 +54,15 @@ def concat_list(series):
 
     return all_words
 
-def get_top_n_gram_mins(data):
-    mins_df=data
+def get_top_n_gram_mins(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    print(data.head())
+    
+    mins_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(mins_df)])
@@ -285,8 +188,14 @@ def get_top_n_gram_mins(data):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def get_top_n_gram_st(data):
-    st_df=data
+def get_top_n_gram_st(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    
+    st_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(st_df)])
@@ -412,8 +321,14 @@ def get_top_n_gram_st(data):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def get_top_n_gram_news(data):
-    news_df =data
+def get_top_n_gram_news(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    
+    news_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(news_df)])
@@ -538,7 +453,6 @@ def get_top_n_gram_news(data):
     )
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
-
 
 
 def plot_hd_ts(data):
