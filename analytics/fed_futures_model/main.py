@@ -13,6 +13,9 @@ class Main():
         result.to_csv(f"../data/fed_futures_data/result/{today}_fff_result.csv")
         pred_values.to_csv(f"../data/fed_futures_data/result/{today}_fff_preds.csv")
 
+        result.to_csv(f"../data/fed_futures_data/latest/fff_result.csv")
+        pred_values.to_csv(f"../data/fed_futures_data/latest/fff_preds.csv")
+
         report = Report(result)
         report.generate_prediction_graphs(save=True)
 
