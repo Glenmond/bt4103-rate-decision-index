@@ -90,14 +90,14 @@ def plot_fff_results(data):
 def plot_futures_pred_vs_fomc(predictions, fomc):
     low, mid, high = fomc
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=low['Date'], y=low['Low'],
+    fig.add_trace(go.Scatter(x=low['Date'], y=low['Value'],
                         line = dict(color='royalblue', width=4, dash='dashdot'),
                         line_shape='spline',
                         name='Low'))
-    fig.add_trace(go.Scatter(x=mid['Date'], y=mid['Mid'],
+    fig.add_trace(go.Scatter(x=mid['Date'], y=mid['Value'],
                         line = dict(color='royalblue', width=4),
                         name='Midpoint'))
-    fig.add_trace(go.Scatter(x=high['Date'], y=high['High'],
+    fig.add_trace(go.Scatter(x=high['Date'], y=high['Value'],
                         line = dict(color='royalblue', width=4, dash='dashdot'),
                         name='High'))
 
@@ -122,5 +122,7 @@ def plot_futures_pred_vs_fomc(predictions, fomc):
 
 
     fig.update_layout(annotations=annotations,  plot_bgcolor='white')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
