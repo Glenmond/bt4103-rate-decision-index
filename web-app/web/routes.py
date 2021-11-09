@@ -28,7 +28,7 @@ main = Main()
 statement_df, mins_df, news_df = utils.load_market_data()
 market_data_cleaned = utils.import_modify_pickle_ms_main(statement_df, mins_df, news_df)
 
-market_ngram_statement, market_ngram_min, market_ngram_news = utils.load_ngram_market_data(year=2004)
+market_ngram_statement, market_ngram_min, market_ngram_news = utils.load_ngram_market_data()
 
 
 #macro
@@ -148,10 +148,6 @@ def plot_home():
     
     if request.method == 'POST':
         date = request.form['date-mm']
-        #print(date)
-        #date = '2004-09-30'
-        #print(date)
-        
         #ploting
         
         #market
@@ -161,13 +157,11 @@ def plot_home():
         
         #macro
         plot_gdp_index = home_plot.plot_gdp_index(home_data)
-        #plot_macro_average = home_plot.plot_market_average2(market_data)
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date)
         macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date)
         #fff
         plot_fff = home_plot.plot_fff(fff_data)
-        #plot_fff_average = home_plot.plot_market_average3(market_data)
 
         # gauge
         ### gmond update data source here 
@@ -193,14 +187,14 @@ def plot_home():
         
         #macro
         plot_gdp_index = home_plot.plot_gdp_index(home_data)
-        #plot_macro_average = home_plot.plot_market_average2(market_data)
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         print(macro_maindashboard_data.head())
         macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
         macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
+        
         #fff
         plot_fff = home_plot.plot_fff(fff_data)
-        #plot_fff_average = home_plot.plot_market_average3(market_data)
+
 
         # gauge
         ### gmond update data source here 
@@ -218,28 +212,56 @@ def plot_home():
         return render_template('home.html', context=context, form=form)
 
 
-#class Form2(FlaskForm):
-#    date = StringField('date', validators=[DataRequired()])
-#    submit = SubmitField('Submit')
+class PostForm2(FlaskForm):
+    date = StringField('date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
-@app.route("/market-consensus")
+@app.route("/market-consensus",  methods=['GET', 'POST'])
 def plot_market_consensus():
-#    form = Form2()
-    #ploting
-    market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
-    market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
-    market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
-    market_ts_plot = market_plot.plot_hd_ts(market_data_cleaned)
-    ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min)
-    ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement)
+    form2 = PostForm2()
+    
+    if request.method == 'POST':
+        date = request.form['date']
+        print("DATE IS HERE", date)
+        print(type(date))
+        #ploting
+        #date=2004
+        print(market_ngram_min.head(2))
+        market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
+        market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
+        market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
+        market_ts_plot = market_plot.plot_hd_ts(market_data_cleaned)
+        ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min, date=date)
+        ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement, date=date)
+        ngram_news = market_plot.get_top_n_gram_news(market_ngram_news, date=date)
 
-    context = {'market_sentiments_drill1': market_sentiments_drill1,
-               'market_sentiments_drill2': market_sentiments_drill2,
-               'market_sentiments_drill3': market_sentiments_drill3, 
-               'market_ts_plot':market_ts_plot,
-               'ngram_min': ngram_min, 
-               'ngram_statement':ngram_statement}
-    return render_template('market-consensus.html', context=context)
+        context = {'market_sentiments_drill1': market_sentiments_drill1,
+                'market_sentiments_drill2': market_sentiments_drill2,
+                'market_sentiments_drill3': market_sentiments_drill3, 
+                'market_ts_plot':market_ts_plot,
+                'ngram_min': ngram_min, 
+                'ngram_statement':ngram_statement,
+                'ngram_news':ngram_news}
+        return render_template('market-consensus.html', context=context, form=form2)
+    
+    else:
+        #ploting
+        market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
+        market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
+        market_sentiments_drill3 = market_plot.display_market_sentiments_drill_down_3(market_data_cleaned)
+        market_ts_plot = market_plot.plot_hd_ts(market_data_cleaned)
+        ngram_min = market_plot.get_top_n_gram_mins(market_ngram_min, date=2004)
+        ngram_statement = market_plot.get_top_n_gram_st(market_ngram_statement, date=2004)
+        ngram_news = market_plot.get_top_n_gram_news(market_ngram_news, date=2004)
+
+        context = {'market_sentiments_drill1': market_sentiments_drill1,
+                'market_sentiments_drill2': market_sentiments_drill2,
+                'market_sentiments_drill3': market_sentiments_drill3, 
+                'market_ts_plot':market_ts_plot,
+                'ngram_min': ngram_min, 
+                'ngram_statement':ngram_statement,
+                'ngram_news':ngram_news}
+        return render_template('market-consensus.html', context=context, form=form2)
 
    
 @app.route("/macroeconomic-indicators")

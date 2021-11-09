@@ -28,18 +28,15 @@ def load_market_data():
     return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
 
 #DONE updated data source
-def load_ngram_market_data(year):
-    in_year=year
+def load_ngram_market_data():
+    #in_year=year
     file = open('../analytics/data/sentiment_data/historical/st_df.pickle', "rb")
-    mins_df = pickle.load(file)
-    out = mins_df.loc[mins_df.date.dt.year == in_year]
+    st_df = pickle.load(file)
     file = open('../analytics/data/sentiment_data/historical/mins_df.pickle', "rb")
     mins_df = pickle.load(file)
-    out2 = mins_df.loc[mins_df.date.dt.year == in_year]
     file = open("../analytics/data/sentiment_data/historical/news_df.pickle", "rb")
-    mins_df = pickle.load(file)
-    out3 = mins_df.loc[mins_df.date.dt.year == in_year]
-    return out, out2, out3
+    news_df = pickle.load(file)
+    return st_df, mins_df, news_df
 
  
  ### gmond add ur data loader function here to read from analytics folder

@@ -96,18 +96,8 @@ put your custom script or styling here
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_market_senti_main | safe }};
-    Plotly.plot('home-8', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
     var graphs = {{ context.macro_maindashboard_plot| safe }};
     Plotly.plot('home-2', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
-    var graphs = {{ context.macro_pie_chart| safe }};
-    Plotly.plot('home-7', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
@@ -128,5 +118,15 @@ put your custom script or styling here
     //PLACEHOLDER TO BE REPLACED WITH GAUGE gmond u update here
     var graphs = {{ context.plot_gauge | safe }};
     Plotly.plot('home-6', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.macro_pie_chart| safe }};
+    Plotly.plot('home-7', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_market_senti_main | safe }};
+    Plotly.plot('home-8', graphs, {});
 </script>
 {% endblock my_content %}

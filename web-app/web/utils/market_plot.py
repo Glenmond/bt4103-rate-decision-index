@@ -17,7 +17,7 @@ import dash as dcc
 import dash as html
 from web.utils.utils import load_market_data
 from sklearn.feature_extraction.text import CountVectorizer
-
+from datetime import datetime
 ## Time series of market sentiments (drill down)
 
 def display_market_sentiments_drill_down_1(market_data):
@@ -158,8 +158,15 @@ def concat_list(series):
 
     return all_words
 
-def get_top_n_gram_mins(data):
-    mins_df=data
+def get_top_n_gram_mins(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    print(data.head())
+    
+    mins_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(mins_df)])
@@ -285,8 +292,14 @@ def get_top_n_gram_mins(data):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def get_top_n_gram_st(data):
-    st_df=data
+def get_top_n_gram_st(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    
+    st_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(st_df)])
@@ -412,8 +425,14 @@ def get_top_n_gram_st(data):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def get_top_n_gram_news(data):
-    news_df =data
+def get_top_n_gram_news(data, date):
+    date_i = int(date)
+    date_next = date_i+ 1
+    date_next = str(date_next)
+    date_now = datetime.strptime(str(date), '%Y')
+    date_next = datetime.strptime(date_next, '%Y')
+    
+    news_df = data[(data.date >= date_now) & (data.date <= date_next)]
     ## Data
     #n=1
     vec = CountVectorizer(ngram_range=(1, 1)).fit([concat_list(news_df)])
@@ -538,7 +557,6 @@ def get_top_n_gram_news(data):
     )
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
-
 
 
 def plot_hd_ts(data):
