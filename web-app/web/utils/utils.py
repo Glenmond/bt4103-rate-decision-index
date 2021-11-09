@@ -7,6 +7,10 @@ import pickle
 import json
 from web.macro_model_2.import_data import fetch_data
 
+from fredapi import Fred
+fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
+fred = Fred(api_key=fred_api)
+
 def isNaN(num):
     return num != num
 
@@ -63,10 +67,35 @@ def load_macro_model_data():
     return data
 
 def load_fff_data():
-    fff_data = pd.read_csv("web/data/fff_result.csv")
-    fake_data = pd.read_csv("web/data/macro_gdp_data.csv")
-    
-    return fff_data, fake_data
+    fff_data = pd.read_csv("web/data/fff_result.csv")    
+    return fff_data
+
+def load_fff_vs_fomc_data():
+
+    def clean_fomc_data(data):
+        data = data.reset_index()
+        data.columns = ['Date', 'Value']
+        data['Date'] = pd.to_datetime(data['Date'])
+        data = data.dropna()
+        return data
+
+    # low
+    # Source: https://fred.stlouisfed.org/series/FEDTARRL
+    low = fred.get_series('FEDTARRL')
+    low = clean_fomc_data(low)
+
+    # mid point
+    # Source: https://fred.stlouisfed.org/series/FEDTARRM
+    mid = fred.get_series('FEDTARRM')
+    mid = clean_fomc_data(mid)
+
+    # high
+    # Source: https://fred.stlouisfed.org/series/FEDTARRH
+    high = fred.get_series('FEDTARRH')
+    high = clean_fomc_data(high)
+
+    preds = pd.read_csv("web/data/fff_preds.csv")
+    return preds, [low, mid, high]
 
 def load_home_data():
     home_data = pd.read_csv("web/data/macro_gdp_data.csv")

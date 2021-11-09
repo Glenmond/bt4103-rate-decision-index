@@ -43,8 +43,11 @@ macro_main_data = utils.load_macro_model_data()
 macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
 
 #fedfundfuture
-fff_data, fake_data = utils.load_fff_data()
+fff_data = utils.load_fff_data()
 fff_data_cleaned = utils.clean_fff(fff_data)
+
+#fedfundfuture vs fomc dot plot
+fff_preds, fff_fomc = utils.load_fff_vs_fomc_data()
 
 #home
 home_data = utils.load_home_data()
@@ -54,7 +57,7 @@ home_data = utils.load_home_data()
 def plot_main_dashboard():
     #ploting
     #market
-    plot_market_senti_main = home_plot.plot_market(market_data, date='2004-09-30')
+    plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09-30')
     plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
     
     
@@ -228,6 +231,8 @@ def plot_macroeconomic_indicators():
 def plot_fedfundfutures():
     #ploting - add plots here and in context
     plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data)
-    context = {'plot_fff_results': plot_fff_results} 
+    plot_futures_pred_vs_fomc = fedfundfutures_plot.plot_futures_pred_vs_fomc(fff_preds, fff_fomc)
+    context = {'plot_fff_results': plot_fff_results,
+               'plot_futures_pred_vs_fomc': plot_futures_pred_vs_fomc} 
     return render_template('fedfundfutures.html', context=context)
 
