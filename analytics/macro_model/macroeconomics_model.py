@@ -39,7 +39,7 @@ class MacroData():
         # Preprocess the data obtained from the API call
 
         # Add the HD index
-        hd = pd.read_csv('./macro_model/final_df.csv')
+        hd = pd.read_csv('./extract/macroeconomic_indicators_data/final_df.csv')
         hd.index = hd['Date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
         hd = hd.drop("Date", axis=1)

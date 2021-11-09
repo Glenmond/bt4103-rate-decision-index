@@ -20,20 +20,20 @@ conf_int_99_line_colour = 'rgba(0, 0, 255, 0.1)'
 
 # Get the data
 try: # so that we do not need the FRED API call every time we try to access
-    data = pd.read_pickle('./macro_model/macro_data_pickle')
+    data = pd.read_pickle('./data/macroeconomic_indicators_data/macro_data_pickle')
 except Exception:   
     data = fetch_data()
-    data.to_pickle('./macro_model/macro_data_pickle')
+    data.to_pickle('./data/macroeconomic_indicators_data/macro_data_pickle')
 
 macro_data = MacroData(data)
 
 try:
-    with open('./macro_model/macro_model_pickle' , 'rb') as f:
+    with open('./data/macroeconomic_indicators_data/macro_model_pickle' , 'rb') as f:
         macro_model = pickle.load(f)
 except Exception:
     macro_model = MacroModel(macro_data)
     macro_model.fit_data()
-    with open('./macro_model/macro_model_pickle', 'wb') as files:
+    with open('./data/macroeconomic_indicators_data/macro_model_pickle', 'wb') as files:
         pickle.dump(macro_model, files)
         
 app = dash.Dash()
