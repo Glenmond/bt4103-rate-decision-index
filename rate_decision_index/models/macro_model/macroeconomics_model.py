@@ -13,11 +13,10 @@ import statsmodels.api as sm
 import warnings 
 warnings.filterwarnings('ignore')
 
-
 from .base_model import Model
 
 class MacroData():
-    def __init__(self, data):
+    def __init__(self, data, path_to_HD_pickle = './data/sentiment_data/historical/'):
         # TODO: configure this data to be compatible with both pd Dataframe and json dictionaries
         # if data is a json dictionary, parse it into a pd Dataframe
         # The self.data is a pd DataFrame!!!
@@ -34,14 +33,14 @@ class MacroData():
         # Initialise the scaler as None first
         self.scaler=None
 
-        self.preprocess()
+        self.preprocess(path_to_HD_pickle)
 
-    def preprocess(self):
+    def preprocess(self, path_to_HD_pickle):
         # Preprocess the data obtained from the API call
 
         # Add the HD index
         #hd = pd.read_csv('./data/macroeconomic_indicators_data/final_df.csv')
-        hd = pd.read_pickle('./data/sentiment_data/historical/final_df.pickle')
+        hd = pd.read_pickle(path_to_HD_pickle + 'final_df.pickle')
         #print(hd.head(50))
         hd.index = hd['date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
@@ -149,7 +148,6 @@ class MacroModel(Model):
             print("The dataset is not defined properly, make sure you fit the model with data first before fitting!") 
             return
 
-
     def assess_val_set_performance(self):
         try:
             y_pred_res, y_pred = self.predict(self.data.X_val)
@@ -187,3 +185,9 @@ class MacroModel(Model):
         print(f"\tThe R2 score is {r2}")
         print(f"\tThe Adjusted R2 score is {adj_r2}")
         print(f"\tThe RMSE score is {rmse}")
+
+    def predict_latest_data(self):
+        """
+        Gets the latest available data from FRED and returns the predicted data based on it. If the latest data for this particular month is not available,
+        the next latest is obtained. For example, if Nov 2021 data is not available, the next latest available (maybe Sept 2021 or something) will be used
+        """
