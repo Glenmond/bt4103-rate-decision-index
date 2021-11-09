@@ -4,6 +4,10 @@ import pandas as pd
 import numpy as np
 
 from scipy.stats import zscore
+
+from bs4 import BeautifulSoup
+import requests
+import re
 from fredapi import Fred
 
 try:
@@ -238,6 +242,81 @@ def download_data(docs, from_year):
     print("The first 5 rows of the data: \n", df.head())
     print("The last 5 rows of the data: \n", df.tail())
     docs.pickle_dump_df(filename=f"{batch_id}_{docs.content_type}" + ".pickle")
+
+
+def download_fed_futures_historical():
+    # Futures: full historical + forward data
+    # download from barchart
+    futures = pd.read_csv("../data/fed_futures_data/raw_data/historical-prices.csv")
+    futures = futures[:-1]
+    futures['Exp Date'] = pd.to_datetime(futures['Exp Date'])
+    futures = futures.set_index("Exp Date")
+
+    # options = webdriver.ChromeOptions() ;
+    # options.add_argument("--disable-notifications")
+    # prefs = {"download.default_directory" : "/Users/erica/Desktop/capstone/data_historical",
+    #         'download.prompt_for_download': False,
+    #         'download.directory_upgrade': True,
+    #         'safebrowsing.enabled': False,
+    #         'safebrowsing.disable_download_protection': True};
+    # options.add_experimental_option("prefs",prefs);
+    
+    # driver = webdriver.Chrome(executable_path='./chromedriver', options=options)
+
+    # driver.get('https://www.barchart.com/futures/quotes/ZQQ22/historical-prices?viewName=main&orderBy=percentChange1y&orderDir=desc&page=1');
+    # driver.implicitly_wait(5)
+    # popup = driver.find_element_by_xpath("""/html/body/div[4]/i""")
+    # popup.click()
+
+    # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
+    # button.click();
+
+    # username = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[1]/input""")
+    # username.send_keys("fohigix903@stvbz.com")
+    # password = driver.find_element_by_xpath("""//*[@id="login-form-password"]""")
+    # password.send_keys("bestpassword")
+    # login_button = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[4]/button""")
+    # login_button.click()
+
+    # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
+    # button.click()
+    # print("download")
+    # time.sleep(10)
+    # driver.close()
+    
+    return futures
+
+def download_fomc_dates():
+        page = requests.get("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm")
+        soup = BeautifulSoup(page.content, 'html.parser')
+        soupy = soup.find_all("div", class_="panel panel-default")
+        result = []
+        for s in soupy:
+            year = s.find("div", class_ = "panel-heading").get_text()
+            year = re.findall(r'\d+', year)[0]
+
+            year_meetings = s.find_all("div", class_=["row fomc-meeting","fomc-meeting--shaded row fomc-meeting"])
+            for meeting in year_meetings:
+                meeting_month = meeting.find("div", class_="fomc-meeting__month").get_text()
+                meeting_day = meeting.find("div", class_="fomc-meeting__date").get_text()
+
+                if re.search(r"\(([^)]+)", meeting_day):
+                    continue
+                meeting_month = meeting_month.split("/")[0]
+                meeting_day = meeting_day.split("-")[0]
+
+                try: 
+                    d = datetime.datetime.strptime(f"{meeting_day} {meeting_month} {year}", '%d %B %Y')
+                except:
+                    d = datetime.datetime.strptime(f"{meeting_day} {meeting_month} {year}", '%d %b %Y')
+                result.append(d.strftime('%Y-%m-%d'))
+        result.sort()
+        df = pd.DataFrame(result)
+        df.columns = ['Date']
+        df['Date'] = pd.to_datetime(df['Date'])
+        df = df.set_index("Date")
+
+        return df
 
 
 if __name__ == "__main__":

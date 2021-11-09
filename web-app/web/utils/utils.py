@@ -12,11 +12,23 @@ def isNaN(num):
 
 #loading data
 def load_market_data():
-    market_data = pd.read_csv("web/data/ms_result.csv")
-    return market_data
+    #market_data = pd.read_csv("web/data/ms_result.csv")
+    statement_pickle_directory = '../analytics/data/sentiment_data/historical/st_df.pickle'
 
-def load_ngram_market_data():
-    in_year=2003
+    minutes_pickle_directory = '../analytics/data/sentiment_data/historical/mins_df.pickle'
+
+    news_pickle_directory = '../analytics/data/sentiment_data/historical/news_df.pickle' 
+    file = open(statement_pickle_directory, "rb")
+    statement_df = pickle.load(file)
+    file = open(minutes_pickle_directory, "rb")
+    mins_df = pickle.load(file)
+    file = open(news_pickle_directory, "rb")
+    news_df = pickle.load(file)
+    
+    return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
+
+def load_ngram_market_data(year):
+    in_year=year
     file = open("web/data/st_df.pickle", "rb")
     mins_df = pickle.load(file)
     out = mins_df.loc[mins_df.date.dt.year == in_year]
@@ -146,7 +158,83 @@ def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
     #merging feature and predicted data
     df_plot = pd.merge(df_fin, df_fin_pred, on="Date")
     # df_plot_fin = df_plot.set_index('Date')
+    df_plot['Date'] = df_plot['Date'] - pd.tseries.offsets.MonthEnd(-1)
     return df_plot
+
+def import_modify_pickle_ms_main(file_st, file_mins, file_news):
+    #Statement
+    st_file = open(file_st, "rb") #"st_df.pickle"
+    st_df = pickle.load(st_file)
+    st_df_to_comb = st_df[["date", "Scaled Score"]]
+    st_df_to_comb['date'] = st_df_to_comb['date'] - pd.tseries.offsets.MonthEnd(-1)    
+    st_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_Statement"}, inplace = True)
+    
+    #Minutes
+    mins_file = open(file_mins, "rb") #"mins_df.pickle"
+    mins_df = pickle.load(mins_file)
+    mins_df_to_comb = mins_df[["date", "Scaled Score"]]
+    mins_df_to_comb['date'] = mins_df_to_comb['date'] - pd.tseries.offsets.MonthEnd(-1)    
+    mins_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_Minutes"}, inplace = True)
+
+    #News
+    news_file = open(file_news, "rb") #"news_df.pickle"
+    news_df = pickle.load(news_file)
+    news_df_to_comb = news_df[["date", "Scaled Score"]] 
+    news_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_News"}, inplace = True)
+    news_df_to_comb = news_df_to_comb[1:]
+    
+    #Join Statement and Minutes
+    df_temp = pd.merge(st_df_to_comb, mins_df_to_comb, on="Date", how='inner')
+    
+    
+    #Join df_temp and News
+    df = pd.merge(df_temp, news_df_to_comb, on="Date", how='inner')    
+    
+    #Add Sentiments
+    #Statement
+    list_statements = []
+    for i in df.Score_Statement:
+        if i > 0:
+            list_statements.append("Hawkish")
+        elif i < 0:
+            list_statements.append("Dovish")
+        elif i == 0:
+            list_statements.append("Neutral")
+        elif isNaN(i):
+            list_statements.append("-")
+
+    df['Statement_Sentiments'] = list_statements
+
+    #Minutes
+    list_minutes = []
+    for j in df.Score_Minutes:
+        if j > 0:
+            list_minutes.append("Hawkish")
+        elif j < 0:
+            list_minutes.append("Dovish")
+        elif j == 0:
+            list_minutes.append("Neutral")
+        elif isNaN(j):
+            list_minutes.append("-")
+
+    df['Minutes_Sentiments'] = list_minutes
+
+    #News
+    list_news = []
+    for k in df.Score_News:
+        if k > 0:
+            list_news.append("Hawkish")
+        elif k < 0:
+            list_news.append("Dovish")
+        elif k == 0:
+            list_news.append("Neutral")
+        elif isNaN(k):
+            list_news.append("-")
+
+    df['News_Sentiments'] = list_news
+    
+    return df
+
 
 #helper function
 def guess_date(string):

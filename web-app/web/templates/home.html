@@ -14,6 +14,15 @@ put your custom script or styling here
     <div class="row">
         <h1 style="margin:15px;">Overall Rate Decision</h1>
     </div>
+        <div class="row">
+        <div class="form-group"style="margin:15px;">
+        <form action"" method="POST" novalidate>
+            <label for="date-mm">Input last day of the Month in question</label>
+                <input type="date" id="date-mm" name="date-mm" class="form-control" format="dd/mm/yyyy" placeholder="DD-MM-YYYY">
+        {{ form.submit() }}
+        </form>
+        </div>
+    </div>
     <div class=2"row">
         <div class="chart" id="home-6">
         </div>
@@ -45,6 +54,7 @@ put your custom script or styling here
             </div>
         </div>
     </div>
+
     <!-- second row -->
     <div class="row">
         <div class="col-md-4">
@@ -58,7 +68,13 @@ put your custom script or styling here
             </div>
         </div>
         <div class="col-md-4">
-            <div id="home-2">
+            <div class="row">
+                <div id="home-7">
+                </div>
+            </div>
+            <div class="row">
+                <div id="home-2">
+                </div>
             </div>
         </div>
         <div class="col-md-4">
@@ -87,6 +103,11 @@ put your custom script or styling here
     //Parse your Json variable here
     var graphs = {{ context.macro_maindashboard_plot| safe }};
     Plotly.plot('home-2', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.macro_pie_chart| safe }};
+    Plotly.plot('home-7', graphs, {});
 </script>
 <script>
     //Parse your Json variable here

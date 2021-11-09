@@ -267,10 +267,154 @@ def plot_main_plot(data):
 
     fig.update_layout(title='Prediction of Federal Funds Rate',
         xaxis_title='Date',
-        yaxis_title='Federal Funds Rate')
+        yaxis_title='Federal Funds Rate',
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",)
 
+    fig.update_xaxes(rangeslider_visible=True)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
+def plot_indicators_ts(df_plot):
+    
+    plot = go.Figure(data=[
+        go.Scatter(
+        name='actual_values',
+        x=df_plot.Date.tolist(),
+        y=df_plot.actual_values.tolist(),
+        marker_color='#A52A2A' #change color of line
+    ),
+        go.Scatter(
+        name='predicted',
+        x=df_plot.Date.tolist(),
+        y=df_plot.predicted.tolist(),
+        marker_color='#000000' #change color of line
+    ),  
+        go.Scatter(
+        name='T10Y3M',
+        x=df_plot.Date.tolist(),
+        y=df_plot.T10Y3M.tolist(),
+        marker_color='#FA8072' #change color of line
+    ),
+        go.Scatter(
+        name='EMRATIO_MEDWAGES',
+        x=df_plot.Date.tolist(),
+        y=df_plot.EMRATIO_MEDWAGES.tolist(),
+        marker_color='#4682B4' #change color of line
+    ),
+        go.Scatter(
+        name='EMRATIO',
+        x=df_plot.Date.tolist(),
+        y=df_plot.EMRATIO.tolist(),
+        marker_color='#00008B' #change color of line
+    ),
+        go.Scatter(
+        name='GDPC1',
+        x=df_plot.Date.tolist(),
+        y=df_plot.GDPC1.tolist(),
+        marker_color='#008B8B' #change color of line
+    ),
+        go.Scatter(
+        name='MEDCPI',
+        x=df_plot.Date.tolist(),
+        y=df_plot.MEDCPI.tolist(),
+        marker_color='#006400' #change color of line
+    ),
+        go.Scatter(
+        name='MEDCPI_PPIACO',
+        x=df_plot.Date.tolist(),
+        y=df_plot.MEDCPI_PPIACO.tolist(),
+        marker_color='#8B008B' #change color of line
+    ),
+        go.Scatter(
+        name='HD_index',
+        x=df_plot.Date.tolist(),
+        y=df_plot.HD_index.tolist(),
+        marker_color='#FF8C00' #change color of line
+    ),
+        go.Scatter(
+        name='shifted_target',
+        x=df_plot.Date.tolist(),
+        y=df_plot.shifted_target.tolist(),
+        marker_color='#8FBC8F' #change color of line
+    )
+    ])
+
+    plot.update_layout(
+        updatemenus=[
+            dict(
+                active=0,
+                buttons=list([
+                    dict(label="All",
+                         method="update",
+                         args=[{"visible": [True, True, True, True, True, True, True, True, True, True]},
+                               {"title": "All Indicators"}]),
+                    dict(label="T10Y3M",
+                         method="update",
+                         args=[{"visible": [True, True, True, False, False, False, False, False, False, False]},
+                               {"title": "T10Y3M",
+                                }]),
+                    dict(label="EMRATIO_MEDWAGES",
+                         method="update",
+                         args=[{"visible": [True, True, False, True, False, False, False, False, False, False]},
+                               {"title": "EMRATIO_MEDWAGES",
+                                }]),
+                    dict(label="EMRATIO",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, True, False, False, False, False, False]},
+                               {"title": "EMRATIO",
+                                }]),
+                    dict(label="GDPC1",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, False, True, False, False, False, False]},
+                               {"title": "GDPC1",
+                                }]),
+                    dict(label="MEDCPI",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, False, False, True, False, False, False]},
+                               {"title": "MEDCPI",
+                                }]),
+                    dict(label="MEDCPI_PPIACO",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, False, False, False, True, False, False]},
+                               {"title": "MEDCPI_PPIACO",
+                                }]),
+                    dict(label="HD_index",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, False, False, False, False, True, False]},
+                               {"title": "HD_index",
+                                }]),
+                    dict(label="shifted_target",
+                         method="update",
+                         args=[{"visible": [True, True, False, False, False, False, False, False, False, True]},
+                               {"title": "shifted_target",
+                                }]),
+            ]),
+            direction="down",
+            pad={"r": 5, "t": 5},
+            showactive=True,
+            x=1.3,
+            xanchor="left",
+            y=1.2,
+            yanchor="top"
+            )
+        ])
+    
+
+    plot.update_layout(
+            title='The effect of individual indicators on Fed Fund Rate',
+            font_family="Courier New",
+            font_color="black",
+            title_font_family="Times New Roman Bold",
+            title_font_color="black",
+            #title_text='All Indicators', 
+            title_x=0.5
+        )
+    
+    plot.update_xaxes(rangeslider_visible=True)
+    plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json
 
 

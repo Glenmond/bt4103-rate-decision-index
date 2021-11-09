@@ -5,6 +5,9 @@ from flask import render_template, url_for, flash, redirect, request, make_respo
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot, fedfundfutures_plot
 from web.models.fff_model.main import Main
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired
 
 import json
 from werkzeug.utils import secure_filename
@@ -21,11 +24,12 @@ main = Main()
 
 #loading and clean data
 #market
-market_data = utils.load_market_data()
-market_data_cleaned = utils.clean_market(market_data)
+#market_data = utils.load_market_data()
+statement_df, mins_df, news_df = utils.load_market_data()
+#market_data_cleaned = utils.clean_market(market_data)
+market_data_cleaned = utils.import_modify_pickle_ms_main(statement_df, mins_df, news_df)
 
-
-market_ngram_statement, market_ngram_min = utils.load_ngram_market_data()
+market_ngram_statement, market_ngram_min = utils.load_ngram_market_data(year=2004)
 #market_ngram_min, market_ngram_statement, market_ngram_news = utils.load_ngram_market_data()
 #market_ngram_min_cleaned = utils.clean_ngram_data(market_ngram_min)
 #market_ngram_statement_cleaned = utils.clean_ngram_data(market_ngram_statement)
@@ -48,35 +52,37 @@ home_data = utils.load_home_data()
 #to change the data for home and start page
 @app.route("/")
 def plot_main_dashboard():
-    # actual values to be filled up 
-    market_consensus = 1
-    macroeconomic_indicators = -1
-    fedfundfutures= 1
     #ploting
     #market
-    plot_market_senti_main = home_plot.plot_market(market_data)
-    plot_market_average = home_plot.plot_market_average(market_data)
-    market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
+    plot_market_senti_main = home_plot.plot_market(market_data, date='2004-09-30')
+    plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
     
     
     #macro
     plot_gdp_index = home_plot.plot_gdp_index(home_data)
-    
+    #plot_macro_average = home_plot.plot_market_average2(market_data)
+    macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+    print(macro_maindashboard_data.head())
+    macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
+    macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
     #fff
     plot_fff = home_plot.plot_fff(fff_data)
+    #plot_fff_average = home_plot.plot_market_average3(market_data)
 
     # gauge
     plot_gauge = home_plot.plot_gauge()
 
-    context = {"market_consensus": market_consensus,
-               "macroeconomic_indicators": macroeconomic_indicators,
-               "fedfundfutures": fedfundfutures,
-               "plot_market_senti_main": plot_market_senti_main,
-               "plot_market_average": plot_market_average,
-               'plot_gdp_index': plot_gdp_index, 
-               'plot_fff': plot_fff,
-               'market_sentiments_drill1': market_sentiments_drill1,
-               "plot_gauge": plot_gauge}
+    context = {
+            "plot_market_senti_main": plot_market_senti_main,
+            "plot_market_average": plot_market_average,
+            #"plot_macro_average": plot_macro_average,
+            #"plot_fff_average": plot_fff_average,
+            'plot_gdp_index': plot_gdp_index, 
+            'plot_fff': plot_fff,
+            "plot_gauge": plot_gauge,
+            'macro_ts_plot':macro_ts_plot,
+            'macro_maindashboard_plot':macro_maindashboard_plot,
+            'macro_pie_chart':macro_pie_chart}
     return render_template('home.html', context=context)
 
 @app.route("/upload")
@@ -96,51 +102,93 @@ def upload_files():
       f.save(path)
       return 'file uploaded successfully'
 
+class PostForm(FlaskForm):
+    date = StringField('date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
-@app.route("/home")
+@app.route("/home",  methods=['GET', 'POST'])
 def plot_home():
-    # actual values to be filled up 
-    market_consensus = 1
-    macroeconomic_indicators = -1
-    fedfundfutures= 1
-    #ploting
-    #market
-    plot_market_senti_main = home_plot.plot_market(market_data)
-    plot_market_average = home_plot.plot_market_average(market_data)
-    market_sentiments_drill1 = home_plot.display_market_sentiments_drill_down_4(market_data_cleaned)
+    form = PostForm()
     
-    
-    #macro
-    plot_gdp_index = home_plot.plot_gdp_index(home_data)
-    plot_macro_average = home_plot.plot_market_average2(market_data)
-    macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
-    macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data)
-    
-    #fff
-    plot_fff = home_plot.plot_fff(fff_data)
-    plot_fff_average = home_plot.plot_market_average3(market_data)
+    if request.method == 'POST':
+        date = request.form['date-mm']
+        print(date)
+        #date = '2004-09-30'
+        print(date)
+        #ploting
+        #market
+        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date)
+        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date)
+        
+        
+        #macro
+        plot_gdp_index = home_plot.plot_gdp_index(home_data)
+        #plot_macro_average = home_plot.plot_market_average2(market_data)
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date)
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date)
+        #fff
+        plot_fff = home_plot.plot_fff(fff_data)
+        #plot_fff_average = home_plot.plot_market_average3(market_data)
 
-    # gauge
-    plot_gauge = home_plot.plot_gauge()
+        # gauge
+        plot_gauge = home_plot.plot_gauge()
 
-    context = {"market_consensus": market_consensus,
-               "macroeconomic_indicators": macroeconomic_indicators,
-               "fedfundfutures": fedfundfutures,
-               "plot_market_senti_main": plot_market_senti_main,
-               "plot_market_average": plot_market_average,
-               "plot_macro_average": plot_macro_average,
-               "plot_fff_average": plot_fff_average,
-               'plot_gdp_index': plot_gdp_index, 
-               'plot_fff': plot_fff,
-               'market_sentiments_drill1': market_sentiments_drill1,
-               "plot_gauge": plot_gauge,
-               'macro_ts_plot':macro_ts_plot,
-               'macro_maindashboard_plot':macro_maindashboard_plot}
-    return render_template('home.html', context=context)
+        context = {
+                "plot_market_senti_main": plot_market_senti_main,
+                "plot_market_average": plot_market_average,
+                #"plot_macro_average": plot_macro_average,
+                #"plot_fff_average": plot_fff_average,
+                'plot_gdp_index': plot_gdp_index, 
+                'plot_fff': plot_fff,
+                "plot_gauge": plot_gauge,
+                'macro_ts_plot':macro_ts_plot,
+                'macro_maindashboard_plot':macro_maindashboard_plot,
+                'macro_pie_chart':macro_pie_chart}
+        return render_template('home.html', context=context, form=form)
+        
+    else:
+        #ploting
+        #market
+        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09-30')
+        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
+        
+        
+        #macro
+        plot_gdp_index = home_plot.plot_gdp_index(home_data)
+        #plot_macro_average = home_plot.plot_market_average2(market_data)
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        print(macro_maindashboard_data.head())
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
+        #fff
+        plot_fff = home_plot.plot_fff(fff_data)
+        #plot_fff_average = home_plot.plot_market_average3(market_data)
 
+        # gauge
+        plot_gauge = home_plot.plot_gauge()
+
+        context = {
+                "plot_market_senti_main": plot_market_senti_main,
+                "plot_market_average": plot_market_average,
+                #"plot_macro_average": plot_macro_average,
+                #"plot_fff_average": plot_fff_average,
+                'plot_gdp_index': plot_gdp_index, 
+                'plot_fff': plot_fff,
+                "plot_gauge": plot_gauge,
+                'macro_ts_plot':macro_ts_plot,
+                'macro_maindashboard_plot':macro_maindashboard_plot,
+                'macro_pie_chart':macro_pie_chart}
+        return render_template('home.html', context=context, form=form)
+
+
+#class Form2(FlaskForm):
+#    date = StringField('date', validators=[DataRequired()])
+#    submit = SubmitField('Submit')
 
 @app.route("/market-consensus")
 def plot_market_consensus():
+#    form = Form2()
     #ploting
     market_sentiments_drill1 = market_plot.display_market_sentiments_drill_down_1(market_data_cleaned)
     market_sentiments_drill2 = market_plot.display_market_sentiments_drill_down_2(market_data_cleaned)
@@ -158,6 +206,8 @@ def plot_market_consensus():
     return render_template('market-consensus.html', context=context)
 
 
+
+    
 @app.route("/macroeconomic-indicators")
 def plot_macroeconomic_indicators():
     #ploting
@@ -165,10 +215,12 @@ def plot_macroeconomic_indicators():
     plot_employment_index = macro_plot.plot_employment_index(employment_data)
     plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
     plot_main_model = macro_plot.plot_main_plot(macro_main_data)
+    plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
     context = {'plot_gdp_index': plot_gdp_index, 
                'plot_employment_index': plot_employment_index, 
                'plot_inflation_index': plot_inflation_index, 
-               'plot_main_model': plot_main_model}
+               'plot_main_model': plot_main_model, 
+               'plot_indicators_ts':plot_indicators_ts}
     return render_template('macroeconomic-indicators.html', context=context)
 
     
