@@ -4,155 +4,92 @@ import pandas as pd
 import numpy as np
 
 from scipy.stats import zscore
-from .fomc_data import FomcStatement
-from .fomc_data import FomcMinutes
-from .news_data import News
+
 from bs4 import BeautifulSoup
 import requests
 import re
-
 from fredapi import Fred
+
+try:
+    from fomc_data.FomcStatement import FomcStatement
+    from fomc_data.FomcMinutes import FomcMinutes
+    from news_data.News import News
+except ModuleNotFoundError: 
+    from .fomc_data.FomcStatement import FomcStatement
+    from .fomc_data.FomcMinutes import FomcMinutes
+    from .news_data.News import News
+
 
 batch_id = datetime.date.today().strftime("%y%m%d")
 
 fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
 fred = Fred(api_key=fred_api)
 
-
 def fetch_data():
     # Fetches data from FRED API, stores it in a dataframe
-    commodities_params = {
-        "observation_start": "2003-01-02",
-        "observation_end": "2021-04-01",
-        "units": "lin",
-        "frequency": "m",
-        "aggregation_method": "eop",
+    commodities_params = { 
+        'observation_start':'2003-01-02',
+        'observation_end':'2021-04-01',
+        'units':'lin',
+        'frequency':'m',
+        'aggregation_method': 'eop',   
     }
-    commodities = ("PPIACO", commodities_params)
+    commodities = ('PPIACO', commodities_params)
 
-    # one period lag
-    # one period lag means obsevation starts and ends one period later
-    # nonfarm_params={
-    #     'observation_start':'2003-01-02',
-    #     'observation_end':'2021-05-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # nonfarm=('PAYEMS',nonfarm_params)
-
-    # breakeven_params = {
-    #     'observation_start':'2003-01-02',
-    #     'observation_end':'2021-05-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # breakeven = ('T5YIE', breakeven_params)
-
-    real_gdp_params = {
-        "observation_start": "2003-01-02",
-        "observation_end": "2021-05-01",
-        "units": "lin",
-        "frequency": "q",
-        "aggregation_method": "eop",
+    # one period lag 
+    # one period lag means observation starts and ends one period later
+    real_gdp_params = { 
+        'observation_start':'2003-01-02',
+        'observation_end':'2021-05-01',
+        'units':'lin',
+        'frequency':'q',
+        'aggregation_method': 'eop',   
     }
-    real_gdp = ("GDPC1", real_gdp_params)
+    real_gdp = ('GDPC1', real_gdp_params)
 
     # two period lag
-    # two period lag means obsevation starts and ends two periods later since we have to shift forward
-    median_cpi_params = {
-        "observation_start": "2003-01-02",
-        "observation_end": "2021-06-01",
-        "units": "lin",
-        "frequency": "m",
-        "aggregation_method": "eop",
+    # two period lag means observation starts and ends two periods later since we have to shift forward
+    median_cpi_params ={ 
+        'observation_start':'2003-01-02',
+        'observation_end':'2021-06-01',
+        'units':'lin',
+        'frequency':'m',
+        'aggregation_method': 'eop',   
     }
-    median_cpi = ("MEDCPIM158SFRBCLE", median_cpi_params)
+    median_cpi = ('MEDCPIM158SFRBCLE', median_cpi_params)
 
     # three period lag
-    # three period lag means obsevation starts and ends three periods later since we have to shift forward
-    em_ratio_params = {
-        "observation_start": "2003-01-02",
-        "observation_end": "2021-07-01",
-        "units": "lin",
-        "frequency": "m",
-        "aggregation_method": "eop",
+    # three period lag means observation starts and ends three periods later since we have to shift forward
+    em_ratio_params = { 
+        'observation_start':'2003-01-02',
+        'observation_end':'2021-07-01',
+        'units':'lin',
+        'frequency':'m',
+        'aggregation_method': 'eop',   
     }
-    em_ratio = ("EMRATIO", em_ratio_params)
+    em_ratio = ('EMRATIO', em_ratio_params)
 
     # five period lag
-    med_wages_params = {
-        "observation_start": "2003-01-02",
-        "observation_end": "2021-09-01",
-        "units": "lin",
-        "frequency": "q",
-        "aggregation_method": "eop",
+    med_wages_params = { 
+        'observation_start':'2003-01-02',
+        'observation_end':'2021-09-01',
+        'units':'lin',
+        'frequency':'q',
+        'aggregation_method': 'eop',   
     }
-    med_wages = ("LES1252881600Q", med_wages_params)
-
-    # two period lead
-    # two period lead means observation starts and ends two periods earlier since we have to shift backward
-    # neworder_params = {
-    #     'observation_start':'2002-11-02', # 2 period lead so observation starts two periods earlier
-    #     'observation_end':'2021-04-01', # 2 period lead so observation ends two periods earlier
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # new_order=('NEWORDER', neworder_params)
-
-    # 4 period lead
-    # four period lead means observation starts and ends four periods earlier since we have to shift backward
-    # job_opening_manu_params={
-    #     'observation_start':'2002-09-02',
-    #     'observation_end':'2021-04-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # job_opening_manu = ('JTS3000JOL', job_opening_manu_params)
+    med_wages = ('LES1252881600Q', med_wages_params)
 
     # 5 period lead
     # five period lead means observation starts and ends five periods earlier since we have to shift backward
-    # permit_params = {
-    #     'observation_start':'2002-08-02',
-    #     'observation_end':'2021-04-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # permit = ('PERMIT', permit_params)
-
-    # amtmno_params={
-    #     'observation_start':'2002-08-02',
-    #     'observation_end':'2021-04-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # amtmno = ('AMTMNO', amtmno_params)
-
-    # dgorder_params = {
-    #     'observation_start':'2002-08-02',
-    #     'observation_end':'2021-04-01',
-    #     'units':'lin',
-    #     'frequency':'m',
-    #     'aggregation_method': 'eop',
-    # }
-    # dgorder=('DGORDER', dgorder_params)
-
     maturity_minus_three_month_params = {
-        "observation_start": "2002-08-02",
-        "observation_end": "2021-04-01",
-        "units": "lin",
-        "frequency": "m",
-        "aggregation_method": "eop",
+        'observation_start':'2002-08-02', 
+        'observation_end':'2021-04-01',
+        'units':'lin',
+        'frequency':'m',
+        'aggregation_method': 'eop',
     }
-    maturity_minus_three_month = ("T10Y3M", maturity_minus_three_month_params)
+    maturity_minus_three_month = ('T10Y3M', maturity_minus_three_month_params)
 
-    # normal_indicators = [nonfarm, breakeven, real_gdp, median_cpi, em_ratio, new_order,
-    #                     job_opening_manu, permit, amtmno, dgorder, maturity_minus_three_month, commodities, med_wages]
 
     indicators = [
         commodities,
@@ -173,7 +110,7 @@ def fetch_data():
             "observation_end": "2021-04-01",  # GDPC1 is only collected until 2020-04-01
             "frequency": "m",
             "aggregation_method": "eop",
-        },
+        }
     )
 
     fed_fund_rate.index = pd.to_datetime(fed_fund_rate.index).to_period("M")
@@ -204,11 +141,6 @@ def fetch_data():
             indicator = indicator.shift(-5)[:-5]
             indicator.rename(columns={"LES1252881600Q": "MEDWAGES"}, inplace=True)
 
-        # if series_id in ('NEWORDER'): # align 2 lead
-        #     indicator = indicator.shift(2)[2:]
-
-        # if series_id in ('JTS3000JOL'): # align 4 lead
-        #     indicator = indicator.shift(4)[4:]
 
         if series_id in ("PERMIT", "AMTMNO", "DGORDER", "T10Y3M"):  # align 5 lead
             indicator = indicator.shift(5)[5:]
@@ -221,11 +153,11 @@ def fetch_data():
     df = df.fillna(method="ffill")
 
     # remove outliers
-    z_scores = zscore(df)
-    abs_z_scores = np.abs(z_scores)
-    threshold = 2.5
-    filtered_entries = (abs_z_scores < threshold).all(axis=1)
-    df = df[filtered_entries]
+    # z_scores = zscore(df)
+    # abs_z_scores = np.abs(z_scores)
+    # threshold = 2.5
+    # filtered_entries = (abs_z_scores < threshold).all(axis=1)
+    # df = df[filtered_entries]
 
     return df
 

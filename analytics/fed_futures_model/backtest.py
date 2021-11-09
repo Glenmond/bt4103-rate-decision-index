@@ -49,6 +49,7 @@ class Backtest():
         today = datetime.now().strftime("%Y-%m")
         meeting_dates = self.loader.fomc_dates.loc[today:]
         all_predictions = {}
+        pred_values = {}
         for dt in meeting_dates.index:
             print(f"Loading: {dt} FOMC Meeting...")
             dt = pd.to_datetime(dt)
@@ -60,12 +61,17 @@ class Backtest():
 
 
             all_predictions[dt] = v
+            pred_values[dt] = [fff.ffer_end]
         
         final_result = pd.DataFrame.from_dict(all_predictions).T
         final_result.columns = ['0-25 BPS','25-50 BPS','50-75 BPS',
                                 '75-100 BPS','100-125 BPS','125-150 BPS',
                                 '150-175 BPS', '175-200 BPS']
-        return final_result
+
+        pred_values = pd.DataFrame.from_dict(pred_values).T
+        pred_values = pred_values.reset_index()
+        pred_values.columns = ['Date', 'Prediction']
+        return final_result, pred_values
     
     def carry(self, sample,cap=1):
         result = sample.copy()
