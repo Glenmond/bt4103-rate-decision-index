@@ -1,6 +1,7 @@
 # Updates the pickle files with the latest data
 import pickle
 import pandas as pd
+from sklearn.linear_model import LinearRegression
 
 from macro_model.macroeconomics_model import MacroData, MacroModel
 try:
@@ -16,7 +17,12 @@ def update_saved_data(path_to_folder = "./data/macroeconomic_indicators_data/"):
 
     # Preprocess the data, add in the HD sentiment index and use it to fit the model
     macro_data = MacroData(data)
-    macro_model = MacroModel(macro_data)
+
+    # fit the data on a base Linear Regression model to get the best coefficient for sensitivity analysis. 
+    reg = LinearRegression().fit(macro_data.X_train, macro_data.y_train)
+    best_coef_val = reg.coef_[0][-1]
+
+    macro_model = MacroModel(macro_data, shift_coef = best_coef_val)
     macro_model.fit_data()
 
     # Save the model as a pickle

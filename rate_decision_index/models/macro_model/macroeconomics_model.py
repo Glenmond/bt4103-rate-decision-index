@@ -13,7 +13,6 @@ import statsmodels.api as sm
 import warnings 
 warnings.filterwarnings('ignore')
 
-
 from macro_model.base_model import Model
 
 class MacroData():
@@ -101,9 +100,8 @@ class MacroData():
         self.X_val = self.X_val[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
         self.X_test = self.X_test[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
 
-
 class MacroModel(Model):
-    def __init__(self, data: MacroData, shift_coef = 1.7117595779058272):
+    def __init__(self, data: MacroData, shift_coef = 1.68323868):
         self.data = data
         self.scaler = data.scaler
         self.shift_coef = shift_coef
