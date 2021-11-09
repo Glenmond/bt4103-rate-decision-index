@@ -301,6 +301,14 @@ class DictionaryModel:
         df_final = df_final.ffill(axis = 0)
         df_final = df_final.bfill(axis = 0)
 
+        # remove duplicates (eg, 2020-03 have 4 FOMC meetings, hence we aim to get the mean score)
+        duplicate = df_final[df_final.duplicated('date', keep=False)]
+        duplicate = duplicate.groupby(['date'], as_index=False).agg({'Score_News': 'mean', 'Score_News_DB': 'mean', 'Score_Minutes': 'mean', 'Score_Minutes_DB': 'mean', 'Score_Statement': 'mean', 'Score_Statement_DB': 'mean',})
+
+        df_final.drop_duplicates(subset=['date'], keep=False, inplace=True)
+        df_final = pd.concat([df_final, duplicate], ignore_index=True)
+        df_final.sort_values(by=['date'], inplace=True)
+
         self.save_df("final", df_final)
     
     
