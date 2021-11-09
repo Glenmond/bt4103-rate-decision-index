@@ -23,7 +23,7 @@ try: # so that we do not need the FRED API call every time we try to access
     data = pd.read_pickle('./data/macroeconomic_indicators_data/macro_data_pickle')
 except Exception:   
     data = fetch_data()
-    data.to_pickle('./data/macroeconomic_indicators_data/macro_data_pickle')
+    data.to_pickle('./data/macroeconomic_indicators_data/macro_data_pickle', protocol = 4)
 
 macro_data = MacroData(data)
 
@@ -34,8 +34,9 @@ except Exception:
     macro_model = MacroModel(macro_data)
     macro_model.fit_data()
     with open('./data/macroeconomic_indicators_data/macro_model_pickle', 'wb') as files:
-        pickle.dump(macro_model, files)
+        pickle.dump(macro_model, files, protocol = 4)
         
+
 app = dash.Dash()
 
 fig = go.Figure()
