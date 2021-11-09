@@ -18,7 +18,7 @@ put your custom script or styling here
         <div class="form-group"style="margin:15px;">
         <form action"" method="POST" novalidate>
             <label for="date-mm">Input last day of the Month in question</label>
-                <input type="date" id="date-mm" name="date-mm" class="form-control" format="dd/mm/yyyy" placeholder="DD-MM-YYYY">
+                <input type="month" id="date-mm" name="date-mm" class="form-control" format="mm/yyyy" placeholder="MM-YYYY">
         {{ form.submit() }}
         </form>
         </div>
@@ -125,7 +125,7 @@ put your custom script or styling here
     Plotly.plot('home-5', graphs, {});
 </script>
 <script>
-    //PLACEHOLDER TO BE REPLACED WITH GAUGE
+    //PLACEHOLDER TO BE REPLACED WITH GAUGE gmond u update here
     var graphs = {{ context.plot_gauge | safe }};
     Plotly.plot('home-6', graphs, {});
 </script>
