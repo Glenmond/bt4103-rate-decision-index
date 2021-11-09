@@ -5,9 +5,11 @@ import datetime
 import pandas as pd
 import pickle
 import json
-from web.macro_model_2.import_data import fetch_data
 
+from web.macro_model_2.import_data import fetch_data
+from pandas.tseries.offsets import MonthEnd
 from fredapi import Fred
+
 fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
 fred = Fred(api_key=fred_api)
 
@@ -44,13 +46,27 @@ def load_ngram_market_data():
 # for main dashboard gauge
 def load_gauge_data():
     #in_year=year
-    gauge_final_data = pd.read_csv('models/data/macroeconomic_indicators_data/y_test_ME.csv', index_col=0)
-    gauge_final_data.reset_index(inplace=True)
-    gauge_final_data.rename(columns={'index': 'Date'}, inplace=True)
-    gauge_final_data['Date'] = pd.to_datetime(gauge_final_data['Date'])
+    file = open('models/data/macroeconomic_indicators_data/macro_train_pred_pickle', "rb")
+    train_df = pickle.load(file)
+    
+    file = open('models/data/macroeconomic_indicators_data/macro_test_pred_pickle', "rb")
+    test_df = pickle.load(file)
+
+    train_df.reset_index(inplace=True)
+    train_df.rename(columns={'index': 'Date'}, inplace=True)
+    train_df['Date'] = pd.to_datetime(train_df['Date']) + MonthEnd(0)
+
+    test_df.reset_index(inplace=True)
+    test_df.rename(columns={'index': 'Date'}, inplace=True)
+    test_df['Date'] = pd.to_datetime(test_df['Date']) + MonthEnd(0)
+
+    gauge_final_data = pd.concat([train_df, test_df])
+    # gauge_final_data['Date'] = gauge_final_data['Date'].dt.strftime('%Y-%m-%d')
+    gauge_final_data.reset_index(drop=True, inplace=True)
     
     fff_prob_data = pd.read_csv('models/data/fed_futures_data/latest/fff_raw_probs.csv', index_col=0)
-    fff_prob_data['Date'] = pd.to_datetime(fff_prob_data['Date'])
+    fff_prob_data['Date'] = pd.to_datetime(fff_prob_data['Date']) + MonthEnd(0)
+    # fff_prob_data['Date'] = fff_prob_data['Date'].dt.strftime('%Y-%m-%d')
     
     return gauge_final_data, fff_prob_data
 

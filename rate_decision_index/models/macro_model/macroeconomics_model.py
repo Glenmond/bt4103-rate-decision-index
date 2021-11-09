@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-from macro_model.base_model import Model
+from .base_model import Model
 
 class MacroData():
     def __init__(self, data):
