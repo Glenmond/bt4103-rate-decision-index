@@ -187,4 +187,4 @@ def update_figure(input):
     return fig ,metrics_report
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()
