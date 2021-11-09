@@ -22,7 +22,7 @@ styling here
     <!-- second row, first column-->
     <h4 style="color:navy; margin:10px;">Federal Dot Plot vs Model Predictions</h4>
     <div class=2"row h-33">
-        <div id="macro-2">
+        <div id="fff-2">
         </div>
     </div>
     <hr>
@@ -42,7 +42,7 @@ styling here
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.plot_fff_results | safe }};
+    var graphs = {{ context.plot_futures_pred_vs_fomc | safe }};
     Plotly.plot('fff-2', graphs, {});
 </script>
 <script>
