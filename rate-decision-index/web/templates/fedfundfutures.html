@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block script %}
+<!-- 
+styling here
+
+-->
+{% endblock script %}
+
+{% block my_content %}
+<!-- Plotly plot placeholder -->
+<div class="container-fluid h-100">
+    <h2 style="color:navy; margin:10px; border:1px">Federal Funds Futures Model</h2>
+
+    <!-- first row, first column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+    <h4 style="color:navy; margin:10px;">Model Predictions</h4>
+    <div class=2"row h-33">
+            <div class="chart" id="fff-1">
+            </div>
+        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+    </div>
+    <hr>
+    <!-- second row, first column-->
+    <h4 style="color:navy; margin:10px;">Federal Dot Plot vs Model Predictions</h4>
+    <div class=2"row h-33">
+        <div id="fff-2">
+        </div>
+    </div>
+    <hr>
+        <!-- second row, first column-->
+</div>
+
+<!-- Script to execute the Json ( we can create it also with looping) -->
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_fff_results | safe }};
+    Plotly.plot('fff-1', graphs, {});
+</script>
+<script>
+    //Parse your Json variable here
+    var graphs = {{ context.plot_futures_pred_vs_fomc | safe }};
+    Plotly.plot('fff-2', graphs, {});
+</script>
+{% endblock my_content %}
