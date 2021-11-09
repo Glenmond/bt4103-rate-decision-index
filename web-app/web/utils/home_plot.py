@@ -502,9 +502,11 @@ def plot_contributions_pie(df_plot, date):
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
                                  textfont = {'family':'Courier New', 'color':'white'},
                                  textfont_size=13,
-                                 showlegend=False, 
-                                 marker = dict(colors=colors,line=dict(color='#000000', width=0.2)))])
-    fig.update_traces(textposition='outside', textinfo='label+percent')
+                                 showlegend=True, 
+                                 marker = dict(colors=colors,line=dict(color='#000000', width=0.2), ),
+                                 insidetextorientation='radial'
+                                 )])
+    fig.update_traces(textposition='outside', textinfo='label+percent',insidetextorientation='radial')
     fig.update_layout(
         paper_bgcolor = "steelblue",
         font_color="black",
@@ -516,7 +518,8 @@ def plot_contributions_pie(df_plot, date):
             'yanchor': 'top', 
             'font.size':18,
             'font.family': 'Times New Roman Bold'},
-        margin=dict(l=10, r=10, t=50, b=10))
+        margin=dict(l=10, r=10, t=50, b=10),)
+
     
     fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
