@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import math
+
+import datetime
 from scipy.stats.mstats import hmean
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -37,10 +39,12 @@ class MacroData():
         # Preprocess the data obtained from the API call
 
         # Add the HD index
-        hd = pd.read_csv('models/data/macroeconomic_indicators_data/final_df.csv')
-        hd.index = hd['Date']
+        #hd = pd.read_csv('./data/macroeconomic_indicators_data/final_df.csv')
+        hd = pd.read_pickle('./data/sentiment_data/historical/final_df.pickle')
+        #print(hd.head(50))
+        hd.index = hd['date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
-        hd = hd.drop("Date", axis=1)
+        hd = hd.drop("date", axis=1)
         # hd = hd.shift(1) # Last month's sentiments affect this month's rate
         hd = hd[hd.index >= '2003-01']
         hd = hd[hd.index <= '2021-04']

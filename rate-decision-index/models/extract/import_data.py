@@ -1,8 +1,8 @@
 import sys
 import datetime
+from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
-
 from scipy.stats import zscore
 
 from bs4 import BeautifulSoup
@@ -19,17 +19,21 @@ except ModuleNotFoundError:
     from .fomc_data.FomcMinutes import FomcMinutes
     from .news_data.News import News
 
-
 batch_id = datetime.date.today().strftime("%y%m%d")
-
 fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
 fred = Fred(api_key=fred_api)
 
-def fetch_data():
-    # Fetches data from FRED API, stores it in a dataframe
+def fetch_data(ref_date = datetime.datetime.today()):
+    '''
+    Fetches data from FRED API, stores it in a dataframe. 
+    Takes as input a datetime of the latest day within the dataframe. 
+    Default value for this is today's date.
+    '''
+    
+    # concurrent
     commodities_params = { 
         'observation_start':'2003-01-02',
-        'observation_end':'2021-04-01',
+        'observation_end':ref_date.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'m',
         'aggregation_method': 'eop',   
@@ -38,9 +42,10 @@ def fetch_data():
 
     # one period lag 
     # one period lag means observation starts and ends one period later
+    one_month_lag = ref_date + relativedelta(months=1)
     real_gdp_params = { 
         'observation_start':'2003-01-02',
-        'observation_end':'2021-05-01',
+        'observation_end':one_month_lag.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'q',
         'aggregation_method': 'eop',   
@@ -49,9 +54,10 @@ def fetch_data():
 
     # two period lag
     # two period lag means observation starts and ends two periods later since we have to shift forward
+    two_month_lag = ref_date + relativedelta(months=2)
     median_cpi_params ={ 
         'observation_start':'2003-01-02',
-        'observation_end':'2021-06-01',
+        'observation_end':two_month_lag.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'m',
         'aggregation_method': 'eop',   
@@ -60,9 +66,10 @@ def fetch_data():
 
     # three period lag
     # three period lag means observation starts and ends three periods later since we have to shift forward
+    three_month_lag = ref_date + relativedelta(months=3)
     em_ratio_params = { 
         'observation_start':'2003-01-02',
-        'observation_end':'2021-07-01',
+        'observation_end':three_month_lag.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'m',
         'aggregation_method': 'eop',   
@@ -70,9 +77,10 @@ def fetch_data():
     em_ratio = ('EMRATIO', em_ratio_params)
 
     # five period lag
+    five_month_lag = ref_date + relativedelta(months=5)
     med_wages_params = { 
         'observation_start':'2003-01-02',
-        'observation_end':'2021-09-01',
+        'observation_end': five_month_lag.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'q',
         'aggregation_method': 'eop',   
@@ -81,9 +89,10 @@ def fetch_data():
 
     # 5 period lead
     # five period lead means observation starts and ends five periods earlier since we have to shift backward
+    five_month_lead = ref_date - relativedelta(months=5)
     maturity_minus_three_month_params = {
         'observation_start':'2002-08-02', 
-        'observation_end':'2021-04-01',
+        'observation_end':five_month_lead.strftime('%Y-%m-%d'),
         'units':'lin',
         'frequency':'m',
         'aggregation_method': 'eop',
@@ -103,11 +112,12 @@ def fetch_data():
     df = pd.DataFrame()
 
     # target value
+    fed_fund_date = ref_date-relativedelta(months=1) # get the latest available end-of-month data for this
     fed_fund_rate = fred.get_series(
         "DFF",
         **{
-            "observation_start": "2003-01-02",  # T5YIE only starts at 2003-01-02, and is shifted by 1 lag forward, so our observation starts from 2002-12-02
-            "observation_end": "2021-04-01",  # GDPC1 is only collected until 2020-04-01
+            "observation_start": "2003-01-02", 
+            "observation_end": fed_fund_date.strftime('%Y-%m-%d'), 
             "frequency": "m",
             "aggregation_method": "eop",
         }
@@ -141,16 +151,19 @@ def fetch_data():
             indicator = indicator.shift(-5)[:-5]
             indicator.rename(columns={"LES1252881600Q": "MEDWAGES"}, inplace=True)
 
-
         if series_id in ("PERMIT", "AMTMNO", "DGORDER", "T10Y3M"):  # align 5 lead
             indicator = indicator.shift(5)[5:]
-            # print(indicator)
 
         # join the dataframes together
         df = pd.concat([indicator, df], axis="columns")
 
+    # If there is any missing data, we drop the entire row, rather than imputing. This is because we want to reduce the error when doing training
+    # Imputation allows us to 'impute' based on the last observed data, but this increases the error because we dont know what the ground truth data is
+    # We want to reduce the error in our training since the prediction is so high stakes. This effect is a lot worse if there are any shocks in the data.
+    df = df.dropna(how='any')
+
     # DO DATA IMPUTATION FOR POSSIBLE NAN VALUES
-    df = df.fillna(method="ffill")
+    #df = df.fillna(method="ffill")
 
     # remove outliers
     # z_scores = zscore(df)
@@ -173,7 +186,7 @@ def download_data(docs, from_year):
 def download_fed_futures_historical():
     # Futures: full historical + forward data
     # download from barchart
-    futures = pd.read_csv("models/data/fed_futures_data/raw_data/historical-prices.csv")
+    futures = pd.read_csv("../data/fed_futures_data/raw_data/historical-prices.csv")
     futures = futures[:-1]
     futures['Exp Date'] = pd.to_datetime(futures['Exp Date'])
     futures = futures.set_index("Exp Date")
