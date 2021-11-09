@@ -36,9 +36,7 @@ except Exception:
     with open('./data/macroeconomic_indicators_data/macro_model_pickle', 'wb') as files:
         pickle.dump(macro_model, files, protocol = 4)
         
-
 app = dash.Dash()
-
 fig = go.Figure()
 
 # training data
@@ -153,6 +151,7 @@ def update_figure(input):
                     mode='lines', name='Model Performance on Testing Data'))
 
     # new confidence intervals
+    # 95% confidence interval
     new_conf_int_95 = new_y_pred_res.summary_frame(0.05)
     new_conf_int_95_upper = new_conf_int_95['mean_ci_upper']
     new_conf_int_95_lower = new_conf_int_95['mean_ci_lower']
@@ -164,6 +163,7 @@ def update_figure(input):
                     fill='tonexty', line_color=conf_int_95_line_colour, 
                     fillcolor=conf_int_95_line_colour, name='95% Confidence Interval'))
 
+    # 99% confidence interval
     new_conf_int_99 = new_y_pred_res.summary_frame(0.01)
     new_conf_int_99_upper = new_conf_int_99['mean_ci_upper']
     new_conf_int_99_lower = new_conf_int_99['mean_ci_lower']
@@ -186,6 +186,5 @@ def update_figure(input):
     metrics_report = f"R2: {r2:.3f}, RMSE: {rmse:.3f}"
     return fig ,metrics_report
 
-
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()
