@@ -81,8 +81,6 @@ class Report():
 
         fig.show()
 
-        if not os.path.exists("result"):
-            os.mkdir("result")
-        today = datetime.now().strftime("%d-%b-%Y")
-        fig.write_image(f"result/fff_model_result_{today}.pdf")
+        today = datetime.now().strftime("%y%m%d")
+        fig.write_image(f"../data/fed_futures_data/report/{today}_fff_report.pdf")
         
