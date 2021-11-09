@@ -4,20 +4,26 @@ import pandas as pd
 import numpy as np
 
 from scipy.stats import zscore
-from .fomc_data import FomcStatement
-from .fomc_data import FomcMinutes
-from .news_data import News
+
 from bs4 import BeautifulSoup
 import requests
 import re
-
 from fredapi import Fred
+
+try:
+    from fomc_data.FomcStatement import FomcStatement
+    from fomc_data.FomcMinutes import FomcMinutes
+    from news_data.News import News
+except ModuleNotFoundError: 
+    from .fomc_data.FomcStatement import FomcStatement
+    from .fomc_data.FomcMinutes import FomcMinutes
+    from .news_data.News import News
+
 
 batch_id = datetime.date.today().strftime("%y%m%d")
 
 fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
 fred = Fred(api_key=fred_api)
-
 
 def fetch_data():
     # Fetches data from FRED API, stores it in a dataframe
