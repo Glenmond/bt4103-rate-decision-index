@@ -7,16 +7,20 @@ import pickle
 import json
 from web.macro_model_2.import_data import fetch_data
 
+from fredapi import Fred
+fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
+fred = Fred(api_key=fred_api)
+
 def isNaN(num):
     return num != num
 
 #loading data
+
+#DONE updated data source
 def load_market_data():
     #market_data = pd.read_csv("web/data/ms_result.csv")
     statement_pickle_directory = '../analytics/data/sentiment_data/historical/st_df.pickle'
-
     minutes_pickle_directory = '../analytics/data/sentiment_data/historical/mins_df.pickle'
-
     news_pickle_directory = '../analytics/data/sentiment_data/historical/news_df.pickle' 
     file = open(statement_pickle_directory, "rb")
     statement_df = pickle.load(file)
@@ -27,19 +31,22 @@ def load_market_data():
     
     return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
 
+#DONE updated data source
 def load_ngram_market_data(year):
     in_year=year
-    file = open("web/data/st_df.pickle", "rb")
+    file = open('../analytics/data/sentiment_data/historical/st_df.pickle', "rb")
     mins_df = pickle.load(file)
     out = mins_df.loc[mins_df.date.dt.year == in_year]
-    file = open("web/data/mins_df.pickle", "rb")
+    file = open('../analytics/data/sentiment_data/historical/mins_df.pickle', "rb")
     mins_df = pickle.load(file)
     out2 = mins_df.loc[mins_df.date.dt.year == in_year]
-    #file = open("web/data/news_df.pickle", "rb")
-    #mins_df = pickle.load(file)
-    #out3 = mins_df.loc[mins_df.date.dt.year == in_year]
-    #return out, out2, out3
-    return out, out2
+    file = open("../analytics/data/sentiment_data/historical/news_df.pickle", "rb")
+    mins_df = pickle.load(file)
+    out3 = mins_df.loc[mins_df.date.dt.year == in_year]
+    return out, out2, out3
+
+ 
+ ### gmond add ur data loader function here to read from analytics folder
     
 def load_macro_ts():
     df_trainres = pd.read_csv('web/data/overall_train_results.csv')
@@ -63,10 +70,35 @@ def load_macro_model_data():
     return data
 
 def load_fff_data():
-    fff_data = pd.read_csv("web/data/fff_result.csv")
-    fake_data = pd.read_csv("web/data/macro_gdp_data.csv")
-    
-    return fff_data, fake_data
+    fff_data = pd.read_csv("web/data/fff_result.csv")    
+    return fff_data
+
+def load_fff_vs_fomc_data():
+
+    def clean_fomc_data(data):
+        data = data.reset_index()
+        data.columns = ['Date', 'Value']
+        data['Date'] = pd.to_datetime(data['Date'])
+        data = data.dropna()
+        return data
+
+    # low
+    # Source: https://fred.stlouisfed.org/series/FEDTARRL
+    low = fred.get_series('FEDTARRL')
+    low = clean_fomc_data(low)
+
+    # mid point
+    # Source: https://fred.stlouisfed.org/series/FEDTARRM
+    mid = fred.get_series('FEDTARRM')
+    mid = clean_fomc_data(mid)
+
+    # high
+    # Source: https://fred.stlouisfed.org/series/FEDTARRH
+    high = fred.get_series('FEDTARRH')
+    high = clean_fomc_data(high)
+
+    preds = pd.read_csv("web/data/fff_preds.csv")
+    return preds, [low, mid, high]
 
 def load_home_data():
     home_data = pd.read_csv("web/data/macro_gdp_data.csv")
@@ -161,6 +193,7 @@ def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
     df_plot['Date'] = df_plot['Date'] - pd.tseries.offsets.MonthEnd(-1)
     return df_plot
 
+#final
 def import_modify_pickle_ms_main(file_st, file_mins, file_news):
     #Statement
     st_file = open(file_st, "rb") #"st_df.pickle"
@@ -236,6 +269,8 @@ def import_modify_pickle_ms_main(file_st, file_mins, file_news):
     return df
 
 
+### gmond add ur data loader function here to read from analytics folder
+
 #helper function
 def guess_date(string):
     for fmt in ["%d/%m/%y"]:
@@ -256,7 +291,6 @@ def clean_fff(fff_data):
     df['Date'] = newdate
     
     return df
-
 
 def preprocessed_data(fff_data):
     """

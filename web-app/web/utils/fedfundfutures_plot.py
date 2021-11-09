@@ -85,3 +85,44 @@ def plot_fff_results(data):
     #fig.update_layout(width=1500, height=500)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
+
+
+def plot_futures_pred_vs_fomc(predictions, fomc):
+    low, mid, high = fomc
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=low['Date'], y=low['Value'],
+                        line = dict(color='royalblue', width=4, dash='dashdot'),
+                        line_shape='spline',
+                        name='Low'))
+    fig.add_trace(go.Scatter(x=mid['Date'], y=mid['Value'],
+                        line = dict(color='royalblue', width=4),
+                        name='Midpoint'))
+    fig.add_trace(go.Scatter(x=high['Date'], y=high['Value'],
+                        line = dict(color='royalblue', width=4, dash='dashdot'),
+                        name='High'))
+
+    fig.add_trace(go.Scatter(x=predictions['Date'], y=predictions['Prediction'], 
+                            mode='lines+markers', name='Predicted Rate'))
+
+    annotations = []
+    annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                                xanchor='left', yanchor='bottom',
+                                text='Futures Predicted Rate vs FOMC Economic Projections',
+                                font=dict(family='Arial',
+                                            size=15,
+                                            color='rgb(37,37,37)'),
+                                showarrow=False))
+    annotations.append(dict(xref='paper', yref='paper', x=0.5, y=-0.1,
+                                xanchor='center', yanchor='top',
+                                text='Source: FRED: FOMC Summary of Economic Projections for the Fed Funds Rate, Range',
+                                font=dict(family='Arial',
+                                            size=14,
+                                            color='rgb(150,150,150)'),
+                                showarrow=False))
+
+
+    fig.update_layout(annotations=annotations,  plot_bgcolor='white')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
+    plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return plot_json

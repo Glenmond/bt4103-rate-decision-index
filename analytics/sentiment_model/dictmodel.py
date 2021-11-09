@@ -4,6 +4,8 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 from config import negate, lmdict
+from pandas.tseries.offsets import MonthEnd
+from functools import reduce
 
 
 class DictionaryModel:
@@ -19,7 +21,9 @@ class DictionaryModel:
         for name in self.docs:
             df = self.classify(name)
             self.update(df, name)
-
+        
+        self.combine_df()
+        
     def negated(self, word):
         if word.lower() in negate:
             return True
@@ -267,11 +271,43 @@ class DictionaryModel:
         self.save_df(name, df)
 
         self.data["historical"][name] = df  # replace the historical dictionary
+    
+    def combine_df(self):
+        """
+        To combine and finalise all df results
+        """
+        st_df = self.data['historical']["statements"]
+        mins_df = self.data['historical']["minutes"]
+        news_df = self.data['historical']["news"]
 
+        st_df['date'] = st_df['date'] + MonthEnd(0)
+        mins_df['date'] = mins_df['date'] + MonthEnd(0)
+        news_df['date'] = news_df['date'] + MonthEnd(0)
+
+        st_df = st_df[['date', 'Scaled Score', 'Scaled Score DB']]
+        mins_df = mins_df[['date', 'Scaled Score', 'Scaled Score DB']]
+        news_df = news_df[['date', 'Scaled Score', 'Scaled Score DB']]
+
+
+        # rename columns
+        st_df.rename(columns = {"Scaled Score" : "Score_Statement", "Scaled Score DB" : "Score_Statement_DB"}, inplace=True)
+        mins_df.rename(columns = {"Scaled Score" : "Score_Minutes", "Scaled Score DB" : "Score_Minutes_DB"}, inplace=True)
+        news_df.rename(columns = {"Scaled Score" : "Score_News", "Scaled Score DB" : "Score_Statement_News"}, inplace=True)
+
+        dfs = [news_df, mins_df, st_df]
+        df_final = reduce(lambda left,right: pd.merge(left,right,on='date', how="left"), dfs)
+        
+        # applying ffill() method to fill the missing values
+        df_final = df_final.ffill(axis = 0)
+        df_final = df_final.bfill(axis = 0)
+
+        self.save_df("final", df_final)
+    
+    
     def save_df(self, name, df):
         """
         Save and replace df to historical folder as pickle
         """
         print(f"===== save {name} to historical pickle =====".title())
-        rename_dict = {"statements": "st", "minutes": "mins", "news": "news"}
+        rename_dict = {"statements": "st", "minutes": "mins", "news": "news", "final": "final"}
         df.to_pickle(f"../data/sentiment_data/historical/{rename_dict[name]}_df.pickle")
