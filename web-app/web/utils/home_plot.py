@@ -15,8 +15,10 @@ import plotly.io as pio
 import json
 from web.utils.utils import load_home_data, load_market_data, load_fff_data
 
-
-def plot_gauge():
+#### gmond update this function
+def plot_gauge(data, date):
+    #do sth with data
+    #do sth with date
     fig = go.Figure(go.Indicator(
         mode = "gauge+number+delta",
         value = 0.654,
@@ -145,29 +147,29 @@ def get_average_sentiment(market_data, date):
     min_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes
     news_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News
     
-#     if isNaN(state_num):
-#         res = ((min_num + news_num) / 2)
+ #     if isNaN(state_num):
+ #         res = ((min_num + news_num) / 2)
         
-#     elif isNaN(min_num):
-#         res = ((state_num + news_num) / 2)
+ #     elif isNaN(min_num):
+ #         res = ((state_num + news_num) / 2)
         
-#     elif isNaN(news_num):
-#         res = ((state_num + min_num) / 2)
+ #     elif isNaN(news_num):
+ #         res = ((state_num + min_num) / 2)
         
-#     elif isNaN(state_num) and isNaN(min_num):
-#         res = news_num
+ #     elif isNaN(state_num) and isNaN(min_num):
+ #         res = news_num
         
-#     elif isNaN(state_num) and isNaN(news_num):
-#         res = min_num
+ #     elif isNaN(state_num) and isNaN(news_num):
+ #         res = min_num
         
-#     elif isNaN(min_num) and isNaN(news_num):
-#         res = state_num
+ #     elif isNaN(min_num) and isNaN(news_num):
+ #         res = state_num
         
-#     elif isNaN(min_num) and isNaN(news_num) and isNaN(state_num):
-#         res = 0
+ #     elif isNaN(min_num) and isNaN(news_num) and isNaN(state_num):
+ #         res = 0
     
-#     else:
-#         res = ((state_num+min_num+news_num) / 3)
+ #     else:
+ #         res = ((state_num+min_num+news_num) / 3)
     
     return ((state_num+min_num+news_num) / 3)
     
@@ -502,7 +504,7 @@ def plot_contributions_pie(df_plot, date):
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
                                  textfont = {'family':'Courier New', 'color':'white'},
                                  textfont_size=13,
-                                 showlegend=True, 
+                                 showlegend=False, 
                                  marker = dict(colors=colors,line=dict(color='#000000', width=0.2), ),
                                  insidetextorientation='radial'
                                  )])
