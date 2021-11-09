@@ -22,10 +22,10 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
     # macro + hd prediction rate
     fig = go.Figure(go.Indicator(
         mode = "gauge+number+delta",
-        value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]].predicted).round(4),
+        value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4),
         domain = {'row': 0, 'column': 0},
         title = {'text': "Rate Hike-Cut", 'font': {'size': 20}},
-        delta = {'reference': (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == date].index-1).tolist()[0]].predicted), 'increasing': {'color': "mediumseagreen"}},
+        delta = {'reference': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index-1).tolist()[0]]["Federal Funds Rate"]), 'increasing': {'color': "mediumseagreen"}},
         gauge = {
             'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "white"},
@@ -51,7 +51,7 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
     # fff probability
     fig.add_trace(go.Indicator(
         mode = "number",
-        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == date].index).tolist()[0]].Hike),
+        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11-30"].index).tolist()[0]].Hike),
         title = {'text':"Probability of Rate Change", 
                  'font.size': 20, 
                  'font.color': 'darkblue', 
