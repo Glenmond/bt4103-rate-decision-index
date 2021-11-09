@@ -16,15 +16,16 @@ import json
 from web.utils.utils import load_market_data, load_fff_data
 
 #### gmond update this function
-def plot_gauge(data, date):
-    #do sth with data
+def plot_gauge(gauge_final_data, fff_prob_data, date):
+    
     #do sth with date
+    # macro + hd prediction rate
     fig = go.Figure(go.Indicator(
         mode = "gauge+number+delta",
-        value = 0.654,
-        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]].predicted).round(4),
+        domain = {'row': 0, 'column': 0},
         title = {'text': "Rate Hike-Cut", 'font': {'size': 20}},
-        delta = {'reference': 0.5, 'increasing': {'color': "mediumseagreen"}},
+        delta = {'reference': (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == date].index-1).tolist()[0]].predicted), 'increasing': {'color': "mediumseagreen"}},
         gauge = {
             'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "white"},
@@ -46,6 +47,16 @@ def plot_gauge(data, date):
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.75,
                 'value': 0.654}}))
+    
+    # fff probability
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == date].index).tolist()[0]].Hike),
+        title = {'text':"Probability of Rate Change", 
+                 'font.size': 20, 
+                 'font.color': 'darkblue', 
+                 'font.family':'Courier New'},
+        domain = {'row': 1, 'column': 0}))
 
     #fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
     #fig.update_layout(width=800, height=450)

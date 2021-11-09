@@ -41,8 +41,19 @@ def load_ngram_market_data():
     news_df = pickle.load(file)
     return st_df, mins_df, news_df
 
- 
- ### gmond add ur data loader function here to read from analytics folder
+# for main dashboard gauge
+def load_gauge_data():
+    #in_year=year
+    gauge_final_data = pd.read_csv('models/data/macroeconomic_indicators_data/y_test_ME.csv', index_col=0)
+    gauge_final_data.reset_index(inplace=True)
+    gauge_final_data.rename(columns={'index': 'Date'}, inplace=True)
+    gauge_final_data['Date'] = pd.to_datetime(gauge_final_data['Date'])
+    
+    fff_prob_data = pd.read_csv('models/data/fed_futures_data/latest/fff_raw_probs.csv', index_col=0)
+    fff_prob_data['Date'] = pd.to_datetime(fff_prob_data['Date'])
+    
+    return gauge_final_data, fff_prob_data
+
     
 def load_macro_ts():
     df_trainres = pd.read_csv('web/data/overall_train_results.csv')

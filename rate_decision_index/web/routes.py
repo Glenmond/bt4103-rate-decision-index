@@ -36,12 +36,14 @@ macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
 macro_main_data = utils.load_macro_model_data()
 
 
-
 #fedfundfuture
 fff_data = utils.load_fff_data()
 fff_data_cleaned = utils.clean_fff(fff_data)
 #fedfundfuture vs fomc dot plot
 fff_preds, fff_fomc = utils.load_fff_vs_fomc_data()
+
+# gauge
+gauge_final_data, fff_prob_data = utils.load_gauge_data()
 
 #home page
 macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
@@ -75,7 +77,7 @@ def plot_main_dashboard():
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         ### gmond update data source here 
         # gauge
-        plot_gauge = home_plot.plot_gauge(market_data_cleaned, date)
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date)
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
@@ -105,7 +107,7 @@ def plot_main_dashboard():
         # overall
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         ### gmond update data source here 
-        plot_gauge = home_plot.plot_gauge(market_data_cleaned,  date='2004-09-30')
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date='2004-09-30')
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
@@ -160,7 +162,7 @@ def plot_home():
         # overall 
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         ### gmond update data source here 
-        plot_gauge = home_plot.plot_gauge(market_data_cleaned, date)
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date)
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
@@ -190,7 +192,7 @@ def plot_home():
         # overall
         macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
         ### gmond update data source here 
-        plot_gauge = home_plot.plot_gauge(market_data_cleaned,  date='2004-09-30')
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date='2004-09-30')
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
