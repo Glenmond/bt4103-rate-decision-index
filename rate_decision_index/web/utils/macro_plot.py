@@ -205,7 +205,7 @@ def plot_inflation_index(gdp_sub_index):
 
 
 def plot_main_plot(data):
-    macro_data = MacroData(data)
+    macro_data = MacroData(data, path_to_HD_pickle='./models/data/sentiment_data/historical/')
     macro_model = MacroModel(macro_data)
 
     macro_model.fit_data()
