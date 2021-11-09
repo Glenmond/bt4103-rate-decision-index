@@ -14,7 +14,7 @@ styling here
     <!-- first row, first column-->
     <div class=2"row">
         <h4 style="color:navy; margin:10px;">Time Series of Sentiment Scores</h4>
-        <div class="chart" id="market-6">
+        <div class="chart" id="market-3">
         </div>
     </div>
     <hr>
@@ -30,56 +30,42 @@ styling here
             </div>
         </div>
         <h5 style="color:navy; margin:10px;">Ngram Plot for FOMC Statement</h5>
-        <div class="chart" id="market-4">
+        <div class="chart" id="market-1">
         </div>
     </div>
     <div class=2"row">
         <h5 style="color:navy; margin:10px;">Ngram Plot for FOMC Meeting Minutes</h5>
-        <div class="chart" id="market-5">
+        <div class="chart" id="market-2">
         </div>
     </div>
     <div class=2"row">
         <h5 style="color:navy; margin:10px;">Ngram Plot for FOMC News Articles</h5>
-        <div class="chart" id="market-7">
+        <div class="chart" id="market-4">
         </div>
     </div>
     <hr>
 </div>
 
+
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.market_ts_plot | safe }};
+    var graphs = {{ context.ngram_statement| safe }};
     Plotly.plot('market-1', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.market_sentiments_drill2 | safe }};
+    var graphs = {{ context.ngram_min | safe }};
     Plotly.plot('market-2', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.market_sentiments_drill3 | safe }};
+    var graphs = {{ context.market_ts_plot| safe }};
     Plotly.plot('market-3', graphs, {});
 </script>
 <script>
     //Parse your Json variable here
-    var graphs = {{ context.ngram_statement| safe }};
-    Plotly.plot('market-4', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
-    var graphs = {{ context.ngram_min | safe }};
-    Plotly.plot('market-5', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
-    var graphs = {{ context.market_ts_plot| safe }};
-    Plotly.plot('market-6', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
     var graphs = {{ context.ngram_news | safe }};
-    Plotly.plot('market-7', graphs, {});
+    Plotly.plot('market-4', graphs, {});
 </script>
 
 {% endblock my_content %}

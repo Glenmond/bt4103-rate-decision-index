@@ -68,9 +68,6 @@ def load_fff_data():
     
     return fff_data, fake_data
 
-def load_home_data():
-    home_data = pd.read_csv("web/data/macro_gdp_data.csv")
-    return home_data
 
 
 #data preprocessing step (if required)
