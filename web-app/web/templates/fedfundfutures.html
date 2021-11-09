@@ -27,11 +27,6 @@ styling here
     </div>
     <hr>
         <!-- second row, first column-->
-    <h4 style="color:navy; margin:10px;">Is the market moving ahead of the curve?</h4>
-    <div class=2"row h-33">
-        <div id="macro-3">
-        </div>
-    </div>
 </div>
 
 <!-- Script to execute the Json ( we can create it also with looping) -->
@@ -44,10 +39,5 @@ styling here
     //Parse your Json variable here
     var graphs = {{ context.plot_futures_pred_vs_fomc | safe }};
     Plotly.plot('fff-2', graphs, {});
-</script>
-<script>
-    //Parse your Json variable here
-    var graphs = {{ context.plot_fff_results | safe }};
-    Plotly.plot('fff-3', graphs, {});
 </script>
 {% endblock my_content %}
