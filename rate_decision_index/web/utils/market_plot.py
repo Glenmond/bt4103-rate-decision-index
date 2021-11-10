@@ -109,31 +109,31 @@ def get_top_n_gram_mins(data, date):
         name='Top 5 Most Common Uni-gram in FOMC Minutes',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
-        marker_color='#FF69B4' #change color of bars
+        marker_color='#401664' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Bi-gram in FOMC Minutes',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
-        marker_color='#F08080' #change color of bars
+        marker_color='#D71C2B' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Tri-gram in FOMC Minutes',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
-        marker_color='#FFA07A' #change color of bars
+        marker_color='#EE2033' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 4-gram in FOMC Minutes',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
-        marker_color='#FFB6C1' #change color of bars
+        marker_color='#F78E99' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 5-gram in FOMC Minutes',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
-        marker_color='#FFE4E1' #change color of bars
+        marker_color='#FBC9CF' #change color of bars
     )
     ])
     
@@ -183,8 +183,12 @@ def get_top_n_gram_mins(data, date):
         title_font_family="Times New Roman Bold",
         title_font_color="black",
         title_text='Most Common Words and Phrases in FOMC Minutes', 
-        title_x=0.5
+        title_x=0.5,
+        plot_bgcolor = 'white'
     )
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -242,31 +246,31 @@ def get_top_n_gram_st(data, date):
         name='Top 5 Most Common Uni-gram in FOMC Statements',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
-        marker_color='#FF69B4' #change color of bars
+        marker_color='#401664' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Bi-gram in FOMC Statements',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
-        marker_color='#F08080' #change color of bars
+        marker_color='#D71C2B' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Tri-gram in FOMC Statements',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
-        marker_color='#FFA07A' #change color of bars
+        marker_color='#EE2033' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 4-gram in FOMC Statements',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
-        marker_color='#FFB6C1' #change color of bars
+        marker_color='#F78E99' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 5-gram in FOMC Statements',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
-        marker_color='#FFE4E1' #change color of bars
+        marker_color='#FBC9CF' #change color of bars
     )
     ])
     
@@ -316,8 +320,12 @@ def get_top_n_gram_st(data, date):
         title_font_family="Times New Roman Bold",
         title_font_color="black",
         title_text='Most Common Words and Phrases in FOMC Statements', 
-        title_x=0.5
+        title_x=0.5,
+        plot_bgcolor = 'white'
     )
+    
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -336,7 +344,7 @@ def get_top_n_gram_news(data, date):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_1 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_1 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=2
     vec = CountVectorizer(ngram_range=(2, 2)).fit([concat_list(news_df)])
@@ -344,7 +352,7 @@ def get_top_n_gram_news(data, date):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_2 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_2 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=3
     vec = CountVectorizer(ngram_range=(3, 3)).fit([concat_list(news_df)])
@@ -352,7 +360,7 @@ def get_top_n_gram_news(data, date):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_3 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_3 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=4
     vec = CountVectorizer(ngram_range=(4, 4)).fit([concat_list(news_df)])
@@ -360,7 +368,7 @@ def get_top_n_gram_news(data, date):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_4 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_4 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     #n=5
     vec = CountVectorizer(ngram_range=(5, 5)).fit([concat_list(news_df)])
@@ -368,38 +376,38 @@ def get_top_n_gram_news(data, date):
     sum_words = bag_of_words.sum(axis=0) 
     words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
     words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    df_plot_5 = pd.DataFrame(words_freq[:10], columns = ['Words' , 'Count'])
+    df_plot_5 = pd.DataFrame(words_freq[:5], columns = ['Words' , 'Count'])
 
     ## Plot
     plot = go.Figure(data=[go.Bar(
         name='Top 5 Most Common Uni-gram in the News',
         x=df_plot_1.Words.tolist(),
         y=df_plot_1.Count.tolist(),
-        marker_color='#FF69B4' #change color of bars
+        marker_color='#401664' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Bi-gram in the News',
         x=df_plot_2.Words.tolist(),
         y=df_plot_2.Count.tolist(),
-        marker_color='#F08080' #change color of bars
+        marker_color='#D71C2B' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common Tri-gram in the News',
         x=df_plot_3.Words.tolist(),
         y=df_plot_3.Count.tolist(),
-        marker_color='#FFA07A' #change color of bars
+        marker_color='#EE2033' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 4-gram in the News',
         x=df_plot_4.Words.tolist(),
         y=df_plot_4.Count.tolist(),
-        marker_color='#FFB6C1' #change color of bars
+        marker_color='#F78E99' #change color of bars
     ),
         go.Bar(
         name='Top 5 Most Common 5-gram in the News',
         x=df_plot_5.Words.tolist(),
         y=df_plot_5.Count.tolist(),
-        marker_color='#FFE4E1' #change color of bars
+        marker_color='#FBC9CF' #change color of bars
     )
     ])
     
@@ -449,8 +457,12 @@ def get_top_n_gram_news(data, date):
         title_font_family="Times New Roman Bold",
         title_font_color="black",
         title_text='Most Common Words and Phrases in the News', 
-        title_x=0.5
+        title_x=0.5,
+        plot_bgcolor = 'white'
     )
+    
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
