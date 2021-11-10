@@ -57,27 +57,26 @@ gauge_final_data, fff_prob_data = utils.load_gauge_data()
 @app.route("/",  methods=['GET', 'POST'])
 def plot_main_dashboard():
     form = PostForm()
-
     
     if request.method == 'POST':
         date = request.form['date-mm']
         #ploting
         print('DATE IS HERE', date)
+        
         #market
         plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date)
         plot_market_average = home_plot.plot_market_average(market_data_cleaned, date)
         
         
         #macro
-        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date)
-        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date)
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_df, date)
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_df, date)
         #fff
-        plot_fff = home_plot.plot_fff(fff_data)
+        plot_fff = home_plot.plot_fff(fff_data_cleaned)
 
         # overall 
-        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts_df)
         ### gmond update data source here 
-        # gauge
         plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date)
 
         context = {
@@ -94,21 +93,20 @@ def plot_main_dashboard():
         #TO CHANGE DEFFAULT DATES
         #ploting
         #market
-        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09')
-        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09')
+        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, '2008-09')
+        plot_market_average = home_plot.plot_market_average(market_data_cleaned, '2008-09')
         
         
         #macro
-        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
-        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
-        
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_df, '2008-09')
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_df, '2008-09')
         #fff
-        plot_fff = home_plot.plot_fff(fff_data)
+        plot_fff = home_plot.plot_fff(fff_data_cleaned)
 
-        # overall
-        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        # overall 
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts_df)
         ### gmond update data source here 
-        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date='2004-09-30')
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, '2008-09')
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
