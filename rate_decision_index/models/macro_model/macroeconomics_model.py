@@ -1,14 +1,18 @@
 import pandas as pd
 import numpy as np
 import math
-
 import datetime
+from dateutil.relativedelta import relativedelta
 from scipy.stats.mstats import hmean
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 import statsmodels.api as sm
+
+from fredapi import Fred
+fred_api = "18fb1a5955cab2aae08b90a2ff0f6e42"
+fred = Fred(api_key=fred_api)
 
 import warnings 
 warnings.filterwarnings('ignore')
@@ -38,10 +42,8 @@ class MacroData():
     def preprocess(self, path_to_HD_pickle):
         # Preprocess the data obtained from the API call
 
-        # Add the HD index
-        #hd = pd.read_csv('./data/macroeconomic_indicators_data/final_df.csv')
+        # Add the HD index=
         hd = pd.read_pickle(path_to_HD_pickle + 'final_df.pickle')
-        #print(hd.head(50))
         hd.index = hd['date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
         hd = hd.drop("date", axis=1)
@@ -186,8 +188,110 @@ class MacroModel(Model):
         print(f"\tThe Adjusted R2 score is {adj_r2}")
         print(f"\tThe RMSE score is {rmse}")
 
-    def predict_latest_data(self):
+    '''def predict_latest_data(self, path_to_HD_pickle ='./data/sentiment_data/historical/'):
         """
         Gets the latest available data from FRED and returns the predicted data based on it. If the latest data for this particular month is not available,
         the next latest is obtained. For example, if Nov 2021 data is not available, the next latest available (maybe Sept 2021 or something) will be used
+        For indicators with lead/lag periods, we will adjust accordingly if possible. 
         """
+        most_recent_date = datetime.datetime.today()
+        # Concurrent
+        commodities = ('PPIACO', {'observation_end':most_recent_date.strftime('%Y-%m-%d'),
+                                    'units':'lin',
+                                    'frequency':'m',
+                                    'aggregation_method': 'eop',   
+                                    })
+
+        # For indicators with lag period, there is no way of getting future data to shift backwards, so we just make do with present data                          
+        real_gdp = ('GDPC1', {'observation_end':most_recent_date.strftime('%Y-%m-%d'),
+                                'units':'lin',
+                                'frequency':'q',
+                                'aggregation_method': 'eop'
+                                })
+        median_cpi = ('MEDCPIM158SFRBCLE', {'observation_end':most_recent_date.strftime('%Y-%m-%d'),
+                                            'units':'lin',
+                                            'frequency':'m',
+                                            'aggregation_method': 'eop',   
+                                            })
+        em_ratio = ('EMRATIO', {'observation_end':most_recent_date.strftime('%Y-%m-%d'),
+                                'units':'lin',
+                                'frequency':'m',
+                                'aggregation_method': 'eop',   
+                                })
+        med_wages = ('LES1252881600Q', {'observation_end': most_recent_date.strftime('%Y-%m-%d'),
+                                        'units':'lin',
+                                        'frequency':'q',
+                                        'aggregation_method': 'eop',   
+                                        })
+
+        # For leading indicators, we align by getting the most recent data n months ago, with n being the amount of lead associated with the indicator
+        maturity_minus_three_month = ('T10Y3M', {'observation_end':(most_recent_date - relativedelta(months=5)).strftime('%Y-%m-%d'),
+                                                'units':'lin',
+                                                'frequency':'m',
+                                                'aggregation_method': 'eop',
+                                                })
+        
+        indicators = [commodities,real_gdp,median_cpi, em_ratio,
+                    med_wages, maturity_minus_three_month]
+
+        df = pd.DataFrame()
+
+        for series_id, params in indicators:
+            # Get the data from FRED, convert to pandas DataFrame
+            indicator = fred.get_series(series_id, **params)
+            indicator = indicator.to_frame().set_axis([series_id], axis="columns")
+            # fill in data with '0.0' that is presented as just '.'
+            indicator[series_id] = ["0.0" if x == "." else x for x in indicator[series_id]]
+            # turn the value into numeric
+            indicator[series_id] = pd.to_numeric(indicator[series_id])
+            indicator.index = pd.to_datetime(indicator.index).to_period("M")
+            indicator = indicator.resample("M").interpolate()
+
+            if series_id in ("MEDCPIM158SFRBCLE"):  
+                indicator.rename(columns={"MEDCPIM158SFRBCLE": "MEDCPI"}, inplace=True)
+
+            if series_id in ("LES1252881600Q"):  # align 5 lag
+                indicator = indicator.shift(-5)[:-5]
+                indicator.rename(columns={"LES1252881600Q": "MEDWAGES"}, inplace=True)
+            indicator= indicator.dropna()[-1:]
+            indicator = indicator.reset_index()
+            indicator_name = indicator.columns[-1]
+            df[indicator_name] = indicator[indicator_name]
+        
+        # add shifted indicator
+        fed_fund_rate = fred.get_series(
+            "DFF",
+            **{"observation_end": (most_recent_date-relativedelta(months=2)).strftime('%Y-%m-%d'), # get the latest available end-of-month data, then shift by 1, so total 2 shifts
+                "frequency": "m",
+                "aggregation_method": "eop",
+            }
+        )
+        fed_fund_rate.index = pd.to_datetime(fed_fund_rate.index).to_period("M")
+        fed_fund_rate = fed_fund_rate[-1:]
+        df["shifted_target"] = fed_fund_rate.to_numpy()
+
+        # Add interactions
+        df['MEDCPI_PPIACO'] = df['MEDCPI'] * df['PPIACO']
+        df['EMRATIO_MEDWAGES'] = df['EMRATIO'] * df['MEDWAGES']
+
+        # Add the HD index
+        hd = pd.read_pickle(path_to_HD_pickle + 'final_df.pickle')
+        hd.index = hd['date']
+        hd.index = pd.to_datetime(hd.index).to_period('M')
+        hd = hd.drop("date", axis=1)
+        hd['Score_Statement'] = MinMaxScaler().fit_transform(hd['Score_Statement'].values.reshape(-1,1))
+        hd['Score_Minutes'] = MinMaxScaler().fit_transform(hd['Score_Minutes'].values.reshape(-1,1))
+        hd['Score_News'] = MinMaxScaler().fit_transform(hd['Score_News'].values.reshape(-1,1))
+        hd['Overall'] = hmean([hd['Score_Statement'],hd['Score_Minutes'],hd['Score_News']])
+        
+        df['HD_index'] = hd[-1:].reset_index()['Overall']
+        df['HD_index'] = np.power(df['HD_index'],1/2)
+
+        df = pd.DataFrame(self.scaler.transform(df), columns=df.columns, index=df.index)
+
+        df = df[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
+        print(df)
+        print(self.data.X_test)
+        latest_prediction_results, latest_prediction_value = self.predict(df)
+        return latest_prediction_results, latest_prediction_value
+        return df'''
