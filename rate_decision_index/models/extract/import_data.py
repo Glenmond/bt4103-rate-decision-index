@@ -258,34 +258,16 @@ def download_fomc_dates():
 
         return df
 
-
-if __name__ == "__main__":
-    pg_name = sys.argv[0]
-    args = sys.argv[1:]
+def import_sentiment_data(from_year, content_type='all'):
     content_type_all = ("statement", "minutes", "news", "all")
 
-    if (len(args) != 1) and (len(args) != 2):
-        print("Usage: ", pg_name)
-        print("Please specify the first argument from ", content_type_all)
-        print("You can add from_year (yyyy) as the second argument.")
-        print("\n You specified: ", ",".join(args))
-        sys.exit(1)
-
-    if len(args) == 1:
-        from_year = 1990
-    else:
-        from_year = int(args[1])
-
-    content_type = args[0].lower()
     if content_type not in content_type_all:
-        print("Usage: ", pg_name)
         print("Please specify the first argument from ", content_type_all)
-        sys.exit(1)
+        return
 
     if (from_year < 1980) or (from_year > 2021):
-        print("Usage: ", pg_name)
         print("Please specify the second argument between 1980 and 2020")
-        sys.exit(1)
+        return 
 
     if content_type == "all":
         fomc = FomcStatement()
@@ -304,3 +286,4 @@ if __name__ == "__main__":
             docs = News()
 
         download_data(docs, from_year)
+    print("Sentiment data imported")

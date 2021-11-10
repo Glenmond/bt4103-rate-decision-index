@@ -41,16 +41,21 @@ def get_data2(indicators, start, end):
     df = df.fillna(method='ffill')
     df['Date']=datecol
     return df
-    
-indicatorsR = ['GDPC1', 'PCEC96', 'GPDIC1', 'GCEC1', 'NETEXC']
-dfR = get_data(indicators=indicatorsR, start='2004-01-01', end='')
-dfR.to_csv(r"../../data/macroeconomic_indicators_data/macro_gdp_data.csv", index=True)
 
-indicators_employment = ['PAYEMS', 'USPRIV', 'CES9091000001', 'USCONS', 'MANEMP']
-dfEI = get_data2(indicators=indicators_employment, start='2004-01-01', end='')
-dfEI.to_csv(r"../../data/macroeconomic_indicators_data/macro_employment_data.csv", index=True)
+def collect_indicator_data(path="../../data/macroeconomic_indicators_data/"):  
+    indicatorsR = ['GDPC1', 'PCEC96', 'GPDIC1', 'GCEC1', 'NETEXC']
+    dfR = get_data(indicators=indicatorsR, start='2004-01-01', end='')
+    dfR.to_csv(f"{path}/macro_gdp_data.csv", index=True)
 
-indicators_inflation = ['MEDCPIM158SFRBCLE','CPIAUCSL','CPIFABSL', 'CPIAPPSL', 'CPIMEDSL', 'CPIHOSSL', 'CPITRNSL', 'CPIEDUSL', 'CPIRECSL', 'CPIOGSSL']
-df_inflation = get_data2(indicators=indicators_inflation, start='2004-01-01', end='')
-df_inflation.to_csv(r"../../data/macroeconomic_indicators_data/macro_inflation_data.csv", index=True)
+    indicators_employment = ['PAYEMS', 'USPRIV', 'CES9091000001', 'USCONS', 'MANEMP']
+    dfEI = get_data2(indicators=indicators_employment, start='2004-01-01', end='')
+    dfEI.to_csv(f"{path}/macro_employment_data.csv", index=True)
 
+    indicators_inflation = ['MEDCPIM158SFRBCLE','CPIAUCSL','CPIFABSL', 'CPIAPPSL', 'CPIMEDSL', 'CPIHOSSL', 'CPITRNSL', 'CPIEDUSL', 'CPIRECSL', 'CPIOGSSL']
+    df_inflation = get_data2(indicators=indicators_inflation, start='2004-01-01', end='')
+    df_inflation.to_csv(f"{path}/macro_inflation_data.csv", index=True)
+
+    print("All indicators data collected!")
+
+if __name__ == "__main__":
+    collect_indicator_data()

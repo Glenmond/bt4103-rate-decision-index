@@ -4,24 +4,22 @@ import datetime
 
 batch_id = datetime.date.today().strftime("%y%m%d")
 
-directory = {
-    "statements": f"../data/sentiment_data/extract/{batch_id}_statement.pickle",
-    "minutes": f"../data/sentiment_data/extract/{batch_id}_minutes.pickle",
-    "news": f"../data/sentiment_data/extract/{batch_id}_news.pickle",
-    "model": "../data/sentiment_data/model/model.pickle",
-    "vectorizer": "../data/sentiment_data/model/vectorizer.pickle",
-    # historical dataframes: for updating
-    "historical": {
-        "statements": f"../data/sentiment_data/historical/st_df.pickle",
-        "minutes": f"../data/sentiment_data/historical/mins_df.pickle",
-        "news": f"../data/sentiment_data/historical/news_df.pickle",
-    },
-}
-
-
 class DataLoader:
-    def __init__(self, start_dt):
+    def __init__(self, start_dt, path):
         self.start_dt = start_dt
+        self.directory = {
+            "statements": f"{path}/extract/{batch_id}_statement.pickle",
+            "minutes": f"{path}/extract/{batch_id}_minutes.pickle",
+            "news": f"{path}/extract/{batch_id}_news.pickle",
+            "model": f"{path}/model/model.pickle",
+            "vectorizer": f"{path}/model/vectorizer.pickle",
+            # historical dataframes: for updating
+            "historical": {
+                "statements": f"{path}/historical/st_df.pickle",
+                "minutes": f"{path}/historical/mins_df.pickle",
+                "news": f"{path}/historical/news_df.pickle",
+            },
+        }
         self.data = self.load_data()
 
     def load_data(self):
@@ -35,10 +33,10 @@ class DataLoader:
             "minutes": pd.DataFrame(),
         }  # to set the structure
 
-        for k, v in directory.items():
+        for k, v in self.directory.items():
             if k == "historical":
 
-                for k2, v2 in directory["historical"].items():
+                for k2, v2 in self.directory["historical"].items():
                     f = open(v2, "rb")
                     df = pickle.load(f)
                     data["historical"][k2] = df

@@ -4,7 +4,6 @@ import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot, fedfundfutures_plot
-from models.fed_futures_model import run_main
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
@@ -14,6 +13,11 @@ from werkzeug.utils import secure_filename
 import os
 
 from web.utils.paths import Path
+
+# models
+from models.fed_futures_model import run_main
+from models.macro_model.indicator_index_plots import collect_indicator_data
+from models.update_macro_data import update_saved_data
 
 # Setting data directory: saved to web/data
 uploads_dir = os.path.join(os.path.dirname(app.instance_path), 'web/data')
@@ -128,6 +132,23 @@ def upload_file():
 def run_fff_model():
     data_path = path.fed_funds_data
     run_main(path = data_path)
+    return render_template('model-run.html')
+
+@app.route('/run', methods = ['GET', 'POST'])
+def run_all_models():
+    # run FFF model
+    fed_funds_data_path = path.fed_funds_data
+    run_main(path = fed_funds_data_path)
+
+    # collect Macroeconomic Indicators data for index breakdown
+    macro_data_path = path.macroeconomic_indicators_data
+    collect_indicator_data(path = macro_data_path)
+
+    # update macro data 
+    sentiment_hist_path = path.sentiment_hist_data
+    update_saved_data(path_to_folder=macro_data_path, path_to_HD_folder=sentiment_hist_path)
+
+    
     return render_template('model-run.html')
 
 @app.route('/uploader', methods = ['GET', 'POST'])

@@ -9,12 +9,13 @@ from functools import reduce
 
 
 class DictionaryModel:
-    def __init__(self, data, start_dt):
+    def __init__(self, data, start_dt, path):
         self.data = data  # dictionary of dataframes
         self.fitted_model = data["model"]  # stacked model with svm as baseline
         self.fitted_vectorizer = data["vectorizer"]  # tfid vectorizer
         self.start_dt = start_dt
         self.docs = ["statements", "minutes", "news"]
+        self.path = path
 
     def predict(self):
 
@@ -318,4 +319,4 @@ class DictionaryModel:
         """
         print(f"===== save {name} to historical pickle =====".title())
         rename_dict = {"statements": "st", "minutes": "mins", "news": "news", "final": "final"}
-        df.to_pickle(f"../data/sentiment_data/historical/{rename_dict[name]}_df.pickle")
+        df.to_pickle(f"{self.path}/historical/{rename_dict[name]}_df.pickle")

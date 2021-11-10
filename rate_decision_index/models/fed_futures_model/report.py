@@ -80,8 +80,6 @@ class Report():
             title_text="Target Rate Predictions for FOMC Meetings",
         )
 
-        fig.show()
-
         today = datetime.now().strftime("%y%m%d")
         if save:
             fig.write_image(f"{self.path}/report/{today}_fff_report.pdf")
