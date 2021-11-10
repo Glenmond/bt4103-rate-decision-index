@@ -21,9 +21,6 @@ from .base_model import Model
 
 class MacroData():
     def __init__(self, data, path_to_HD_pickle = './data/sentiment_data/historical/'):
-        # TODO: configure this data to be compatible with both pd Dataframe and json dictionaries
-        # if data is a json dictionary, parse it into a pd Dataframe
-        # The self.data is a pd DataFrame!!!
         self.data = data
 
         # Initialise train and test sets as None first
@@ -89,6 +86,11 @@ class MacroData():
         self.X_test['HD_index'] = np.power(self.X_test['HD_index'],1/2)
         self.X_val['HD_index'] = np.power(self.X_val['HD_index'],1/2)
 
+        # Rearrange the input features
+        self.X_train = self.X_train[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
+        self.X_val = self.X_val[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
+        self.X_test = self.X_test[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
+
         # Do some scalings
         scaler = StandardScaler()
         scaler.fit(self.X_train) # fit the scaler only on training set
@@ -96,11 +98,6 @@ class MacroData():
         self.X_val = pd.DataFrame(scaler.transform(self.X_val), columns=self.X_val.columns, index=self.X_val.index)
         self.X_test = pd.DataFrame(scaler.transform(self.X_test), columns=self.X_test.columns, index=self.X_test.index)
         self.scaler = scaler
-
-        # Rearrange the input features
-        self.X_train = self.X_train[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
-        self.X_val = self.X_val[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
-        self.X_test = self.X_test[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
 
 class MacroModel(Model):
     def __init__(self, data: MacroData, shift_coef = 1.68323868):
@@ -188,7 +185,7 @@ class MacroModel(Model):
         print(f"\tThe Adjusted R2 score is {adj_r2}")
         print(f"\tThe RMSE score is {rmse}")
 
-    '''def predict_latest_data(self, path_to_HD_pickle ='./data/sentiment_data/historical/'):
+    def predict_latest_data(self, path_to_HD_pickle ='./data/sentiment_data/historical/'):
         """
         Gets the latest available data from FRED and returns the predicted data based on it. If the latest data for this particular month is not available,
         the next latest is obtained. For example, if Nov 2021 data is not available, the next latest available (maybe Sept 2021 or something) will be used
@@ -253,7 +250,7 @@ class MacroModel(Model):
             if series_id in ("LES1252881600Q"):  # align 5 lag
                 indicator = indicator.shift(-5)[:-5]
                 indicator.rename(columns={"LES1252881600Q": "MEDWAGES"}, inplace=True)
-            indicator= indicator.dropna()[-1:]
+            indicator= indicator.dropna()[-12:]
             indicator = indicator.reset_index()
             indicator_name = indicator.columns[-1]
             df[indicator_name] = indicator[indicator_name]
@@ -267,7 +264,8 @@ class MacroModel(Model):
             }
         )
         fed_fund_rate.index = pd.to_datetime(fed_fund_rate.index).to_period("M")
-        fed_fund_rate = fed_fund_rate[-1:]
+        fed_fund_rate = fed_fund_rate[-13:]
+        fed_fund_rate = fed_fund_rate.shift(1).dropna()
         df["shifted_target"] = fed_fund_rate.to_numpy()
 
         # Add interactions
@@ -284,14 +282,12 @@ class MacroModel(Model):
         hd['Score_News'] = MinMaxScaler().fit_transform(hd['Score_News'].values.reshape(-1,1))
         hd['Overall'] = hmean([hd['Score_Statement'],hd['Score_Minutes'],hd['Score_News']])
         
-        df['HD_index'] = hd[-1:].reset_index()['Overall']
-        df['HD_index'] = np.power(df['HD_index'],1/2)
+        df['HD_index'] = hd[-12:].reset_index()['Overall']
+        df['HD_index'] = np.power(df['HD_index'],1/2)       
+
+        df = df[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
 
         df = pd.DataFrame(self.scaler.transform(df), columns=df.columns, index=df.index)
 
-        df = df[['T10Y3M', 'EMRATIO_MEDWAGES','EMRATIO', 'GDPC1','MEDCPI','MEDCPI_PPIACO','HD_index','shifted_target']]
-        print(df)
-        print(self.data.X_test)
         latest_prediction_results, latest_prediction_value = self.predict(df)
-        return latest_prediction_results, latest_prediction_value
-        return df'''
+        return latest_prediction_value[-1][0]
