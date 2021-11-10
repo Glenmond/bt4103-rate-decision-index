@@ -32,7 +32,7 @@ def make_macro_plot(path_to_pickle_files = './data/macroeconomic_indicators_data
         macro_data = MacroData(data)
         with open(path_to_pickle_files + 'macro_model_pickle' , 'rb') as f:
             macro_model = pickle.load(f)
-
+            
     app = dash.Dash()
     fig = go.Figure()
 
