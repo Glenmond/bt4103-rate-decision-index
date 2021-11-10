@@ -6,7 +6,7 @@ import pandas as pd
 import pickle
 import json
 
-from web.macro_model_2.import_data import fetch_data
+from models.extract.import_data import fetch_data
 from pandas.tseries.offsets import MonthEnd
 from fredapi import Fred
 
@@ -87,10 +87,10 @@ def load_macro_data():
 
 def load_macro_model_data():
     try: # so that we do not need the FRED API call every time we try to access
-        data = pd.read_pickle('web/macro_model_2/macro_data_pickle')
+        data = pd.read_pickle('models/data/macroeconomic_indicators_data/macro_data_pickle')
     except Exception:       
         data = fetch_data()
-        data.to_pickle('web/macro_model_2/macro_data_pickle')
+        data.to_pickle('models/data/macroeconomic_indicators_data/mmacro_data_pickle')
     return data
 
 def load_fff_data(): 
