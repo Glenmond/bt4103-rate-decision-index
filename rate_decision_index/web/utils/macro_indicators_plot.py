@@ -98,7 +98,10 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
 
     fig.update_layout(title='Prediction of Federal Funds Rate',
         xaxis_title='Date',
-        yaxis_title='Federal Funds Rate')
+        yaxis_title='Federal Funds Rate', plot_bgcolor = 'white')
+
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
 
     dash_app.layout = html.Div([
                     dcc.Graph(id='plot', figure=fig, style={'display': 'inline-block',
@@ -194,7 +197,10 @@ def init_callbacks(app, macro_data, training_data,y_train_to_plot, y_perf):
 
         fig.update_layout(title='Prediction of Federal Funds Rate',
                             xaxis_title='Date',
-                            yaxis_title='Federal Funds Rate')
+                            yaxis_title='Federal Funds Rate', plot_bgcolor = 'white')
+        
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
 
         # calculate R2 and RMSE
         r2 = r2_score(macro_data.y_test, new_y_pred)

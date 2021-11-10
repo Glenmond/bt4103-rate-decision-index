@@ -4,19 +4,17 @@
 put your custom script or styling here
 
 -->
-
+<!-- Script to execute the Json ( we can create it also with looping) -->
 {% endblock script %}
 
 
 {% block my_content %}
 <!-- first row -->
 <div class="container-fluid">
-    <div class="row">
-        <h1 style="margin:15px;">Overall Rate Decision</h1>
-    </div>
-        <div class="row">
+        <h1>Overall Rate Decision</h1>
+        <div class=2"row">
         <div class="form-group"style="margin:15px;">
-        <form action"" method="POST" novalidate>
+        <form action="" method="POST" novalidate>
             <label for="date-mm">Input last day of the Month in question</label>
                 <input type="month" id="date-mm" name="date-mm" class="form-control" format="mm/yyyy" placeholder="MM-YYYY">
         {{ form.submit() }}
@@ -27,57 +25,38 @@ put your custom script or styling here
         <div class="chart" id="home-6">
         </div>
     </div>
-    <div class=2"row">
+    <div class=2"row mt-5">
         <div class="chart" id="home-5">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <div class="small-box bg-navy">
-                <div class = 'row'>
-                    <h4 style="margin:15px;">    Market Consensus</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="small-box bg-navy">
-                <div class = 'row'>
-                    <h4 style="margin:15px;">Macroeconomic Indicators</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="small-box bg-navy">
-                <div class = 'row'>
-                    <h4 style="margin:15px;">Fed Fund Futures</h4>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- second row -->
-    <div class="row">
-        <div class="col-md-4">
-            <div class="row">
+    <div class="row mt-2">
+        <div class="col-md-4 justify-content-stretch">
+                <div class="title-box">
+                    <h4>Market Consensus</h4>
+            </div>
                 <div id="home-4">
                 </div>
-            </div>
-            <div class="row">
-                <div id="home-1">
+                <div id="home-1" class="mt-3">
                 </div>
-            </div>
         </div>
-        <div class="col-md-4">
-            <div class="row">
+        <div class="col-md-4 justify-content-stretch">
+                <div class="title-box">
+                    <h4>Macroeconomic Indicators</h4>
+             </div>
                 <div id="home-7">
                 </div>
-            </div>
-            <div class="row">
-                <div id="home-2">
+                <div id="home-2" class="mt-3"> 
                 </div>
-            </div>
+            <!-- <div class="mt-1">
+                
+            </div> -->
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 justify-content-stretch">
+            <div class="title-box">
+                <h4>Market Expectations</h4>
+            </div>
             <div id="home-3">
             </div>
         </div>
@@ -87,8 +66,6 @@ put your custom script or styling here
 
 
 
-
-<!-- Script to execute the Json ( we can create it also with looping) -->
 <script>
     //Parse your Json variable here
     var graphs = {{ context.plot_market_senti_main | safe }};
@@ -128,5 +105,9 @@ put your custom script or styling here
     //Parse your Json variable here
     var graphs = {{ context.plot_market_senti_main | safe }};
     Plotly.plot('home-8', graphs, {});
+</script>
+
+<script type="text/javascript">
+    window.dispatchEvent(new Event('resize'));
 </script>
 {% endblock my_content %}

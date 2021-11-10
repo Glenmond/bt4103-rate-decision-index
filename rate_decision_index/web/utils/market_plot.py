@@ -186,8 +186,8 @@ def get_top_n_gram_mins(data, date):
         title_x=0.5,
         plot_bgcolor = 'white'
     )
-    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
-    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
@@ -324,8 +324,8 @@ def get_top_n_gram_st(data, date):
         plot_bgcolor = 'white'
     )
     
-    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
-    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -461,33 +461,32 @@ def get_top_n_gram_news(data, date):
         plot_bgcolor = 'white'
     )
     
-    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
-    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
 
 def plot_hd_ts(data):
     df_senti = data
-    #df_senti = import_modify_csv_ms('ms_result.csv')
 
     plot = go.Figure(data=[go.Scatter(
         name='FOMC Statements',
         x=df_senti.Date.tolist(),
         y=df_senti.Score_Statement.tolist(),
-        marker_color='#F08080' #change color of line
+        marker_color='#401664' #change color of line
     ),
         go.Scatter(
         name='FOMC Minutes',
         x=df_senti.Date.tolist(),
         y=df_senti.Score_Minutes.tolist(),
-        marker_color='#6A5ACD' #change color of line
+        marker_color='#19AADE' #change color of line
     ),
         go.Scatter(
         name='News',
         x=df_senti.Date.tolist(),
         y=df_senti.Score_News.tolist(),
-        marker_color='#20B2AA' #change color of line
+        marker_color='#F78E99' #change color of line
     )                       
 
     ])
@@ -526,11 +525,11 @@ def plot_hd_ts(data):
             title_font_family="Times New Roman Bold",
             title_font_color="black",
             title_text='Time Series of Sentiment Scores', 
-            title_x=0.5
+            title_x=0.5, plot_bgcolor = 'white'
         )
-    plot.update_xaxes(rangeslider_visible=True)
-    plot.update_yaxes(range=[-1.1, 1.1])
-
+    plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(range=[-1.1, 1.1], showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    # plot.update_xaxes(rangeslider_visible=True)
 
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
