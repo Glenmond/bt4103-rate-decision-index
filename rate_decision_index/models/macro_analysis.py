@@ -3,7 +3,6 @@ import numpy as np
 import pickle
 import math
 from sklearn.metrics import r2_score, mean_squared_error
-from sklearn.linear_model import LinearRegression
 
 import dash
 from dash import dcc
@@ -33,8 +32,6 @@ def make_macro_plot(path_to_pickle_files = './data/macroeconomic_indicators_data
         macro_data = MacroData(data)
         with open(path_to_pickle_files + 'macro_model_pickle' , 'rb') as f:
             macro_model = pickle.load(f)
-
-    print(macro_model.predict_latest_data())
 
     app = dash.Dash()
     fig = go.Figure()

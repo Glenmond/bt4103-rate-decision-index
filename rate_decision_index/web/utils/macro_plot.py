@@ -203,7 +203,6 @@ def plot_inflation_index(gdp_sub_index):
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-
 def plot_main_plot(data):
     macro_data = MacroData(data, path_to_HD_pickle='./models/data/sentiment_data/historical/')
     macro_model = MacroModel(macro_data)
