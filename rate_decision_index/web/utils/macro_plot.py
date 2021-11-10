@@ -62,10 +62,12 @@ def plot_gdp_index(gdp_sub_index):
             yanchor="top"
             )
         ],
+        plot_bgcolor = 'white'
 
     )
-    #fig.update_layout(width=1500, height=500)
-    fig.update_xaxes(rangeslider_visible=True)
+
+    fig.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -118,9 +120,12 @@ def plot_employment_index(gdp_sub_index):
             y=1.2,
             yanchor="top"
             )
-        ]
+        ],
+        plot_bgcolor = 'white'
     )
-    fig.update_xaxes(rangeslider_visible=True)
+    fig.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -196,10 +201,13 @@ def plot_inflation_index(gdp_sub_index):
             y=1.2,
             yanchor="top"
             )
-        ]
+        ],
+        plot_bgcolor = 'white'
     )
 
-    fig.update_xaxes(rangeslider_visible=True)
+    fig.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -270,9 +278,12 @@ def plot_main_plot(data):
         font_family="Courier New",
         font_color="black",
         title_font_family="Times New Roman Bold",
-        title_font_color="black",)
+        title_font_color="black",
+        plot_bgcolor = 'white')
 
-    fig.update_xaxes(rangeslider_visible=True)
+    fig.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -409,10 +420,12 @@ def plot_indicators_ts(df_plot):
             title_font_family="Times New Roman Bold",
             title_font_color="black",
             #title_text='All Indicators', 
-            title_x=0.5
+            title_x=0.5,
+            plot_bgcolor = 'white'
         )
     
-    plot.update_xaxes(rangeslider_visible=True)
+    plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 

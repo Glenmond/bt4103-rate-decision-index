@@ -20,15 +20,16 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
     
     #do sth with date
     # macro + hd prediction rate
+
     fig = go.Figure(go.Indicator(
         mode = "gauge+number+delta",
         value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4),
         domain = {'row': 0, 'column': 0},
-        title = {'text': "Rate Hike-Cut", 'font': {'size': 20}},
+        title = {'text': "Rate Hike-Cut", 'font': {'size': 30}},
         delta = {'reference': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index-1).tolist()[0]]["Federal Funds Rate"]), 'increasing': {'color': "mediumseagreen"}},
         gauge = {
             'axis': {'range': [None, 6], 'tickwidth': 1, 'tickcolor': "darkblue"},
-            'bar': {'color': "black"},
+            'bar': {'color': "#401664"},
             'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
@@ -44,21 +45,34 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
                 {'range': [4.8, 5.4], 'color': 'firebrick'},
                 {'range': [5.4, 6.0], 'color': 'maroon'}],
             'threshold': {
-                'line': {'color': "red", 'width': 4},
+                'line': {'color': "#401664", 'width': 4},
                 'thickness': 0.75,
                 'value': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4)}}))
-    
+        
     # fff probability
     fig.add_trace(go.Indicator(
         mode = "number",
-        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11"].index).tolist()[0]].Hike),
+        number = {'suffix': "%", "font":{"size":80}},
+        value = (((fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11"].index).tolist()[0]].Hike)*100).round(2)),
         title = {'text':"Probability of Rate Change", 
                  'font.size': 20, 
-                 'font.color': 'darkblue', 
-                 'font.family':'Courier New'},
-        domain = {'row': 1, 'column': 0}))
+                 'font.color': '#401664', 
+                 'font.family':'Times New Roman Bold'},
+        domain = {'row': 0, 'column': 1}))
 
-    #fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+    # fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+    fig.update_layout(
+        grid = {'rows': 1, 'columns': 2, 'pattern': "independent"},
+        paper_bgcolor = "white", 
+        font_family="Times New Roman Bold",
+        font_color="black",
+        title={
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':15},
+        margin=dict(l=200, r=150, t=75, b=20))
     #fig.update_layout(width=800, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
@@ -73,9 +87,10 @@ def plot_market(market_data, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement).round(4),
-        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Statement).round(4)},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Statement).round(4), "font":{"size":20}},
         title = {'text':"FOMC STATEMENT SENTIMENTS SCORE"+'<br>'+ '='*len("FOMC Statement Sentiments Score"), 
-                 'font.size': 20, 
+                 'font.size': 15, 
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
@@ -84,6 +99,7 @@ def plot_market(market_data, date):
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Statement_Sentiments+">", 
                  'font.size': 17,
                  'font.family': 'Courier New', 
+                 'font.color': '#401664',
                  'align': 'right'},
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
@@ -93,9 +109,10 @@ def plot_market(market_data, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes).round(4),
-        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Minutes).round(4)},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_Minutes).round(4), "font":{"size":20}},
         title = {'text':"FOMC MINUTES SENTIMENTS SCORE"+'<br>'+ '='*len("FOMC Minutes Sentiments Score"),
-                 'font.size': 20, 
+                 'font.size': 15, 
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 3, 'column': 0}))
@@ -103,6 +120,7 @@ def plot_market(market_data, date):
     fig.add_trace(go.Indicator(
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Minutes_Sentiments+">", 
                  'font.size': 17,
+                 'font.color': '#401664',
                  'font.family': 'Courier New', 
                  'align': 'right'},
         mode = 'delta',
@@ -113,9 +131,10 @@ def plot_market(market_data, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News).round(4),
-        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_News).round(4)},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference': (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index-1).tolist()[0]].Score_News).round(4), "font":{"size":20}},
         title = {'text':"NEWS SENTIMENTS SCORE"+'<br>'+ '='*len("News Sentiments Score"), 
-                 'font.size': 20, 
+                 'font.size': 15, 
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 5, 'column': 0}))
@@ -123,6 +142,7 @@ def plot_market(market_data, date):
     fig.add_trace(go.Indicator(
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].News_Sentiments+">", 
                  'font.size': 17,
+                 'font.color': '#401664',
                  'font.family': 'Courier New',
                  'align': 'right'},
         mode = 'delta',
@@ -135,51 +155,26 @@ def plot_market(market_data, date):
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black",
-        height=600, width=800,
         title={
             'text': "Breakdown of Sentiment Scores for " + pd.to_datetime(date).strftime("%B %Y"),
             'y':0.95,
             'x':0.5,
             'xanchor': 'center',
             'yanchor': 'top', 
-            'font.size':25},
-        margin=dict(l=150, r=100, t=75, b=20))
-    
-    fig.update_layout(width=590, height=450)
+            'font.size':20},
+        margin=dict(l=150, r=100, t=75, b=20),
+        autosize=True)
+    fig.update_xaxes(automargin=True)
+    # fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
 
 def get_average_sentiment(market_data, date):
     df_senti = market_data
-    #    res = 0
     state_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement
     min_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes
     news_num = df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News
-    
- #     if isNaN(state_num):
- #         res = ((min_num + news_num) / 2)
-        
- #     elif isNaN(min_num):
- #         res = ((state_num + news_num) / 2)
-        
- #     elif isNaN(news_num):
- #         res = ((state_num + min_num) / 2)
-        
- #     elif isNaN(state_num) and isNaN(min_num):
- #         res = news_num
-        
- #     elif isNaN(state_num) and isNaN(news_num):
- #         res = min_num
-        
- #     elif isNaN(min_num) and isNaN(news_num):
- #         res = state_num
-        
- #     elif isNaN(min_num) and isNaN(news_num) and isNaN(state_num):
- #         res = 0
-    
- #     else:
- #         res = ((state_num+min_num+news_num) / 3)
     
     return ((state_num+min_num+news_num) / 3)
     
@@ -197,20 +192,20 @@ def plot_market_average(market_data, date):
     fig = go.Figure()
     fig.add_trace(go.Indicator(
         title={
-            'text': "Average Sentiment Score for " + pd.to_datetime(date).strftime("%B %Y"),
-            'font.size':30},
+            'text': "Average Sentiment Score for " + pd.to_datetime(date).strftime("%B %Y"), 'font.size': 20},
         mode = "delta",
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 0, 'column': 0}))
     
     fig.add_trace(go.Indicator(
         mode = "number",
+        number={"font":{"size":80}},
         value = avg,
         domain = {'row': 1, 'column': 0}))
     
     fig.add_trace(go.Indicator(
         title = {'text': "<"+word+">", 
-                 'font.size': 30,
+                 'font.size': 20,
                  'font.family': 'Courier New Bold',
                  'font.color':'#401664',            
                  'align': 'center'},
@@ -224,11 +219,13 @@ def plot_market_average(market_data, date):
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black",
-        height=600, width=800,
-        margin=dict(l=5, r=5, t=25, b=5))
+       
+        margin=dict(l=8, r=8, t=25, b=5),
+        autosize=True
+        )
 
     
-    fig.update_layout(width=600, height=300)
+    # fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
        
@@ -249,16 +246,18 @@ def plot_fff(fff_data):
         title_font_color="black",
         title_text='Probability of Change in Target Rates by Basis Points', 
         title_x=0.5, 
-        title_font_size = 30,
-        xaxis_title="Amount of Change in Target Rates",
+        title_font_size = 20,
+        
+        xaxis_title="",
         yaxis_title="Probability of Change", 
-        plot_bgcolor = 'white'
+        plot_bgcolor = 'white',
+        autosize=True
     )
     
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
-    fig.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     
-    fig.update_layout(width=600, height=550)
+    # fig.update_layout(width=600, height=550)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -332,9 +331,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_T10Y3M.round(4)),
-        delta = {'position': "right", 'reference':abs(value_T10Y3M_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_T10Y3M_prev.round(4)), "font":{"size":20}},
         title = {'text':"BOND YIELD SPREAD"+'<br>'+ '='*len("Bond Yield Spread"), 
-                 'font.size': 20, 
+                 'font.size': 15, 
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 0, 'column': 0}))
@@ -343,9 +343,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_EMRATIO.round(4)),
-        delta = {'position': "right", 'reference':abs(value_EMRATIO_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_EMRATIO_prev.round(4)), "font":{"size":20}},
         title = {'text':"EMPLOYMENT"+'<br>'+ '='*len("Employment"), 
-                 'font.size': 20,
+                 'font.size': 15,
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 0, 'column': 1}))
@@ -354,9 +355,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_GDPC1.round(4)),
-        delta = {'position': "right", 'reference':abs(value_GDPC1_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_GDPC1_prev.round(4)), "font":{"size":20}},
         title = {'text':"DOMESTIC OUTPUT"+'<br>'+ '='*len("Domestic Output"), 
-                 'font.size': 20,
+                 'font.size': 15,
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
@@ -365,9 +367,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_MEDCPI.round(4)),
-        delta = {'position': "right", 'reference':abs(value_MEDCPI_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_MEDCPI_prev.round(4)), "font":{"size":20}},
         title = {'text':"INFLATION"+'<br>'+ '='*len("Inflation"), 
-                 'font.size': 20,
+                 'font.size': 15,
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 1}))
@@ -376,9 +379,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_HD_index.round(4)),
-        delta = {'position': "right", 'reference':abs(value_HD_index_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_HD_index_prev.round(4)), "font":{"size":20}},
         title = {'text':"HAWKISH-DOVISH INDEX"+'<br>'+ '='*len("Hawisk-Dovish Index"), 
-                 'font.size': 20,
+                 'font.size': 15,
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 2, 'column': 0}))
@@ -387,9 +391,10 @@ def plot_macro_maindashboard(df_plot, date):
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_shifted_target.round(4)),
-        delta = {'position': "right", 'reference':abs(value_shifted_target_prev.round(4))},
+        number={"font":{"size":40}},
+        delta = {'position': "right", 'reference':abs(value_shifted_target_prev.round(4)), "font":{"size":20}},
         title = {'text':"PREVIOUS MONTH RATE"+'<br>'+ '='*len("Previous Month Rate"), 
-                 'font.size': 20,
+                 'font.size': 15,
                  'font.color': '#401664', 
                  'font.family':'Courier New'},
         domain = {'row': 2, 'column': 1}))
@@ -400,17 +405,18 @@ def plot_macro_maindashboard(df_plot, date):
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black",
-        width=590, height=470,
+        # width=590, height=470,
         title={
             'text': "Contribution of Indicators for " + pd.to_datetime(date).strftime("%B %Y"),
             'y':0.95,
             'x':0.5,
             'xanchor': 'center',
             'yanchor': 'top', 
-            'font.size':25},
-        margin=dict(l=50, r=50, t=100, b=15))
+            'font.size': 20},
+        margin=dict(l=50, r=50, t=100, b=15),
+        autosize=True)
     
-    fig.update_layout(width=590, height=450)
+    # fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -454,29 +460,29 @@ def plot_contributions_pie(df_plot, date):
 
     labels = ['Bond Yield Spread', 'Employment', 'Domestic Output', 'Inflation', 'Hawisk-Dovish Index', 'Previous Month Rate']
     values = [abs(value_T10Y3M), abs(value_EMRATIO), abs(value_GDPC1), abs(value_MEDCPI), abs(value_HD_index), abs(value_shifted_target)]
-    colors = ['#401664', '#D71C2B', '#EE2033', '#F78E99', '#FBC9CF', '#FEDFE2']
+    colors = ['#401664', '#D71C2B', '#EE2033', '#F78E99', '#FBC9CF', 'lavender']
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
                                  textfont = {'family':'Courier New', 'color':'black'},
                                  textfont_size=13,
-                                 showlegend=False, 
+                                 showlegend=True, 
                                  marker = dict(colors=colors,line=dict(color='#000000', width=0.4)))])
-    fig.update_traces(textposition='outside', textinfo='label+percent')
+    fig.update_traces(textposition='outside', textinfo='percent')
     fig.update_layout(
         paper_bgcolor = "white",
         font_color="black",
         title={
-            'text': "Weightage of Contributions of Respective Indicators on " + pd.to_datetime(date).strftime("%B %Y"),
+            'text': "Indicators Contributions for " + pd.to_datetime(date).strftime("%B %Y"),
             'y':0.95,
             'x':0.5,
             'xanchor': 'center',
             'yanchor': 'top', 
-            'font.size':30,
+            'font.size':20,
             'font.family': 'Times New Roman Bold'},
-        margin=dict(l=10, r=10, t=50, b=10),)
+        margin=dict(l=100, r=100, t=100, b=100),)
 
     
-    fig.update_layout(width=600, height=300)
+    # fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -526,11 +532,12 @@ def plot_fed_rates_ts(data):
         title_font_color="black",
         title_text='Time Series of Both Actual and Predicted Federal Funds Rates', 
         title_x=0.5,
-        plot_bgcolor = 'white'
+        title_font_size = 20,
+        plot_bgcolor = 'white', autosize=True
     )
 
-    plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
-    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot.update_xaxes(rangeslider_visible=True)
 
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
