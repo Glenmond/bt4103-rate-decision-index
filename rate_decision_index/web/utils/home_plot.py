@@ -27,31 +27,31 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
         title = {'text': "Rate Hike-Cut", 'font': {'size': 20}},
         delta = {'reference': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index-1).tolist()[0]]["Federal Funds Rate"]), 'increasing': {'color': "mediumseagreen"}},
         gauge = {
-            'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
-            'bar': {'color': "white"},
+            'axis': {'range': [None, 6], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': "black"},
             'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 0.1], 'color': 'maroon'},
-                {'range': [0.1, 0.2], 'color': 'firebrick'},
-                {'range': [0.2, 0.3], 'color': 'indianred'},
-                {'range': [0.3, 0.4], 'color': 'lightcoral'},
-                {'range': [0.4, 0.5], 'color': 'rosybrown'},
-                {'range': [0.5, 0.6], 'color': 'floralwhite'},
-                {'range': [0.6, 0.7], 'color': 'palegreen'},
-                {'range': [0.7, 0.8], 'color': 'lightgreen'},
-                {'range': [0.8, 0.9], 'color': 'limegreen'},
-                {'range': [0.9, 1], 'color': 'forestgreen'}],
+                {'range': [0.0, 0.60], 'color': 'forestgreen'},
+                {'range': [0.60, 1.2], 'color': 'limegreen'},
+                {'range': [1.2, 1.8], 'color': 'lightgreen'},
+                {'range': [1.8, 2.4], 'color': 'palegreen'},
+                {'range': [2.4, 3.0], 'color': 'floralwhite'},
+                {'range': [3.0, 3.6], 'color': 'rosybrown'},
+                {'range': [3.6, 4.2], 'color': 'lightcoral'},
+                {'range': [4.2, 4.8], 'color': 'indianred'},
+                {'range': [4.8, 5.4], 'color': 'firebrick'},
+                {'range': [5.4, 6.0], 'color': 'maroon'}],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.75,
-                'value': 0.654}}))
+                'value': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4)}}))
     
     # fff probability
     fig.add_trace(go.Indicator(
         mode = "number",
-        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11-30"].index).tolist()[0]].Hike),
+        value = (fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11"].index).tolist()[0]].Hike),
         title = {'text':"Probability of Rate Change", 
                  'font.size': 20, 
                  'font.color': 'darkblue', 
@@ -63,6 +63,7 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
+     
 
 
 def plot_market(market_data, date):
@@ -484,16 +485,16 @@ def plot_contributions_pie(df_plot, date):
 def plot_fed_rates_ts(data):
     df_plot=data
     plot = go.Figure(data=[go.Scatter(
-        name='Actual',
+        name='Actual Rate',
         x=df_plot.Date.tolist(),
-        y=df_plot.actual_values.tolist(),
-        marker_color='#FA8072' #change color of line
+        y=df_plot.Actual_Rate.tolist(),
+        marker_color='#D71C2B' #change color of line
     ),
         go.Scatter(
-        name='Predicted',
+        name='Predicted Rate',
         x=df_plot.Date.tolist(),
-        y=df_plot.predicted.tolist(),
-        marker_color='#4682B4' #change color of line
+        y=df_plot.Predicted_Rate.tolist(),
+        marker_color='#401664' #change color of line
     )
     ])
 
@@ -521,13 +522,17 @@ def plot_fed_rates_ts(data):
         ])
 
     plot.update_layout(
-            font_family="Courier New",
-            font_color="black",
-            title_font_family="Times New Roman Bold",
-            title_font_color="black",
-            title_text='Time Series of Both Actual and Predicted Federal Funds Rates', 
-            title_x=0.5
-        )
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",
+        title_text='Time Series of Both Actual and Predicted Federal Funds Rates', 
+        title_x=0.5,
+        plot_bgcolor = 'white'
+    )
+
+    plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
+    plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgrey', zeroline=True, zerolinecolor='lightgrey')
     plot.update_xaxes(rangeslider_visible=True)
 
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
