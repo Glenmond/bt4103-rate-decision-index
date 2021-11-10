@@ -20,17 +20,18 @@ def isNaN(num):
 
 #DONE updated data source
 def load_market_data():
-    statement_pickle_directory = 'models/data/sentiment_data/historical/st_df.pickle'
-    minutes_pickle_directory = 'models/data/sentiment_data/historical/mins_df.pickle'
-    news_pickle_directory = 'models/data/sentiment_data/historical/news_df.pickle' 
-    file = open(statement_pickle_directory, "rb")
-    statement_df = pickle.load(file)
-    file = open(minutes_pickle_directory, "rb")
-    mins_df = pickle.load(file)
-    file = open(news_pickle_directory, "rb")
-    news_df = pickle.load(file)
-    
-    return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
+    final_pickle_directory = 'models/data/sentiment_data/historical/final_df.pickle'
+    #minutes_pickle_directory = 'models/data/sentiment_data/historical/mins_df.pickle'
+    #news_pickle_directory = 'models/data/sentiment_data/historical/news_df.pickle' 
+    #file = open(statement_pickle_directory, "rb")
+    #statement_df = pickle.load(file)
+    #statement_df['date2'] = statement_df['date'].dt.strftime('%Y-%m')
+    #file = open(minutes_pickle_directory, "rb")
+    #mins_df = pickle.load(file)
+    #file = open(news_pickle_directory, "rb")
+    #news_df = pickle.load(file)
+    return final_pickle_directory
+    #return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
 
 #DONE updated data source
 def load_ngram_market_data():
@@ -61,12 +62,12 @@ def load_gauge_data():
     test_df['Date'] = pd.to_datetime(test_df['Date']) + MonthEnd(0)
 
     gauge_final_data = pd.concat([train_df, test_df])
-    # gauge_final_data['Date'] = gauge_final_data['Date'].dt.strftime('%Y-%m-%d')
+    gauge_final_data['Date'] = gauge_final_data['Date'].dt.strftime('%Y-%m')
     gauge_final_data.reset_index(drop=True, inplace=True)
     
     fff_prob_data = pd.read_csv('models/data/fed_futures_data/latest/fff_raw_probs.csv', index_col=0)
     fff_prob_data['Date'] = pd.to_datetime(fff_prob_data['Date']) + MonthEnd(0)
-    # fff_prob_data['Date'] = fff_prob_data['Date'].dt.strftime('%Y-%m-%d')
+    fff_prob_data['Date'] = fff_prob_data['Date'].dt.strftime('%Y-%m')
     
     return gauge_final_data, fff_prob_data
 
@@ -79,9 +80,9 @@ def load_macro_ts():
     return df_trainres, df_testres, df_x_train, df_x_test
     
 def load_macro_data():
-    gdp_sub_index = pd.read_csv("web/data/macro_gdp_data.csv")
-    employment_sub_index = pd.read_csv("web/data/macro_employment_data.csv")
-    inflation_sub_index = pd.read_csv("web/data/macro_inflation_data.csv")
+    gdp_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_gdp_data.csv")
+    employment_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_employment_data.csv")
+    inflation_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_inflation_data.csv")
     return gdp_sub_index, employment_sub_index, inflation_sub_index
 
 def load_macro_model_data():
@@ -92,9 +93,8 @@ def load_macro_model_data():
         data.to_pickle('web/macro_model_2/macro_data_pickle')
     return data
 
-def load_fff_data():
-    fff_data = pd.read_csv("web/data/fff_result.csv")    
-    return fff_data
+def load_fff_data(): 
+    return 'models/data/fed_futures_data/latest/fff_result.csv'
 
 def load_fff_vs_fomc_data():
 
@@ -123,7 +123,21 @@ def load_fff_vs_fomc_data():
     preds = pd.read_csv("models/data/fed_futures_data/latest/fff_preds.csv")
     return preds, [low, mid, high]
 
+def load_dir_macro_values():
+    y_train = 'models/data/macroeconomic_indicators_data/macro_y_train_pickle'
+    y_test =  'models/data/macroeconomic_indicators_data/macro_y_test_pickle'
+    x_train =  'models/data/macroeconomic_indicators_data/macro_X_train_pickle'
+    x_test =  'models/data/macroeconomic_indicators_data/macro_X_test_pickle'
+    
+    return y_train, y_test, x_train, x_test
 
+def load_dir_macro_ts():
+    y_train = 'models/data/macroeconomic_indicators_data/macro_y_train_pickle'
+    y_test =  'models/data/macroeconomic_indicators_data/macro_y_test_pickle'
+    x_train =  'models/data/macroeconomic_indicators_data/macro_train_pred_pickle'
+    x_test =   'models/data/macroeconomic_indicators_data/macro_test_pred_pickle'
+    
+    return y_train, y_test, x_train, x_test
 
 #data preprocessing step (if required)
 def clean_market(data):
@@ -180,68 +194,96 @@ def clean_macro_ts(y_train, y_test):
     return df_overall
 
 def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
-    #import predicted data
-    #df_trainres_pred = pd.read_csv(y_train) #y_train  ('overall_train_results.csv')
-    #df_testres_pred = pd.read_csv(y_test) #y_test  ('overall_test_results.csv')
-    comb_pred = [y_train, y_test]
-    df_overall_pred = pd.concat(comb_pred)
-    df_overall_pred.reset_index(inplace=True)
-    df_overall_pred.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
-
-    df_overall_pred['Date'] = pd.to_datetime(df_overall_pred['Date'])
-    df_temp_pred = df_overall_pred.sort_values(by=['Date'])
-    df_temp_pred.reset_index(inplace=True)
-    df_fin_pred = df_temp_pred[["Date", "actual_values", "predicted"]]
     
-    #import feature data
-    #df_trainres = pd.read_csv(x_train) #x_train  ('X_train_ME.csv')
-    #df_testres = pd.read_csv(x_test) #x_test  ('X_test_ME.csv')
-    comb = [x_train, x_test]
-    df_overall = pd.concat(comb)
-    df_overall.reset_index(inplace=True)
-    df_overall.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
-    df_overall['Date'] = pd.to_datetime(df_overall['Date'])
-    df_temp = df_overall.sort_values(by=['Date'])
-    df_temp2 = df_temp[["Date", "T10Y3M", "EMRATIO_MEDWAGES", "EMRATIO", "GDPC1", "MEDCPI", "MEDCPI_PPIACO", "HD_index", "shifted_target"]]
-    df_temp2.reset_index(inplace=True)
-    df_fin = df_temp2[["Date", "T10Y3M", "EMRATIO_MEDWAGES", "EMRATIO", "GDPC1", "MEDCPI", "MEDCPI_PPIACO", "HD_index", "shifted_target"]]
-    # df_fin2 = df_fin.set_index('Date')
+    #import y val
+    file_y_test = open(y_test, "rb") #"macro_y_test_pickle"
+    y_test_df = pickle.load(file_y_test)
+    file_y_train = open(y_train, "rb") #"macro_y_train_pickle"
+    y_train_df = pickle.load(file_y_train)
+
+    comb_y = [y_train_df, y_test_df]
+    df_overall_y = pd.concat(comb_y)
+    df_overall_y.reset_index(inplace=True)
+    df_overall_y.rename(columns={"index": "Date"}, inplace = True)
+    df_temp_y = df_overall_y.sort_values(by=['Date'])
+    df_temp_y.reset_index(inplace=True)
+    df_fin_y = df_temp_y[["Date", "target"]]
+    
+    #import feature (X) val
+    file_X_test = open(x_test, "rb") #"macro_X_test_pickle"
+    X_test_df = pickle.load(file_X_test)
+    file_X_train = open(x_train, "rb") #"macro_X_train_pickle"
+    X_train_df = pickle.load(file_X_train)
+
+    comb_X = [X_train_df, X_test_df]
+    df_overall_X = pd.concat(comb_X)
+    df_overall_X.reset_index(inplace=True)
+    df_overall_X.rename(columns={"index": "Date"}, inplace = True)
+    df_temp_X = df_overall_X.sort_values(by=['Date'])
+    df_temp_X.reset_index(inplace=True)
+    df_fin_X = df_temp_X[["Date", "T10Y3M", "EMRATIO_MEDWAGES", "EMRATIO", "GDPC1", "MEDCPI", "MEDCPI_PPIACO", "HD_index", "shifted_target"]]
     
     #merging feature and predicted data
-    df_plot = pd.merge(df_fin, df_fin_pred, on="Date")
-    # df_plot_fin = df_plot.set_index('Date')
-    df_plot['Date'] = df_plot['Date'] - pd.tseries.offsets.MonthEnd(-1)
+    df_plot = pd.merge(df_fin_X, df_fin_y, on="Date")
+    
+    ## ADD IN Date manipulation in necessary##
+    return df_plot
+
+def import_modify_pickle_overall_ts(y_train, y_test, pred_train, pred_test):
+    
+    #Predicted Value
+    file_test_pred = open(pred_test, "rb") #"macro_test_pred_pickle"
+    test_pred_df = pickle.load(file_test_pred)
+    file_train_pred = open(pred_train, "rb") #"macro_train_pred_pickle"
+    train_pred_df = pickle.load(file_train_pred)
+    comb_pred = [train_pred_df, test_pred_df]
+    df_pred = pd.concat(comb_pred)
+    df_pred.reset_index(inplace=True)
+    df_pred.rename(columns={"index": "Date", "Federal Funds Rate": "Predicted_Rate"}, inplace = True)
+    df_temp_pred = df_pred.sort_values(by=['Date'])
+    df_temp_pred.reset_index(inplace=True)
+    df_fin_pred = df_temp_pred[["Date", "Predicted_Rate"]]
+    df_fin_pred['Date'] = df_fin_pred['Date'].astype(str)
+    
+    #Actual Value
+    file_y_test = open(y_test, "rb") #"macro_y_test_pickle"
+    y_test_df = pickle.load(file_y_test)
+    file_y_train = open(y_train, "rb") #"macro_y_train_pickle"
+    y_train_df = pickle.load(file_y_train)
+    comb_y = [y_train_df, y_test_df]
+    df_overall_y = pd.concat(comb_y)
+    df_overall_y.reset_index(inplace=True)
+    df_overall_y.rename(columns={"index": "Date", "target": "Actual_Rate"}, inplace = True)
+    df_temp_y = df_overall_y.sort_values(by=['Date'])
+    df_temp_y.reset_index(inplace=True)
+    df_fin_y = df_temp_y[["Date", "Actual_Rate"]]
+    df_fin_y['Date'] = df_fin_y['Date'].astype(str)
+    
+    #Merge
+    df_plot = pd.merge(df_fin_y, df_fin_pred, on="Date")
+    
     return df_plot
 
 #final
-def import_modify_pickle_ms_main(file_st, file_mins, file_news):
-    #Statement
-    st_file = open(file_st, "rb") #"st_df.pickle"
-    st_df = pickle.load(st_file)
-    st_df_to_comb = st_df[["date", "Scaled Score"]]
-    st_df_to_comb['date'] = st_df_to_comb['date'] - pd.tseries.offsets.MonthEnd(-1)    
-    st_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_Statement"}, inplace = True)
+def import_modify_pickle_ms_main(file_final):
     
-    #Minutes
-    mins_file = open(file_mins, "rb") #"mins_df.pickle"
-    mins_df = pickle.load(mins_file)
-    mins_df_to_comb = mins_df[["date", "Scaled Score"]]
-    mins_df_to_comb['date'] = mins_df_to_comb['date'] - pd.tseries.offsets.MonthEnd(-1)    
-    mins_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_Minutes"}, inplace = True)
+    ## Read from final pickle
+    score_file = open(file_final, "rb") #"final_df.pickle"
+    score_df = pickle.load(score_file)
+    score_df.rename(columns={"date": "Date_Full"}, inplace = True)
 
-    #News
-    news_file = open(file_news, "rb") #"news_df.pickle"
-    news_df = pickle.load(news_file)
-    news_df_to_comb = news_df[["date", "Scaled Score"]] 
-    news_df_to_comb.rename(columns={"date": "Date", "Scaled Score": "Score_News"}, inplace = True)
-    news_df_to_comb = news_df_to_comb[1:]
-    
-    #Join Statement and Minutes
-    df_temp = pd.merge(st_df_to_comb, mins_df_to_comb, on="Date", how='inner')
-    
-    
-    #Join df_temp and News
-    df = pd.merge(df_temp, news_df_to_comb, on="Date", how='inner')    
+    datel = []
+    for d in score_df.Date_Full:
+        datel.append(d.strftime("%Y-%m"))
+
+    score_df['Date'] = datel
+
+    dates = []
+    for x in score_df.Date_Full:
+        dates.append(x.strftime("%B %Y"))
+    score_df['Date_Show'] = dates
+
+    df = score_df[["Date", "Date_Full", "Date_Show", "Score_Statement", "Score_Minutes", "Score_News"]]
     
     #Add Sentiments
     #Statement
@@ -289,20 +331,21 @@ def import_modify_pickle_ms_main(file_st, file_mins, file_news):
     return df
 
 
-### gmond add ur data loader function here to read from analytics folder
-
 #helper function
 def guess_date(string):
-    for fmt in ["%d/%m/%y"]:
+    for fmt in ["%Y-%m-%d"]:
         try:
             return datetime.datetime.strptime(string, fmt).date()
         except ValueError:
             continue
     raise ValueError(string)
 
-def clean_fff(fff_data):
+def import_modify_csv_fff(file):
+    df = pd.read_csv(file) 
+    
+    df.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
+
     #Changing date format
-    df = fff_data
     newdate = []
     for d in df.Date:
         newdate.append(guess_date(d).strftime("%Y-%m-%d"))

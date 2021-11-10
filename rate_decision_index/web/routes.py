@@ -19,26 +19,27 @@ os.makedirs(uploads_dir, exist_ok=True)
 
 main = Main()
 
-
 # Loading raw data and clean it
 
 #loading and clean data
 #market
-statement_df, mins_df, news_df = utils.load_market_data()
-market_data_cleaned = utils.import_modify_pickle_ms_main(statement_df, mins_df, news_df)
+final_dir = utils.load_market_data()
+market_data_cleaned = utils.import_modify_pickle_ms_main(final_dir)
 market_ngram_statement, market_ngram_min, market_ngram_news = utils.load_ngram_market_data()
 
 
 #macro
 gdp_data, employment_data, inflation_data = utils.load_macro_data()
-macro_ts_train, macro_ts_test, macro_X_train, macro_X_test = utils.load_macro_ts()
-macro_ts = utils.clean_macro_ts(macro_ts_train, macro_ts_test)
+macro_y_train, macro_y_test, macro_x_train, macro_x_test = utils.load_dir_macro_values()
+macro_df = utils.clean_maindashboard_macro(macro_y_train, macro_y_test, macro_x_train, macro_x_test)
+macro_ts_train, macro_ts_test, macro_pred_train, macro_pred_test = utils.load_dir_macro_ts()
+macro_ts_df = utils.import_modify_pickle_overall_ts(macro_ts_train, macro_ts_test, macro_pred_train, macro_pred_test)
 macro_main_data = utils.load_macro_model_data()
 
 
 #fedfundfuture
-fff_data = utils.load_fff_data()
-fff_data_cleaned = utils.clean_fff(fff_data)
+fff_dir = utils.load_fff_data()
+fff_data_cleaned = utils.import_modify_csv_fff(fff_dir)
 #fedfundfuture vs fomc dot plot
 fff_preds, fff_fomc = utils.load_fff_vs_fomc_data()
 
@@ -46,7 +47,7 @@ fff_preds, fff_fomc = utils.load_fff_vs_fomc_data()
 gauge_final_data, fff_prob_data = utils.load_gauge_data()
 
 #home page
-macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
+#macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
 
 
 ###gmond add data loader here and cleaner if needed here 
@@ -61,7 +62,7 @@ def plot_main_dashboard():
     if request.method == 'POST':
         date = request.form['date-mm']
         #ploting
-        
+        print('DATE IS HERE', date)
         #market
         plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date)
         plot_market_average = home_plot.plot_market_average(market_data_cleaned, date)
@@ -93,8 +94,8 @@ def plot_main_dashboard():
         #TO CHANGE DEFFAULT DATES
         #ploting
         #market
-        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09-30')
-        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
+        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09')
+        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09')
         
         
         #macro
@@ -147,6 +148,7 @@ def plot_home():
     if request.method == 'POST':
         date = request.form['date-mm']
         #ploting
+        print('DATE IS HERE', date)
         
         #market
         plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date)
@@ -154,13 +156,13 @@ def plot_home():
         
         
         #macro
-        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date)
-        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date)
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_df, date)
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_df, date)
         #fff
-        plot_fff = home_plot.plot_fff(fff_data)
+        plot_fff = home_plot.plot_fff(fff_data_cleaned)
 
         # overall 
-        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts_df)
         ### gmond update data source here 
         plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date)
 
@@ -178,21 +180,20 @@ def plot_home():
         #TO CHANGE DEFFAULT DATES
         #ploting
         #market
-        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, date='2004-09-30')
-        plot_market_average = home_plot.plot_market_average(market_data_cleaned, date='2004-09-30')
+        plot_market_senti_main = home_plot.plot_market(market_data_cleaned, '2008-09')
+        plot_market_average = home_plot.plot_market_average(market_data_cleaned, '2008-09')
         
         
         #macro
-        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_maindashboard_data, date='2004-09-30')
-        macro_pie_chart = home_plot.plot_contributions_pie(macro_maindashboard_data, date='2004-09-30')
-        
+        macro_maindashboard_plot = home_plot.plot_macro_maindashboard(macro_df, '2008-09')
+        macro_pie_chart = home_plot.plot_contributions_pie(macro_df, '2008-09')
         #fff
-        plot_fff = home_plot.plot_fff(fff_data)
+        plot_fff = home_plot.plot_fff(fff_data_cleaned)
 
-        # overall
-        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts)
+        # overall 
+        macro_ts_plot = home_plot.plot_fed_rates_ts(macro_ts_df)
         ### gmond update data source here 
-        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, date='2004-09-30')
+        plot_gauge = home_plot.plot_gauge(gauge_final_data, fff_prob_data, '2008-09')
 
         context = {
                 "plot_market_senti_main": plot_market_senti_main,
@@ -254,19 +255,20 @@ def plot_macroeconomic_indicators():
     plot_employment_index = macro_plot.plot_employment_index(employment_data)
     plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
     plot_main_model = macro_plot.plot_main_plot(macro_main_data)
-    plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
+    #plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
     context = {'plot_gdp_index': plot_gdp_index, 
                'plot_employment_index': plot_employment_index, 
                'plot_inflation_index': plot_inflation_index, 
                'plot_main_model': plot_main_model, 
-               'plot_indicators_ts':plot_indicators_ts}
+               #'plot_indicators_ts':plot_indicators_ts
+               }
     return render_template('macroeconomic-indicators.html', context=context)
 
     
 @app.route("/fedfundfutures")
 def plot_fedfundfutures():
     #ploting - add plots here and in context
-    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data)
+    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data_cleaned)
     plot_futures_pred_vs_fomc = fedfundfutures_plot.plot_futures_pred_vs_fomc(fff_preds, fff_fomc)
     context = {'plot_fff_results': plot_fff_results,
                'plot_futures_pred_vs_fomc': plot_futures_pred_vs_fomc} 
