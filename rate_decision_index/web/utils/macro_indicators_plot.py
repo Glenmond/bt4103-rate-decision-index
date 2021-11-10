@@ -13,6 +13,17 @@ import plotly.graph_objs as go
 from models.macro_model import MacroModel, MacroData
 from models import update_saved_data
 
+# Configure html for dashboard
+html_layout = """
+    {%app_entry%}
+    <footer>
+        {%config%}
+        {%scripts%}
+        {%renderer%}
+    </footer>
+
+"""
+
 conf_int_95_line_colour = 'rgba(255, 0, 0, 0.1)'
 conf_int_99_line_colour = 'rgba(0, 0, 255, 0.1)'
 
@@ -32,6 +43,9 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
 
     dash_app = dash.Dash(server=server, routes_pathname_prefix="/dashapp/",)
     fig = go.Figure()
+
+    # Custom HTML layout
+    dash_app.index_string = html_layout
 
     # training data
     training_data = macro_data.X_train.copy().append(macro_data.X_val).sort_index()
@@ -87,23 +101,29 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
         yaxis_title='Federal Funds Rate')
 
     dash_app.layout = html.Div([
-                    dcc.Graph(id='plot', figure=fig),
+                    dcc.Graph(id='plot', figure=fig, style={'display': 'inline-block',
+                                                            'height':'75vh',
+                                                            'width': '100%'
+                                                            }),
                     # slider
-                    html.P([
+                    html.Div([
                         html.Label("Coefficient"),
                         dcc.Slider(id = 'slider',
-                                        #marks = {i : i/10 for i in range(0, 10)},
                                         step = 0.01,
                                         min = -2,
                                         max = 2,
                                         value = 1.68,
-                                        tooltip={"placement": "bottom", "always_visible": True},),
+                                        tooltip={"placement": "bottom", "always_visible": True},
+                                        ),
                         html.P(id='metrics')], 
-                    style = {'width' : '80%',
+                    style = {'width' : '100%',
                             'fontSize' : '20px',
-                            'padding-left' : '100px',
-                            'display': 'inline-block'},),                   
-    ])
+                            'padding' : '0 0 0 2%',
+                            'display': 'inline-block',
+                            'height': '25vh',
+                            'background-color': 'white'
+                            },),                   
+    ], style={'max-height': '100vh'})
 
     # Initialize callbacks
     init_callbacks(dash_app, macro_data, training_data, y_train_to_plot, y_perf)
