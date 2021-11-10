@@ -3,20 +3,24 @@ import pickle
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-from macro_model.macroeconomics_model import MacroData, MacroModel
+try:
+    from macro_model.macroeconomics_model import MacroData, MacroModel
+except ModuleNotFoundError: 
+    from .macro_model.macroeconomics_model import MacroData, MacroModel
+    
 try:
     from extract import fetch_data
 except ModuleNotFoundError:
     from .extract import fetch_data
 
-def update_saved_data(path_to_folder = "./data/macroeconomic_indicators_data/"):
+def update_saved_data(path_to_folder = "./data/macroeconomic_indicators_data/", path_to_HD_folder = './data/sentiment_data/historical/'):
     data = fetch_data()
 
     # Save the data as a pickle
     data.to_pickle(path_to_folder + 'macro_data_pickle', protocol = 4)
 
     # Preprocess the data, add in the HD sentiment index and use it to fit the model
-    macro_data = MacroData(data)
+    macro_data = MacroData(data, path_to_HD_pickle=path_to_HD_folder)
 
     # fit the data on a base Linear Regression model to get the best coefficient for sensitivity analysis. 
     reg = LinearRegression().fit(macro_data.X_train, macro_data.y_train)
