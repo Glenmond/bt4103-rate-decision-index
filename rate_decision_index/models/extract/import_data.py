@@ -183,10 +183,11 @@ def download_data(docs, from_year):
     docs.pickle_dump_df(filename=f"{batch_id}_{docs.content_type}" + ".pickle")
 
 
-def download_fed_futures_historical():
+def download_fed_futures_historical(path):
     # Futures: full historical + forward data
     # download from barchart
-    futures = pd.read_csv("../data/fed_futures_data/raw_data/historical-prices.csv")
+    full_path = path + "/raw_data/historical-prices.csv"
+    futures = pd.read_csv(full_path)
     futures = futures[:-1]
     futures['Exp Date'] = pd.to_datetime(futures['Exp Date'])
     futures = futures.set_index("Exp Date")

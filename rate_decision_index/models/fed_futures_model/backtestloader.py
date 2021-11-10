@@ -6,7 +6,8 @@ import yfinance as yf
 from models.extract.import_data import download_fed_futures_historical, download_fomc_dates
 
 class BacktestLoader():
-    def __init__(self):
+    def __init__(self, path):
+        self.path = path
         self.futures = self.load_futures_historical()
         self.fomc_dates = self.get_fomc_dates()
         self.models = {}
@@ -29,7 +30,7 @@ class BacktestLoader():
     def load_futures_historical(self):
         # Futures: full historical + forward data
         # download from barchart
-        futures = download_fed_futures_historical()        
+        futures = download_fed_futures_historical(self.path)        
         return futures
     
     def load_meeting_futures_data(self, meeting_date,period='max'):
