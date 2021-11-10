@@ -255,19 +255,20 @@ def plot_macroeconomic_indicators():
     plot_employment_index = macro_plot.plot_employment_index(employment_data)
     plot_inflation_index = macro_plot.plot_inflation_index(inflation_data)
     plot_main_model = macro_plot.plot_main_plot(macro_main_data)
-    plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
+    #plot_indicators_ts = macro_plot.plot_indicators_ts(macro_maindashboard_data ) 
     context = {'plot_gdp_index': plot_gdp_index, 
                'plot_employment_index': plot_employment_index, 
                'plot_inflation_index': plot_inflation_index, 
                'plot_main_model': plot_main_model, 
-               'plot_indicators_ts':plot_indicators_ts}
+               #'plot_indicators_ts':plot_indicators_ts
+               }
     return render_template('macroeconomic-indicators.html', context=context)
 
     
 @app.route("/fedfundfutures")
 def plot_fedfundfutures():
     #ploting - add plots here and in context
-    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data)
+    plot_fff_results = fedfundfutures_plot.plot_fff_results(fff_data_cleaned)
     plot_futures_pred_vs_fomc = fedfundfutures_plot.plot_futures_pred_vs_fomc(fff_preds, fff_fomc)
     context = {'plot_fff_results': plot_fff_results,
                'plot_futures_pred_vs_fomc': plot_futures_pred_vs_fomc} 

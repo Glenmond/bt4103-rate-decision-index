@@ -80,9 +80,9 @@ def load_macro_ts():
     return df_trainres, df_testres, df_x_train, df_x_test
     
 def load_macro_data():
-    gdp_sub_index = pd.read_csv("web/data/macro_gdp_data.csv")
-    employment_sub_index = pd.read_csv("web/data/macro_employment_data.csv")
-    inflation_sub_index = pd.read_csv("web/data/macro_inflation_data.csv")
+    gdp_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_gdp_data.csv")
+    employment_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_employment_data.csv")
+    inflation_sub_index = pd.read_csv("models/data/macroeconomic_indicators_data/macro_inflation_data.csv")
     return gdp_sub_index, employment_sub_index, inflation_sub_index
 
 def load_macro_model_data():
