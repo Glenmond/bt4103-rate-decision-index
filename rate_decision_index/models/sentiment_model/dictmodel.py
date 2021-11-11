@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
-from config import negate, lmdict
+from models.sentiment_model.config import negate, lmdict
 from pandas.tseries.offsets import MonthEnd
 from functools import reduce
 
@@ -293,7 +293,7 @@ class DictionaryModel:
         # rename columns
         st_df.rename(columns = {"Scaled Score" : "Score_Statement", "Scaled Score DB" : "Score_Statement_DB"}, inplace=True)
         mins_df.rename(columns = {"Scaled Score" : "Score_Minutes", "Scaled Score DB" : "Score_Minutes_DB"}, inplace=True)
-        news_df.rename(columns = {"Scaled Score" : "Score_News", "Scaled Score DB" : "Score_Statement_News"}, inplace=True)
+        news_df.rename(columns = {"Scaled Score" : "Score_News", "Scaled Score DB" : "Score_News_DB"}, inplace=True)
 
         dfs = [news_df, mins_df, st_df]
         df_final = reduce(lambda left,right: pd.merge(left,right,on='date', how="left"), dfs)

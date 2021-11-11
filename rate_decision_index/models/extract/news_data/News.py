@@ -12,10 +12,10 @@ apikey = os.getenv('NYTIMES_APIKEY', 'w3R4zcqQEA87fNdWNj866OzJ03SvgOwu')
 
 class News():
 
-    def __init__(self):
+    def __init__(self, base_dir='../data/sentiment_data/extract/'):
         # Set arguments to internal variables
         self.content_type = "news"
-        self.base_dir = '../data/sentiment_data/extract/' # '../data/db/pickle/extract/'
+        self.base_dir = base_dir # '../data/db/pickle/extract/'
         self.df = None
         self.start = None
         self.end = None

@@ -258,7 +258,7 @@ def download_fomc_dates():
 
         return df
 
-def import_sentiment_data(from_year, content_type='all'):
+def import_sentiment_data(from_year, content_type='all', base_dir='../data/sentiment_data/extract/'):
     content_type_all = ("statement", "minutes", "news", "all")
 
     if content_type not in content_type_all:
@@ -270,13 +270,13 @@ def import_sentiment_data(from_year, content_type='all'):
         return 
 
     if content_type == "all":
-        fomc = FomcStatement()
+        fomc = FomcStatement(base_dir=base_dir)
         download_data(fomc, from_year)
-        fomc = FomcMinutes()
+        fomc = FomcMinutes(base_dir=base_dir)
         download_data(fomc, from_year)
-        news = News()
+        news = News(base_dir=base_dir)
         download_data(news, from_year)
-
+        
     else:
         if content_type == "statement":
             docs = FomcStatement()
