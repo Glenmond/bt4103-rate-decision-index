@@ -25,8 +25,7 @@ def update_saved_data(path_to_folder = "./data/macroeconomic_indicators_data/", 
     # fit the data on a base Linear Regression model to get the best coefficient for sensitivity analysis. 
     reg = LinearRegression().fit(macro_data.X_train, macro_data.y_train)
     best_coef_val = reg.coef_[0][-1]
-    print(best_coef_val)
-
+    
     macro_model = MacroModel(macro_data, shift_coef = best_coef_val)
     macro_model.fit_data()
 
