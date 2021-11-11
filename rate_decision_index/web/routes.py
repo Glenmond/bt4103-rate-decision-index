@@ -53,6 +53,14 @@ fff_preds, fff_fomc = utils.load_fff_vs_fomc_data()
 # gauge
 gauge_final_data, fff_prob_data = utils.load_gauge_data()
 
+# Save Pickle for Main Page in Dashboard
+market_data_cleaned.to_pickle(f"./web/utils/pickle/market_data_cleaned.pickle")
+macro_df.to_pickle(f"./web/utils/pickle/macro_df.pickle")
+fff_data_cleaned.to_pickle(f"./web/utils/pickle/fff_data_cleaned.pickle")
+macro_ts_df.to_pickle(f"./web/utils/pickle/macro_ts_df.pickle")
+gauge_final_data.to_pickle(f"./web/utils/pickle/gauge_final_data.pickle")
+fff_prob_data.to_pickle(f"./web/utils/pickle/fff_prob_data.pickle")
+
 #home page
 #macro_maindashboard_data = utils.clean_maindashboard_macro(macro_ts_train, macro_ts_test, macro_X_train, macro_X_test )
 
