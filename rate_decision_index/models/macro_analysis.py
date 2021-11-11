@@ -75,7 +75,6 @@ def make_macro_plot(path_to_pickle_files = './data/macroeconomic_indicators_data
                     fill='tonexty', line_color=conf_int_95_line_colour, 
                     fillcolor=conf_int_95_line_colour, name='95% Confidence Interval'))
 
-
     conf_int_99 = y_pred_res.summary_frame(0.01)
     conf_int_99_upper = conf_int_99['mean_ci_upper']
     conf_int_99_lower = conf_int_99['mean_ci_lower']

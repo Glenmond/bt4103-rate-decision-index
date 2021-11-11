@@ -10,6 +10,8 @@ import requests
 import re
 from fredapi import Fred
 
+from sklearn.impute import KNNImputer
+
 try:
     from fomc_data.FomcStatement import FomcStatement
     from fomc_data.FomcMinutes import FomcMinutes
@@ -99,7 +101,6 @@ def fetch_data(ref_date = datetime.datetime.today()):
     }
     maturity_minus_three_month = ('T10Y3M', maturity_minus_three_month_params)
 
-
     indicators = [
         commodities,
         real_gdp,
@@ -160,10 +161,13 @@ def fetch_data(ref_date = datetime.datetime.today()):
     # If there is any missing data, we drop the entire row, rather than imputing. This is because we want to reduce the error when doing training
     # Imputation allows us to 'impute' based on the last observed data, but this increases the error because we dont know what the ground truth data is
     # We want to reduce the error in our training since the prediction is so high stakes. This effect is a lot worse if there are any shocks in the data.
-    df = df.dropna(how='any')
+    #df = df.dropna(how='any')
 
     # DO DATA IMPUTATION FOR POSSIBLE NAN VALUES
     #df = df.fillna(method="ffill")
+    #imputer = KNNImputer(n_neighbors=6)
+    #df = pd.DataFrame(imputer.fit_transform(df),index=df.index,columns=df.columns)
+
 
     # remove outliers
     # z_scores = zscore(df)
