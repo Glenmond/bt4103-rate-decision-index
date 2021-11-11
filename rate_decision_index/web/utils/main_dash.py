@@ -46,13 +46,13 @@ import json
 from werkzeug.utils import secure_filename
 
 # Loading raw data and clean it
-f = open("market_data_cleaned.pickle", "rb")
+f = open("./web/utils/market_data_cleaned.pickle", "rb")
 market_data_cleaned = pickle.load(f)
 
-f = open("macro_df.pickle", "rb")
+f = open("./web/utils/macro_df.pickle", "rb")
 macro_df = pickle.load(f)
 
-f = open("fff_data_cleaned.pickle", "rb")
+f = open("./web/utils/fff_data_cleaned.pickle", "rb")
 fff_data_cleaned = pickle.load(f)
 
 date = '2008-09'
@@ -65,11 +65,19 @@ def get_average_sentiment(market_data, date):
     
     return ((state_num+min_num+news_num) / 3)
 
+html_layout = """
+    {%app_entry%}
+    <footer>
+        {%config%}
+        {%scripts%}
+        {%renderer%}
+    </footer>
 
-def make_home_plot(date = date):
-    
-            
-    app = dash.Dash()
+"""
+
+def make_home_plot(server, date = date):
+    app =dash.Dash(server=server, routes_pathname_prefix="/home-plot-dash/",)
+    app.index_string = html_layout
 
     # Initialize figure with subplots
     # fig = make_subplots(
@@ -477,6 +485,9 @@ def make_home_plot(date = date):
                         dcc.Graph(figure=fig2)],
                         style = {'width' : '100%',
                                 'max-width': '100%',
+                                'max-height':'30%',
+                                'height':'45%',
+                                'max-height':'45%',
                                 'fontSize' : '20px',
                                 # 'padding-left' : '100px',
                                 'margin': 0,
@@ -487,6 +498,8 @@ def make_home_plot(date = date):
                         dcc.Graph(figure=fig4)],
                         style = {'width' : '100%',
                                 'max-width': '100%',
+                                'height':'45%',
+                                'max-height':'45%',
                                 'fontSize' : '20px',
                                 # 'padding-left' : '100px',
                                 'margin': 0,
@@ -496,13 +509,15 @@ def make_home_plot(date = date):
                         dcc.Graph(figure=fig5)],
                         style = {'width' : '100%',
                                 'max-width': '100%',
+                                'height':'45%',
+                                'max-height':'45%',
                                 'fontSize' : '20px',
                                 # 'padding-left' : '100px',
                                 'margin': 0,
                                 'display': 'inline-block'},),
                     
-    ], style = {'display': 'flex', 'flex-direction': 'row', 'width' : "100%"}  )
-    return app
+    ], style = {'display': 'flex', 'flex-direction': 'row', 'width' : "100vh",'max-width':'100vh','height':'100vh','max-height': '100vh'}  )
+    return app.server
 
     
 
