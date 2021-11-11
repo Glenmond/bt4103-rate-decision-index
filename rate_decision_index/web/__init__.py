@@ -10,5 +10,3 @@ with app.app_context():
     from .utils.macro_indicators_plot import init_dashboard
 
     app = init_dashboard(app)
-
-
