@@ -35,6 +35,7 @@ import os
 
 # IMPORT ALL THE DATASET
 from altair import Chart, X, Y, Axis, Data, DataFormat
+from pandas.tseries.offsets import MonthEnd
 import pandas as pd
 import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
@@ -45,17 +46,26 @@ from wtforms.validators import DataRequired
 import json
 from werkzeug.utils import secure_filename
 
-# Loading raw data and clean it
-f = open("./web/utils/market_data_cleaned.pickle", "rb")
+# Loading Raw Data For Main Dashboard Charts
+f = open("./web/utils/pickle/market_data_cleaned.pickle", "rb")
 market_data_cleaned = pickle.load(f)
 
-f = open("./web/utils/macro_df.pickle", "rb")
+f = open("./web/utils/pickle/macro_df.pickle", "rb")
 macro_df = pickle.load(f)
 
-f = open("./web/utils/fff_data_cleaned.pickle", "rb")
+f = open("./web/utils/pickle/fff_data_cleaned.pickle", "rb")
 fff_data_cleaned = pickle.load(f)
 
-date = '2008-09'
+f = open("./web/utils/pickle/gauge_final_data.pickle", "rb")
+gauge_final_data = pickle.load(f)
+
+f = open("./web/utils/pickle/macro_ts_df.pickle", "rb")
+macro_ts_df = pickle.load(f)
+
+f = open("./web/utils/pickle/fff_prob_data.pickle", "rb")
+fff_prob_data = pickle.load(f)
+
+date = '2021-09'
 
 def get_average_sentiment(market_data, date):
     df_senti = market_data
@@ -79,10 +89,118 @@ def make_home_plot(server, date = date):
     app =dash.Dash(server=server, routes_pathname_prefix="/home-plot-dash/",)
     app.index_string = html_layout
 
-    # Initialize figure with subplots
-    # fig = make_subplots(
-    # rows=2, cols=3, subplot_titles=("Plot 1", "Plot 2", "Plot 3", "Plot 4", "Plot 5")
-    # )
+    """
+    Main Gauge
+    """
+    next_date = pd.to_datetime(date) + MonthEnd(2)
+    fig1 = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4),
+        domain = {'row': 0, 'column': 0},
+        title = {'text': "Rate Hike-Cut (%) for " + pd.to_datetime(next_date).strftime("%B %Y"), 'font': {'size': 30}},
+        delta = {'reference': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index-1).tolist()[0]]["Federal Funds Rate"]), 'increasing': {'color': "mediumseagreen"}},
+        gauge = {
+            'axis': {'range': [None, 6], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': "#401664"},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "gray",
+            'steps': [
+                {'range': [0.0, 0.60], 'color': 'forestgreen'},
+                {'range': [0.60, 1.2], 'color': 'limegreen'},
+                {'range': [1.2, 1.8], 'color': 'lightgreen'},
+                {'range': [1.8, 2.4], 'color': 'palegreen'},
+                {'range': [2.4, 3.0], 'color': 'floralwhite'},
+                {'range': [3.0, 3.6], 'color': 'rosybrown'},
+                {'range': [3.6, 4.2], 'color': 'lightcoral'},
+                {'range': [4.2, 4.8], 'color': 'indianred'},
+                {'range': [4.8, 5.4], 'color': 'firebrick'},
+                {'range': [5.4, 6.0], 'color': 'maroon'}],
+            'threshold': {
+                'line': {'color': "#401664", 'width': 4},
+                'thickness': 0.75,
+                'value': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4)}}))
+        
+    # fff probability
+    fig1.add_trace(go.Indicator(
+        mode = "number",
+        number = {'suffix': "%", "font":{"size":80}},
+        value = (((fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11"].index).tolist()[0]].Hike)*100).round(2)),
+        title = {'text':"Probability of Rate Change", 
+                 'font.size': 20, 
+                 'font.color': '#401664', 
+                 'font.family':'Times New Roman Bold'},
+        domain = {'row': 0, 'column': 1}))
+
+    # fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+    fig1.update_layout(
+        grid = {'rows': 1, 'columns': 2, 'pattern': "independent"},
+        paper_bgcolor = "white", 
+        font_family="Times New Roman Bold",
+        font_color="black",
+        title={
+            'y':0.95,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top', 
+            'font.size':15},
+        margin=dict(l=200, r=150, t=75, b=20))
+    """
+    Predicted Rate
+    """
+    df_plot = macro_ts_df
+    fig2 = go.Figure(data=[go.Scatter(
+        name='Actual Rate',
+        x=df_plot.Date.tolist(),
+        y=df_plot.Actual_Rate.tolist(),
+        marker_color='#D71C2B' #change color of line
+    ),
+        go.Scatter(
+        name='Predicted Rate',
+        x=df_plot.Date.tolist(),
+        y=df_plot.Predicted_Rate.tolist(),
+        marker_color='#401664' #change color of line
+    )
+    ])
+
+    fig2.update_layout(
+        updatemenus=[
+            dict(
+                active=0,
+                buttons=list([
+                    dict(label="Both",
+                         method="update",
+                         args=[{"visible": [True, True]},
+                               {"title": "Time Series of Both Actual and Predicted Federal Funds Rates"}]),
+                    dict(label="Actual",
+                         method="update",
+                         args=[{"visible": [True, False]},
+                               {"title": "Time Series of Actual Federal Funds Rates",
+                                }]),
+                    dict(label="Predicted",
+                         method="update",
+                         args=[{"visible": [False, True]},
+                               {"title": "Time Series of Predicted Federal Funds Rates",
+                                }]),
+                ]),
+            )
+        ])
+
+    fig2.update_layout(
+        font_family="Courier New",
+        font_color="black",
+        title_font_family="Times New Roman Bold",
+        title_font_color="black",
+        title_text='Time Series of Both Actual and Predicted Federal Funds Rates', 
+        title_x=0.5,
+        title_font_size = 20,
+        plot_bgcolor = 'white', autosize=True
+    )
+
+    fig2.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig2.update_xaxes(rangeslider_visible=True)
+
 
     """
     Market Average Sentiment
@@ -97,21 +215,21 @@ def make_home_plot(server, date = date):
     elif avg == 0:
         word = "Overall Neutral"
     
-    fig1 = go.Figure()
-    fig1.add_trace(go.Indicator(
+    fig3 = go.Figure()
+    fig3.add_trace(go.Indicator(
         title={
             'text': "Average Sentiment Score for " + pd.to_datetime(date).strftime("%B %Y"), 'font.size': 20},
         mode = "delta",
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 0, 'column': 0}))
     
-    fig1.add_trace(go.Indicator(
+    fig3.add_trace(go.Indicator(
         mode = "number",
         number={"font":{"size":80}},
         value = avg,
         domain = {'row': 1, 'column': 0}))
     
-    fig1.add_trace(go.Indicator(
+    fig3.add_trace(go.Indicator(
         title = {'text': "<"+word+">", 
                  'font.size': 20,
                  'font.family': 'Courier New Bold',
@@ -122,7 +240,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 2, 'column': 0}))
     
     
-    fig1.update_layout(
+    fig3.update_layout(
         grid = {'rows': 3, 'columns': 1, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
@@ -131,7 +249,7 @@ def make_home_plot(server, date = date):
         margin=dict(l=8, r=8, t=25, b=5),
         autosize=True
         )
-    fig1.update_xaxes(automargin=True)
+    fig3.update_xaxes(automargin=True)
 
     """
     Sentiment Score
@@ -139,9 +257,9 @@ def make_home_plot(server, date = date):
     #currently is static and hard coded. 
     # need to implment date picker for entire dashboard for home page
     df_senti = market_data_cleaned
-    fig2 = go.Figure()
+    fig4 = go.Figure()
     #Statement
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Statement).round(4),
         number={"font":{"size":40}},
@@ -152,7 +270,7 @@ def make_home_plot(server, date = date):
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
     
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Statement_Sentiments+">", 
                  'font.size': 17,
                  'font.family': 'Courier New', 
@@ -163,7 +281,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 1, 'column': 1}))
 
     #Minutes
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_Minutes).round(4),
         number={"font":{"size":40}},
@@ -174,7 +292,7 @@ def make_home_plot(server, date = date):
                  'font.family':'Courier New'},
         domain = {'row': 3, 'column': 0}))
     
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Minutes_Sentiments+">", 
                  'font.size': 17,
                  'font.color': '#401664',
@@ -185,7 +303,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 3, 'column': 1}))
 
     #News
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         mode = "number+delta",
         value = (df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].Score_News).round(4),
         number={"font":{"size":40}},
@@ -196,7 +314,7 @@ def make_home_plot(server, date = date):
                  'font.family':'Courier New'},
         domain = {'row': 5, 'column': 0}))
     
-    fig2.add_trace(go.Indicator(
+    fig4.add_trace(go.Indicator(
         title = {'text': "<"+df_senti.iloc[(df_senti.loc[df_senti.Date == date].index).tolist()[0]].News_Sentiments+">", 
                  'font.size': 17,
                  'font.color': '#401664',
@@ -207,7 +325,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 5, 'column': 1}))
 
     
-    fig2.update_layout(
+    fig4.update_layout(
         grid = {'rows': 6, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
@@ -221,7 +339,7 @@ def make_home_plot(server, date = date):
             'font.size':20},
         margin=dict(l=150, r=100, t=75, b=20),
         autosize=True,)
-    fig2.update_xaxes(automargin=True)
+    fig4.update_xaxes(automargin=True)
 
 
     """"
@@ -269,13 +387,13 @@ def make_home_plot(server, date = date):
     values = [abs(value_T10Y3M), abs(value_EMRATIO), abs(value_GDPC1), abs(value_MEDCPI), abs(value_HD_index), abs(value_shifted_target)]
     colors = ['#401664', '#D71C2B', '#EE2033', '#F78E99', '#FBC9CF', 'lavender']
 
-    fig3 = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
+    fig5 = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, 
                                  textfont = {'family':'Courier New', 'color':'black'},
                                  textfont_size=13,
                                  showlegend=True, 
                                  marker = dict(colors=colors,line=dict(color='#000000', width=0.4)))])
-    fig3.update_traces(textposition='outside', textinfo='percent')
-    fig3.update_layout(
+    fig5.update_traces(textposition='outside', textinfo='percent')
+    fig5.update_layout(
         paper_bgcolor = "white",
         font_color="black",
         title={
@@ -354,11 +472,11 @@ def make_home_plot(server, date = date):
 
     
     ## PLotting figures
-    fig4 = go.Figure()
+    fig6 = go.Figure()
 
 
     #T10Y3M Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_T10Y3M.round(4)),
         number={"font":{"size":40}},
@@ -370,7 +488,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 0, 'column': 0}))
 
     #EMRATIO Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_EMRATIO.round(4)),
         number={"font":{"size":40}},
@@ -382,7 +500,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 0, 'column': 1}))
 
     #GDP Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_GDPC1.round(4)),
         number={"font":{"size":40}},
@@ -394,7 +512,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 1, 'column': 0}))
 
     #MEDCPI Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_MEDCPI.round(4)),
         number={"font":{"size":40}},
@@ -406,7 +524,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 1, 'column': 1}))
 
     #HD index Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_HD_index.round(4)),
         number={"font":{"size":40}},
@@ -418,7 +536,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 2, 'column': 0}))
 
     #shifted target Indicator
-    fig4.add_trace(go.Indicator(
+    fig6.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_shifted_target.round(4)),
         number={"font":{"size":40}},
@@ -430,7 +548,7 @@ def make_home_plot(server, date = date):
         domain = {'row': 2, 'column': 1}))
 
     #Configure layout
-    fig4.update_layout(
+    fig6.update_layout(
         grid = {'rows': 3, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
@@ -445,7 +563,7 @@ def make_home_plot(server, date = date):
             'font.size': 20},
         margin=dict(l=50, r=50, t=100, b=15),
         autosize=True)
-    fig4.update_xaxes(automargin=True)
+    fig6.update_xaxes(automargin=True)
 
 
     """"
@@ -457,10 +575,10 @@ def make_home_plot(server, date = date):
     new_df_fff = df_fff.melt(id_vars=["Date"],
                              var_name="Basis Points",
                              value_name="Probability")
-    fig5 = px.bar(new_df_fff, x='Basis Points', y='Probability', animation_frame='Date', 
+    fig7 = px.bar(new_df_fff, x='Basis Points', y='Probability', animation_frame='Date', 
              color_discrete_sequence =['#401664']*len(new_df_fff))
     
-    fig5.update_layout(
+    fig7.update_layout(
         font_family="Courier New",
         font_color="black",
         title_font_family="Times New Roman Bold",
@@ -475,48 +593,78 @@ def make_home_plot(server, date = date):
         autosize=True
     )
     
-    fig5.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey', automargin=True)
-    fig5.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
+    fig7.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey', automargin=True)
+    fig7.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
 
     app.layout = html.Div([
-                    #first
-                    html.P([
-                        dcc.Graph(figure=fig1),
-                        dcc.Graph(figure=fig2)],
-                        style = {'width' : '100%',
-                                'max-width': '100%',
-                                'max-height':'30%',
-                                'height':'45%',
-                                'max-height':'45%',
-                                'fontSize' : '20px',
-                                # 'padding-left' : '100px',
-                                'margin': 0,
-                                'display': 'inline-block'},),  
-                    #second
-                    html.P([
-                        dcc.Graph(figure=fig3),
-                        dcc.Graph(figure=fig4)],
-                        style = {'width' : '100%',
-                                'max-width': '100%',
-                                'height':'45%',
-                                'max-height':'45%',
-                                'fontSize' : '20px',
-                                # 'padding-left' : '100px',
-                                'margin': 0,
-                                'display': 'inline-block'},),  
-                    #third
-                    html.P([
-                        dcc.Graph(figure=fig5)],
-                        style = {'width' : '100%',
-                                'max-width': '100%',
-                                'height':'45%',
-                                'max-height':'45%',
-                                'fontSize' : '20px',
-                                # 'padding-left' : '100px',
-                                'margin': 0,
-                                'display': 'inline-block'},),
+
+                    # Gauge + Prob
+                    dcc.Graph(figure=fig1, 
+                    style = {'width' : '100%',
+                            'height':'20%',
+                            'fontSize' : '20px',
+                            'margin' : 0,
+                            'display': 'inline-block'}
+                            
+                            ), 
+                    # Predicted Rate
+                    dcc.Graph(figure=fig2, 
+                    style = {'width' : '100%',
+                            'height':'30%',
+                            'fontSize' : '20px',
+                            # 'padding-left' : '100px',
+                            'display': 'inline-block'}
+                            
+                    ), 
                     
-    ], style = {'display': 'flex', 'flex-direction': 'row', 'width' : "100vh",'max-width':'100vh','height':'100vh','max-height': '100vh'}  )
+                    html.Div(children=[
+                        html.Div([
+                            #first
+                            html.P([
+                                dcc.Graph(figure=fig3),
+                                dcc.Graph(figure=fig4)],
+                                style = {'width' : '100%',
+                                        'max-width': '100%',
+                                        'max-height':'30%',
+                                        'height':'45%',
+                                        'max-height':'45%',
+                                        'fontSize' : '20px',
+                                        # 'padding-left' : '100px',
+                                        'margin': 0,
+                                        'display': 'inline-block'},),
+                            #second
+                            html.P([
+                                dcc.Graph(figure=fig5),
+                                dcc.Graph(figure=fig6)],
+                                style = {'width' : '100%',
+                                        'max-width': '100%',
+                                        'height':'45%',
+                                        'max-height':'45%',
+                                        'fontSize' : '20px',
+                                        # 'padding-left' : '100px',
+                                        'margin': 0,
+                                        'display': 'inline-block'},),
+                            #third
+                            html.P([
+                                dcc.Graph(figure=fig7)],
+                                style = {'width' : '100%',
+                                        'max-width': '100%',
+                                        'height':'45%',
+                                        'max-height':'45%',
+                                        'fontSize' : '20px',
+                                        # 'padding-left' : '100px',
+                                        'margin': 0,
+                                        'display': 'inline-block'},),],
+                        
+                            style = { 'display': 'flex', 'flex-direction': 'row', 'width' : "100%",'max-width':'100%','height':'100%','max-height': '100%'},),],
+                        style = {'width' : '100%',
+                                'height':'50%',
+                                'fontSize' : '20px',
+                                # 'padding-left' : '100px',
+                                'display': 'inline-block'},)
+                    
+                    
+    ], style = {'display': 'flex', 'flex-direction': 'column', 'width' : "100%",'max-width':'100%','height':'100vh','max-height': '100vh'})
     return app.server
 
     
