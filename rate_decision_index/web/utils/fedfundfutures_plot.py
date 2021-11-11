@@ -122,7 +122,7 @@ def plot_futures_pred_vs_fomc(predictions, fomc):
 
 
     fig.update_layout(annotations=annotations,  plot_bgcolor='white')
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGrey')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC')
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
