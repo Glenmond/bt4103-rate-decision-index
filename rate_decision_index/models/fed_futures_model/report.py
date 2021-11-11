@@ -13,8 +13,9 @@ from plotly.subplots import make_subplots
 
 
 class Report():
-    def __init__(self, result):
+    def __init__(self, result, path):
         self.result = result
+        self.path = path
 
     def generate_prediction_graphs(self, save=False):
         titles = ["Model Results"]  + list(y.strftime("%d %B %Y FOMC Meeting") for y in self.result.index)
@@ -79,9 +80,7 @@ class Report():
             title_text="Target Rate Predictions for FOMC Meetings",
         )
 
-        fig.show()
-
         today = datetime.now().strftime("%y%m%d")
         if save:
-            fig.write_image(f"../data/fed_futures_data/report/{today}_fff_report.pdf")
+            fig.write_image(f"{self.path}/report/{today}_fff_report.pdf")
         

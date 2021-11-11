@@ -7,9 +7,6 @@ import string
 import nltk
 import sys
 
-nltk.download("averaged_perceptron_tagger")
-nltk.download("wordnet")
-
 from datetime import datetime
 from pandas.tseries.offsets import MonthEnd
 from nltk.corpus import wordnet
@@ -62,9 +59,11 @@ stop = stopwords.words("english")
 
 
 class DataPreprocessor:
-    def __init__(self, data, batch_id):
+    def __init__(self, data, batch_id, path):
         self.batch_id = batch_id
+        self.path = path
         self.data = self.preprocess(data)  # dictionary of dfs
+
 
     def clean_text(self, text):
         """
@@ -233,6 +232,9 @@ class DataPreprocessor:
         """
         Data Cleaning and Preprocessing
         """
+        nltk.download("averaged_perceptron_tagger")
+        nltk.download("wordnet")
+        
         for k, df in data.items():
 
             if k in ["historical", "model", "vectorizer"]:
@@ -340,5 +342,5 @@ class DataPreprocessor:
         rename_dict = {"statements": "st", "minutes": "mins", "news": "news"}
 
         df.to_pickle(
-            f"../data/sentiment_data/preprocess/{self.batch_id}_{rename_dict[name]}_df.pickle"
+            f"{self.path}/preprocess/{self.batch_id}_{rename_dict[name]}_df.pickle"
         )

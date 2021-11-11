@@ -4,13 +4,13 @@ from calendar import monthrange
 from datetime import datetime,timedelta
 import re
 import numpy as np
-from backtestloader import BacktestLoader
-from fff_model import FederalFundsFuture
+from models.fed_futures_model.backtestloader import BacktestLoader
+from models.fed_futures_model.fff_model import FederalFundsFuture
 
 
 class Backtest():
-    def __init__(self):
-        self.loader = BacktestLoader()
+    def __init__(self, path):
+        self.loader = BacktestLoader(path)
     
     def load_month(self, meeting_date:datetime):
         ff_curr = self.loader.get_curr_data(meeting_date)
@@ -50,6 +50,7 @@ class Backtest():
         meeting_dates = self.loader.fomc_dates.loc[today:]
         all_predictions = {}
         pred_values = {}
+        raw_probs = {}
         for dt in meeting_dates.index:
             print(f"Loading: {dt} FOMC Meeting...")
             dt = pd.to_datetime(dt)
@@ -62,6 +63,8 @@ class Backtest():
 
             all_predictions[dt] = v
             pred_values[dt] = [fff.ffer_end]
+            raw_probs[dt] = probs
+        
         
         final_result = pd.DataFrame.from_dict(all_predictions).T
         final_result.columns = ['0-25 BPS','25-50 BPS','50-75 BPS',
@@ -71,7 +74,10 @@ class Backtest():
         pred_values = pd.DataFrame.from_dict(pred_values).T
         pred_values = pred_values.reset_index()
         pred_values.columns = ['Date', 'Prediction']
-        return final_result, pred_values
+
+        raw_probs = pd.DataFrame.from_dict(raw_probs).T.reset_index()
+        raw_probs.columns = ['Date', 'No Hike', 'Hike']
+        return final_result, pred_values, raw_probs
     
     def carry(self, sample,cap=1):
         result = sample.copy()

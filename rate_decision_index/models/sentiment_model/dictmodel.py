@@ -3,18 +3,19 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
-from config import negate, lmdict
+from models.sentiment_model.config import negate, lmdict
 from pandas.tseries.offsets import MonthEnd
 from functools import reduce
 
 
 class DictionaryModel:
-    def __init__(self, data, start_dt):
+    def __init__(self, data, start_dt, path):
         self.data = data  # dictionary of dataframes
         self.fitted_model = data["model"]  # stacked model with svm as baseline
         self.fitted_vectorizer = data["vectorizer"]  # tfid vectorizer
         self.start_dt = start_dt
         self.docs = ["statements", "minutes", "news"]
+        self.path = path
 
     def predict(self):
 
@@ -292,7 +293,7 @@ class DictionaryModel:
         # rename columns
         st_df.rename(columns = {"Scaled Score" : "Score_Statement", "Scaled Score DB" : "Score_Statement_DB"}, inplace=True)
         mins_df.rename(columns = {"Scaled Score" : "Score_Minutes", "Scaled Score DB" : "Score_Minutes_DB"}, inplace=True)
-        news_df.rename(columns = {"Scaled Score" : "Score_News", "Scaled Score DB" : "Score_Statement_News"}, inplace=True)
+        news_df.rename(columns = {"Scaled Score" : "Score_News", "Scaled Score DB" : "Score_News_DB"}, inplace=True)
 
         dfs = [news_df, mins_df, st_df]
         df_final = reduce(lambda left,right: pd.merge(left,right,on='date', how="left"), dfs)
@@ -318,4 +319,4 @@ class DictionaryModel:
         """
         print(f"===== save {name} to historical pickle =====".title())
         rename_dict = {"statements": "st", "minutes": "mins", "news": "news", "final": "final"}
-        df.to_pickle(f"../data/sentiment_data/historical/{rename_dict[name]}_df.pickle")
+        df.to_pickle(f"{self.path}/historical/{rename_dict[name]}_df.pickle")

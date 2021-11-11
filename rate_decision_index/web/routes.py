@@ -4,7 +4,6 @@ import numpy as np
 from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
 from web import app
 from web.utils import utils, home_plot, macro_plot, market_plot, fedfundfutures_plot
-from web.models.fff_model.main import Main
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
@@ -13,11 +12,19 @@ import json
 from werkzeug.utils import secure_filename
 import os
 
+from web.utils.paths import Path
+
+# models
+from models.fed_futures_model import run_main
+from models.macro_model.indicator_index_plots import collect_indicator_data
+from models.update_macro_data import update_saved_data
+from models.sentiment_model import run_sentiment_model
+
 # Setting data directory: saved to web/data
 uploads_dir = os.path.join(os.path.dirname(app.instance_path), 'web/data')
 os.makedirs(uploads_dir, exist_ok=True)
 
-main = Main()
+path = Path()
 
 # Loading raw data and clean it
 
@@ -124,7 +131,33 @@ def upload_file():
 
 @app.route("/runfff", methods = ['GET', 'POST'])
 def run_fff_model():
-    main.run_main()
+    data_path = path.fed_funds_data
+    run_main(path = data_path)
+    return render_template('model-run.html')
+
+@app.route('/run', methods = ['GET', 'POST'])
+def run_all_models():
+    # run FFF model
+    print("===== Running Federal Funds Model =====")
+    fed_funds_data_path = path.fed_funds_data
+    run_main(path = fed_funds_data_path)
+
+    # # collect Macroeconomic Indicators data for index breakdown
+    print("===== Running Macroindicators Breakdown =====")
+    macro_data_path = path.macroeconomic_indicators_data
+    collect_indicator_data(path = macro_data_path)
+
+    # run sentiment model
+    print("===== Running Market Consensus/Sentiment Model =====")
+    sentiment_data_path = path.sentiment_data
+    extract_path = path.sentiment_extract_data
+    run_sentiment_model(path=sentiment_data_path, extract_path=extract_path)
+
+    # update macro data 
+    print("===== Running Macroeconomic Model =====")
+    sentiment_hist_path = path.sentiment_hist_data
+    update_saved_data(path_to_folder=macro_data_path, path_to_HD_folder=sentiment_hist_path)
+
     return render_template('model-run.html')
 
 @app.route('/uploader', methods = ['GET', 'POST'])
