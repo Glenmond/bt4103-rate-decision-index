@@ -250,7 +250,7 @@ class MacroModel(Model):
             if series_id in ("LES1252881600Q"):  # align 5 lag
                 indicator = indicator.shift(-5)[:-5]
                 indicator.rename(columns={"LES1252881600Q": "MEDWAGES"}, inplace=True)
-            indicator= indicator.dropna()[-12:]
+            indicator= indicator.dropna()[-12:] # get 1 year of data first
             indicator = indicator.reset_index()
             indicator_name = indicator.columns[-1]
             df[indicator_name] = indicator[indicator_name]
