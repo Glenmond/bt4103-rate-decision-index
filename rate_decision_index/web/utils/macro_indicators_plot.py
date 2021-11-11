@@ -115,7 +115,7 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
                                         step = 0.01,
                                         min = -2,
                                         max = 2,
-                                        value = 1.68,
+                                        value = 1.65,
                                         tooltip={"placement": "bottom", "always_visible": True},
                                         ),
                         html.P(id='metrics')], 

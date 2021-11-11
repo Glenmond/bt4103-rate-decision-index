@@ -50,10 +50,9 @@ class MacroData():
         hd = hd[hd.index >= '2003-01']
         #hd = hd[hd.index <= '2021-04']
 
-        #hd_imputer = KNNImputer(n_neighbors=3)
+        #hd_imputer = KNNImputer(n_neighbors=7)
         #hd = pd.DataFrame(hd_imputer.fit_transform(hd), index=hd.index, columns=hd.columns)
         hd = hd.fillna(method="ffill")
-        
 
         # Combine the different sentiments by using harmonic mean
         hd['Score_Statement'] = MinMaxScaler().fit_transform(hd['Score_Statement'].values.reshape(-1,1))
@@ -91,7 +90,7 @@ class MacroData():
         self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
 
         # Impute
-        #imputer = KNNImputer(n_neighbors=6)
+        #imputer = KNNImputer(n_neighbors=7)
         #imputer.fit(X_train)
         #self.X_train = pd.DataFrame(imputer.transform(self.X_train), columns=self.X_train.columns, index=self.X_train.index)
         #self.X_val = pd.DataFrame(imputer.transform(self.X_val), columns=self.X_val.columns, index=self.X_val.index)
@@ -129,6 +128,7 @@ class MacroModel(Model):
     def __init__(self, data: MacroData, shift_coef = 1.7119430641311288):
         self.data = data
         self.scaler = data.scaler
+        self.imputer = data.imputer
         self.shift_coef = shift_coef
 
         # Initialize model results as None first
@@ -293,6 +293,8 @@ class MacroModel(Model):
         fed_fund_rate = fed_fund_rate[-13:]
         fed_fund_rate = fed_fund_rate.shift(1).dropna()
         df["shifted_target"] = fed_fund_rate.to_numpy()
+
+        
 
         # Add interactions
         df['MEDCPI_PPIACO'] = df['MEDCPI'] * df['PPIACO']
