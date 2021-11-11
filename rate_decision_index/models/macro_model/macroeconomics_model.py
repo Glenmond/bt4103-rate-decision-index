@@ -8,6 +8,7 @@ from scipy.stats.mstats import hmean
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
+from sklearn.impute import KNNImputer
 import statsmodels.api as sm
 
 from fredapi import Fred
@@ -33,6 +34,7 @@ class MacroData():
 
         # Initialise the scaler as None first
         self.scaler=None
+        self.imputer=None
 
         self.preprocess(path_to_HD_pickle)
 
@@ -46,7 +48,12 @@ class MacroData():
         hd = hd.drop("date", axis=1)
         # hd = hd.shift(1) # Last month's sentiments affect this month's rate
         hd = hd[hd.index >= '2003-01']
-        hd = hd[hd.index <= '2021-04']
+        #hd = hd[hd.index <= '2021-04']
+
+        #hd_imputer = KNNImputer(n_neighbors=3)
+        #hd = pd.DataFrame(hd_imputer.fit_transform(hd), index=hd.index, columns=hd.columns)
+        hd = hd.fillna(method="ffill")
+        
 
         # Combine the different sentiments by using harmonic mean
         hd['Score_Statement'] = MinMaxScaler().fit_transform(hd['Score_Statement'].values.reshape(-1,1))
@@ -65,11 +72,13 @@ class MacroData():
 
         # Get the 1 period ago rate decision
         self.data['shifted_target'] = self.data['target'].shift(1)
-        self.data.dropna(inplace=True)
+        #self.data.dropna(inplace=True)
 
         # Add interactions
-        self.data['MEDCPI_PPIACO'] = self.data['MEDCPI'] * self.data['PPIACO']
-        self.data['EMRATIO_MEDWAGES'] = self.data['EMRATIO'] * self.data['MEDWAGES']
+        #self.data['MEDCPI_PPIACO'] = self.data['MEDCPI'] * self.data['PPIACO']
+        #self.data['EMRATIO_MEDWAGES'] = self.data['EMRATIO'] * self.data['MEDWAGES']
+        self.data = self.data.fillna(method="ffill")
+        self.data = self.data.fillna(method="bfill")
 
         # Do train test split
         X = self.data.copy().drop('target', axis=1)
@@ -80,6 +89,23 @@ class MacroData():
         self.X_test = X[-test_proportion:]
         self.y_test = y[-test_proportion:]
         self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
+
+        # Impute
+        #imputer = KNNImputer(n_neighbors=6)
+        #imputer.fit(X_train)
+        #self.X_train = pd.DataFrame(imputer.transform(self.X_train), columns=self.X_train.columns, index=self.X_train.index)
+        #self.X_val = pd.DataFrame(imputer.transform(self.X_val), columns=self.X_val.columns, index=self.X_val.index)
+        #self.X_test = pd.DataFrame(imputer.transform(self.X_test), columns=self.X_test.columns, index=self.X_test.index)
+        #self.imputer = imputer
+        
+
+        # Add interactions
+        self.X_train['MEDCPI_PPIACO'] = self.X_train['MEDCPI'] * self.X_train['PPIACO']
+        self.X_train['EMRATIO_MEDWAGES'] = self.X_train['EMRATIO'] * self.X_train['MEDWAGES']
+        self.X_val['MEDCPI_PPIACO'] = self.X_val['MEDCPI'] * self.X_val['PPIACO']
+        self.X_val['EMRATIO_MEDWAGES'] = self.X_val['EMRATIO'] * self.X_val['MEDWAGES']
+        self.X_test['MEDCPI_PPIACO'] = self.X_test['MEDCPI'] * self.X_test['PPIACO']
+        self.X_test['EMRATIO_MEDWAGES'] = self.X_test['EMRATIO'] * self.X_test['MEDWAGES']
 
         # Do some transformations
         self.X_train['HD_index'] = np.power(self.X_train['HD_index'],1/2)
@@ -100,7 +126,7 @@ class MacroData():
         self.scaler = scaler
 
 class MacroModel(Model):
-    def __init__(self, data: MacroData, shift_coef = 1.68323868):
+    def __init__(self, data: MacroData, shift_coef = 1.7119430641311288):
         self.data = data
         self.scaler = data.scaler
         self.shift_coef = shift_coef
