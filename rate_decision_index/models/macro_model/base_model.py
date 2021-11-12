@@ -14,8 +14,3 @@ class Model():
     def predict(self, data):
         pass
         # TODO: handle how prediction is made, using input data
-
-    '''@abstractmethod
-    def create_index(self):
-        pass
-        # TODO: handle how an index is created using our predictions''' 

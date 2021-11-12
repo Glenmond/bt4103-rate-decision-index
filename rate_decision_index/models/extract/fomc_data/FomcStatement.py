@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from .FomcBase import FomcBase
 
 class FomcStatement(FomcBase):
-
     def __init__(self, verbose = True, max_threads = 10, base_dir = '../data/sentiment_data/extract/'):
         super().__init__('statement', verbose, max_threads, base_dir)
 

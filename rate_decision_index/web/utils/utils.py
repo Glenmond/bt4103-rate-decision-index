@@ -1,10 +1,7 @@
-import numpy as np
-from datetime import datetime,timedelta, date
+from datetime import datetime
 import datetime
-# check your pickle compability, perhaps its pickle not pickle5
 import pandas as pd
 import pickle
-import json
 
 from models.extract.import_data import fetch_data
 from pandas.tseries.offsets import MonthEnd
@@ -17,25 +14,11 @@ def isNaN(num):
     return num != num
 
 #loading data
-
-#DONE updated data source
 def load_market_data():
     final_pickle_directory = 'models/data/sentiment_data/historical/final_df.pickle'
-    #minutes_pickle_directory = 'models/data/sentiment_data/historical/mins_df.pickle'
-    #news_pickle_directory = 'models/data/sentiment_data/historical/news_df.pickle' 
-    #file = open(statement_pickle_directory, "rb")
-    #statement_df = pickle.load(file)
-    #statement_df['date2'] = statement_df['date'].dt.strftime('%Y-%m')
-    #file = open(minutes_pickle_directory, "rb")
-    #mins_df = pickle.load(file)
-    #file = open(news_pickle_directory, "rb")
-    #news_df = pickle.load(file)
     return final_pickle_directory
-    #return statement_pickle_directory, minutes_pickle_directory, news_pickle_directory
 
-#DONE updated data source
 def load_ngram_market_data():
-    #in_year=year
     file = open('models/data/sentiment_data/historical/st_df.pickle', "rb")
     st_df = pickle.load(file)
     file = open('models/data/sentiment_data/historical/mins_df.pickle', "rb")
@@ -46,7 +29,6 @@ def load_ngram_market_data():
 
 # for main dashboard gauge
 def load_gauge_data():
-    #in_year=year
     file = open('models/data/macroeconomic_indicators_data/macro_train_pred_pickle', "rb")
     train_df = pickle.load(file)
     
@@ -139,8 +121,10 @@ def load_dir_macro_ts():
     
     return y_train, y_test, x_train, x_test
 
-#data preprocessing step (if required)
 def clean_market(data):
+    """
+    Data Preprocessing Step
+    """
     df = data
     #Statement
     list_statements = []
@@ -194,7 +178,6 @@ def clean_macro_ts(y_train, y_test):
     return df_overall
 
 def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
-    
     #import y val
     file_y_test = open(y_test, "rb") #"macro_y_test_pickle"
     y_test_df = pickle.load(file_y_test)
@@ -226,7 +209,6 @@ def clean_maindashboard_macro(y_train, y_test, x_train, x_test):
     #merging feature and predicted data
     df_plot = pd.merge(df_fin_X, df_fin_y, on="Date")
     
-    ## ADD IN Date manipulation in necessary##
     return df_plot
 
 def import_modify_pickle_overall_ts(y_train, y_test, pred_train, pred_test):
@@ -264,9 +246,7 @@ def import_modify_pickle_overall_ts(y_train, y_test, pred_train, pred_test):
     
     return df_plot
 
-#final
 def import_modify_pickle_ms_main(file_final):
-    
     ## Read from final pickle
     score_file = open(file_final, "rb") #"final_df.pickle"
     score_df = pickle.load(score_file)
@@ -330,7 +310,6 @@ def import_modify_pickle_ms_main(file_final):
     
     return df
 
-
 #helper function
 def guess_date(string):
     for fmt in ["%Y-%m-%d"]:
@@ -342,15 +321,12 @@ def guess_date(string):
 
 def import_modify_csv_fff(file):
     df = pd.read_csv(file) 
-    
     df.rename(columns={"Unnamed: 0": "Date"}, inplace = True)
 
     #Changing date format
     newdate = []
     for d in df.Date:
         newdate.append(guess_date(d).strftime("%Y-%m-%d"))
-    newdate
-
     df['Date'] = newdate
     
     return df

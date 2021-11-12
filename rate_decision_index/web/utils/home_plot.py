@@ -1,26 +1,16 @@
 import pandas as pd
 import numpy as np
-import dateutil
-import datetime
-import numpy as np
 import pandas as pd
 import plotly
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
-from vega_datasets import data
-from plotly.subplots import make_subplots
 import plotly.express as px
-import plotly.io as pio
 import json
 from web.utils.utils import load_market_data, load_fff_data
 
 #### gmond update this function
 def plot_gauge(gauge_final_data, fff_prob_data, date):
-    
-    #do sth with date
-    # macro + hd prediction rate
-
     fig = go.Figure(go.Indicator(
         mode = "gauge+number+delta",
         value = (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date].index).tolist()[0]]["Federal Funds Rate"]).round(4),
@@ -60,7 +50,6 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
                  'font.family':'Times New Roman Bold'},
         domain = {'row': 0, 'column': 1}))
 
-    # fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
     fig.update_layout(
         grid = {'rows': 1, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
@@ -73,14 +62,11 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
             'yanchor': 'top', 
             'font.size':15},
         margin=dict(l=200, r=150, t=75, b=20))
-    #fig.update_layout(width=800, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
      
 def plot_market(market_data, date):
-    #currently is static and hard coded. 
-    # need to implment date picker for entire dashboard for home page
     df_senti = market_data
     fig = go.Figure()
     #Statement
@@ -165,7 +151,6 @@ def plot_market(market_data, date):
         margin=dict(l=150, r=100, t=75, b=20),
         autosize=True)
     fig.update_xaxes(automargin=True)
-    # fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return plot_json
@@ -224,13 +209,10 @@ def plot_market_average(market_data, date):
         autosize=True
         )
 
-    
-    # fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
        
 def plot_fff(fff_data):
-    date = '2022-09-20'
     df_fff =fff_data
     #transform df
     new_df_fff = df_fff.melt(id_vars=["Date"],
@@ -257,14 +239,12 @@ def plot_fff(fff_data):
     fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     fig.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     
-    # fig.update_layout(width=600, height=550)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
 def plot_macro_maindashboard(df_plot, date):
-    #date= '2004-09-01'
     ## Setting up values
-    #T10Y3M
+    # T10Y3M
     B_T10Y3M = 0.043143
     X_T10Y3M = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].T10Y3M #change to actual date to date
     value_T10Y3M = B_T10Y3M * X_T10Y3M
@@ -272,7 +252,7 @@ def plot_macro_maindashboard(df_plot, date):
     X_T10Y3M_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].T10Y3M
     value_T10Y3M_prev = B_T10Y3M * X_T10Y3M_prev
     
-    #EMRATIO
+    # EMRATIO
     B_EMRATIO = 0.033783
     B_EMRATIO_MEDWAGES = 0.006322
     X_EMRATIO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO #change to actual date to date
@@ -285,7 +265,7 @@ def plot_macro_maindashboard(df_plot, date):
     X_MEDWAGES_prev = X_EMRATIO_MEDWAGES_prev / X_EMRATIO_prev
     value_EMRATIO_prev = (B_EMRATIO + (B_EMRATIO_MEDWAGES*X_MEDWAGES_prev)) * X_EMRATIO_prev
 
-    #GDP
+    # GDP
     B_GDPC1 = 0.036187
     X_GDPC1 = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].GDPC1 #change to actual date to date
     value_GDPC1 = B_GDPC1 * X_GDPC1
@@ -293,7 +273,7 @@ def plot_macro_maindashboard(df_plot, date):
     X_GDPC1_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].GDPC1 #change to actual date to date
     value_GDPC1_prev = B_GDPC1 * X_GDPC1_prev
     
-    #MEDCPI
+    # MEDCPI
     B_MEDCPI = 0.063183
     B_MEDCPI_PPIACO = -0.077871
     X_MEDCPI = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI #change to actual date to date
@@ -306,7 +286,7 @@ def plot_macro_maindashboard(df_plot, date):
     X_PPIACO_prev = X_MEDCPI_PPIACO_prev / X_MEDCPI_prev
     value_MEDCPI_prev = (B_MEDCPI + (B_MEDCPI_PPIACO*X_PPIACO_prev)) * X_MEDCPI_prev
     
-    #HD index
+    # HD index
     B_HD_index = 0.051086
     X_HD_index = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].HD_index #change to actual date to date
     value_HD_index = B_HD_index * X_HD_index
@@ -314,20 +294,18 @@ def plot_macro_maindashboard(df_plot, date):
     X_HD_index_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].HD_index #change to actual date to date
     value_HD_index_prev = B_HD_index * X_HD_index_prev
     
-    #shifted_target
+    # shifted_target
     B_shifted_target = 1.7117595779058272
     X_shifted_target = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].shifted_target #change to actual date to date
     value_shifted_target = B_shifted_target * X_shifted_target
     
     X_shifted_target_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].shifted_target #change to actual date to date
     value_shifted_target_prev = B_shifted_target * X_shifted_target_prev
-
     
-    ## PLotting figures
+    ## Plotting figures
     fig = go.Figure()
 
-
-    #T10Y3M Indicator
+    # T10Y3M Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_T10Y3M.round(4)),
@@ -339,7 +317,7 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 0, 'column': 0}))
 
-    #EMRATIO Indicator
+    # EMRATIO Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_EMRATIO.round(4)),
@@ -351,7 +329,7 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 0, 'column': 1}))
 
-    #GDP Indicator
+    # GDP Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_GDPC1.round(4)),
@@ -363,7 +341,7 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 0}))
 
-    #MEDCPI Indicator
+    # MEDCPI Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_MEDCPI.round(4)),
@@ -375,7 +353,7 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 1, 'column': 1}))
 
-    #HD index Indicator
+    # HD index Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_HD_index.round(4)),
@@ -387,7 +365,7 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 2, 'column': 0}))
 
-    #shifted target Indicator
+    # shifted target Indicator
     fig.add_trace(go.Indicator(
         mode = "number+delta",
         value = abs(value_shifted_target.round(4)),
@@ -399,13 +377,12 @@ def plot_macro_maindashboard(df_plot, date):
                  'font.family':'Courier New'},
         domain = {'row': 2, 'column': 1}))
 
-    #Configure layout
+    # Configure layout
     fig.update_layout(
         grid = {'rows': 3, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
         font_family="Times New Roman Bold",
         font_color="black",
-        # width=590, height=470,
         title={
             'text': "Contribution of Indicators for " + pd.to_datetime(date).strftime("%B %Y"),
             'y':0.95,
@@ -416,18 +393,17 @@ def plot_macro_maindashboard(df_plot, date):
         margin=dict(l=50, r=50, t=100, b=15),
         autosize=True)
     
-    # fig.update_layout(width=590, height=450)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
 def plot_contributions_pie(df_plot, date):
     ## Setting up values
-    #T10Y3M
+    # T10Y3M
     B_T10Y3M = 0.043143
     X_T10Y3M = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].T10Y3M #change to actual date to date
     value_T10Y3M = B_T10Y3M * X_T10Y3M
 
-    #EMRATIO
+    # EMRATIO
     B_EMRATIO = 0.033783
     B_EMRATIO_MEDWAGES = 0.006322
     X_EMRATIO = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].EMRATIO #change to actual date to date
@@ -435,12 +411,12 @@ def plot_contributions_pie(df_plot, date):
     X_MEDWAGES = X_EMRATIO_MEDWAGES / X_EMRATIO
     value_EMRATIO = (B_EMRATIO + (B_EMRATIO_MEDWAGES*X_MEDWAGES)) * X_EMRATIO
 
-    #GDP
+    # GDP
     B_GDPC1 = 0.036187
     X_GDPC1 = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].GDPC1 #change to actual date to date
     value_GDPC1 = B_GDPC1 * X_GDPC1
 
-    #MEDCPI
+    # MEDCPI
     B_MEDCPI = 0.063183
     B_MEDCPI_PPIACO = -0.077871
     X_MEDCPI = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].MEDCPI #change to actual date to date
@@ -448,12 +424,12 @@ def plot_contributions_pie(df_plot, date):
     X_PPIACO = X_MEDCPI_PPIACO / X_MEDCPI
     value_MEDCPI = (B_MEDCPI + (B_MEDCPI_PPIACO*X_PPIACO)) * X_MEDCPI
 
-    #HD index
+    # HD index
     B_HD_index = 0.051086
     X_HD_index = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].HD_index #change to actual date to date
     value_HD_index = B_HD_index * X_HD_index
 
-    #shifted_target
+    # shifted_target
     B_shifted_target = 1.7117595779058272
     X_shifted_target = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index).tolist()[0]].shifted_target #change to actual date to date
     value_shifted_target = B_shifted_target * X_shifted_target
@@ -481,8 +457,6 @@ def plot_contributions_pie(df_plot, date):
             'font.family': 'Times New Roman Bold'},
         margin=dict(l=100, r=100, t=100, b=100),)
 
-    
-    # fig.update_layout(width=600, height=300)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -542,4 +516,3 @@ def plot_fed_rates_ts(data):
 
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
-

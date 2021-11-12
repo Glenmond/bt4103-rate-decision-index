@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np
-import dateutil
-import datetime
-import numpy as np
 import pandas as pd
 import plotly
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
-from vega_datasets import data
 from plotly.subplots import make_subplots
-import plotly.express as px
 import json
-from web.utils.utils import load_fff_data
 
 def plot_fff_results(data):
     '''
@@ -35,7 +29,6 @@ def plot_fff_results(data):
             [{"type": "bar"},{"type": "bar"}],
             [{"type": "bar"},{"type": "bar"}]]
     )
-    #table_df = fff_data.copy().round(2).reset_index()
     table_df = fff_data.copy().round(2)
     table_df['Date'] = pd.to_datetime(table_df['Date']).apply(lambda x: x.strftime("%Y-%m-%d"))
     fig.add_trace(
@@ -82,7 +75,6 @@ def plot_fff_results(data):
         showlegend=False,
         title_text="Target Rate Predictions for FOMC Meetings",
     )
-    #fig.update_layout(width=1500, height=500)
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 

@@ -1,16 +1,11 @@
-import sys
 import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
-import numpy as np
-from scipy.stats import zscore
 
 from bs4 import BeautifulSoup
 import requests
 import re
 from fredapi import Fred
-
-from sklearn.impute import KNNImputer
 
 try:
     from fomc_data.FomcStatement import FomcStatement
@@ -30,8 +25,7 @@ def fetch_data(ref_date = datetime.datetime.today()):
     Fetches data from FRED API, stores it in a dataframe. 
     Takes as input a datetime of the latest day within the dataframe. 
     Default value for this is today's date.
-    '''
-    
+    '''    
     # concurrent
     commodities_params = { 
         'observation_start':'2003-01-02',
@@ -157,25 +151,6 @@ def fetch_data(ref_date = datetime.datetime.today()):
 
         # join the dataframes together
         df = pd.concat([indicator, df], axis="columns")
-
-    # If there is any missing data, we drop the entire row, rather than imputing. This is because we want to reduce the error when doing training
-    # Imputation allows us to 'impute' based on the last observed data, but this increases the error because we dont know what the ground truth data is
-    # We want to reduce the error in our training since the prediction is so high stakes. This effect is a lot worse if there are any shocks in the data.
-    #df = df.dropna(how='any')
-
-    # DO DATA IMPUTATION FOR POSSIBLE NAN VALUES
-    #df = df.fillna(method="ffill")
-    #imputer = KNNImputer(n_neighbors=6)
-    #df = pd.DataFrame(imputer.fit_transform(df),index=df.index,columns=df.columns)
-
-
-    # remove outliers
-    # z_scores = zscore(df)
-    # abs_z_scores = np.abs(z_scores)
-    # threshold = 2.5
-    # filtered_entries = (abs_z_scores < threshold).all(axis=1)
-    # df = df[filtered_entries]
-
     return df
 
 
@@ -194,40 +169,7 @@ def download_fed_futures_historical(path):
     futures = pd.read_csv(full_path)
     futures = futures[:-1]
     futures['Exp Date'] = pd.to_datetime(futures['Exp Date'])
-    futures = futures.set_index("Exp Date")
-
-    # options = webdriver.ChromeOptions() ;
-    # options.add_argument("--disable-notifications")
-    # prefs = {"download.default_directory" : "/Users/erica/Desktop/capstone/data_historical",
-    #         'download.prompt_for_download': False,
-    #         'download.directory_upgrade': True,
-    #         'safebrowsing.enabled': False,
-    #         'safebrowsing.disable_download_protection': True};
-    # options.add_experimental_option("prefs",prefs);
-    
-    # driver = webdriver.Chrome(executable_path='./chromedriver', options=options)
-
-    # driver.get('https://www.barchart.com/futures/quotes/ZQQ22/historical-prices?viewName=main&orderBy=percentChange1y&orderDir=desc&page=1');
-    # driver.implicitly_wait(5)
-    # popup = driver.find_element_by_xpath("""/html/body/div[4]/i""")
-    # popup.click()
-
-    # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
-    # button.click();
-
-    # username = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[1]/input""")
-    # username.send_keys("fohigix903@stvbz.com")
-    # password = driver.find_element_by_xpath("""//*[@id="login-form-password"]""")
-    # password.send_keys("bestpassword")
-    # login_button = driver.find_element_by_xpath("""//*[@id="bc-login-form"]/div[4]/button""")
-    # login_button.click()
-
-    # button = driver.find_element_by_xpath("""//*[@id="main-content-column"]/div/div[2]/div[2]/div[2]""")
-    # button.click()
-    # print("download")
-    # time.sleep(10)
-    # driver.close()
-    
+    futures = futures.set_index("Exp Date")    
     return futures
 
 def download_fomc_dates():

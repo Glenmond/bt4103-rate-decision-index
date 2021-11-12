@@ -1,30 +1,16 @@
 {% extends "layout.html" %}
-{% block script %}
-<!-- 
-styling here
--->
-{% endblock script %}
-
 
 {% block my_content %}
-
-<!-- Plotly plot placeholder -->
 <div class="container-fluid h-100">
     <h2 style="color:navy; margin:10px; border:1px">Macroeconomic Indicators Drill Down</h2>
 
-    <!-- first row, first column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
     <h3 style="color:navy; margin:10px;">Macro Model Analysis</h3>
     <div class=2"row h-33">
-            <!--<a href='/dashapp'>Perform Sensitivity Analysis</a>
-            <div class="chart" id="macro-4">
-            </div>-->
-            <iframe src="/dashapp" width=100% height=500 scrolling='no' style="border:none;background-color: white;"></iframe>
-        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
+            <iframe src="/dashapp" width=100% height=500 scrolling='no' style="border:none;background-color: white;margin: 0 1% 0 0"></iframe>
     </div>
         <div class=2"row h-33">
             <div class="chart" id="macro-5">
             </div>
-        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
     </div>
     <hr>
     <h3 style="color:navy; margin:10px;">Macroeconomics Indicators Sub Index</h3>
@@ -32,17 +18,14 @@ styling here
     <div class=2"row h-33">
             <div class="chart" id="macro-1">
             </div>
-        <!-- first row, second column NOTE NEED TO FIX THE CHARTS SO THEY STAY -->
     </div>
     <hr>
-    <!-- second row, first column-->
     <h4 style="color:navy; margin:10px;">Employment Economic Indicator</h4>
     <div class=2"row h-33">
         <div id="macro-2">
         </div>
     </div>
     <hr>
-        <!-- second row, first column-->
     <h4 style="color:navy; margin:10px;">Inflation Economic Indicator</h4>
     <div class=2"row h-33">
         <div id="macro-3">
@@ -76,4 +59,5 @@ styling here
     var graphs = {{ context.plot_indicators_ts| safe }};
     Plotly.plot('macro-5', graphs, {});
 </script>
+
 {% endblock my_content %}
