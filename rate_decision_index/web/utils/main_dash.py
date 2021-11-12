@@ -598,8 +598,8 @@ def make_home_plot(server, date = default_date):
     fig7.update_yaxes(range=[-0.1, 1.1],showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
 
     app.layout = html.Div([
-                    html.H1("Rate Decision Index"),
-                    html.Label("Pick the day of the Month in question:", style={'font-size': '20px', 'padding':'0 0 0.5% 0'}),
+                    html.H1("Rate Decision Index",style={'font-size': '35px'}),
+                    html.Label("Input the day of the month:", style={'font-size': '20px', 'padding':'0 0 0.5% 0'}),
                     dcc.DatePickerSingle(
                         id='datepicker',
                         month_format='MMM YYYY',
@@ -630,6 +630,8 @@ def make_home_plot(server, date = default_date):
                         html.Div([
                             #first
                             html.P([
+                                html.P("Market Consensus", style={'font-size': '35px', 'text-align': 'center','background-color':'#401664', 
+                                                                  'color':'white', 'padding': '1% 0 1% 0', 'margin': '0 0.5% 0 0.5%'}),
                                 dcc.Graph(id='market-avg-sentiment',figure=fig3),
                                 dcc.Graph(id='sentiment-score',figure=fig4)],
                                 style = {'width' : '100%',
@@ -643,6 +645,8 @@ def make_home_plot(server, date = default_date):
                                         'display': 'inline-block'},),
                             #second
                             html.P([
+                                html.P("Macroeconomic Indicators", style={'font-size': '35px', 'text-align': 'center','background-color':'#401664', 
+                                                                          'color':'white', 'padding': '1% 0 1% 0', 'margin': '0 0.5% 0 0.5%'}),
                                 dcc.Graph(id='macroeconomic-indicators-contributions',figure=fig5),
                                 dcc.Graph(id='macro-value-ind',figure=fig6)],
                                 style = {'width' : '100%',
@@ -655,6 +659,8 @@ def make_home_plot(server, date = default_date):
                                         'display': 'inline-block'},),
                             #third
                             html.P([
+                                html.P("Fed Funds Futures", style={'font-size': '35px', 'text-align': 'center','background-color':'#401664', 
+                                                                    'color':'white', 'padding': '1% 0 1% 0', 'margin': '0 0.5% 0 0.5%'}),
                                 dcc.Graph(figure=fig7)],
                                 style = {'width' : '100%',
                                         'max-width': '100%',
