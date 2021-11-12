@@ -42,10 +42,9 @@ The primary objective of the Federal Funds Futures model is to capture the marke
 ## 2. Installation
 #### Libraries
 Required libraries are described in requirements.txt. The code should run with no issues using Python versions 3.7+.
-There are 2 ways that you can create the environment required:
+There are 2 ways that you can create the virtual environment required:
 
-1. Using the requirements.txt file
-Create a virtual environment of your choice. Here uses Anaconda:
+1. Using the requirements.txt file using Anaconda
 ```
 conda create -n rate python=3.7 jupyter
 conda activate rate
@@ -53,7 +52,6 @@ pip install -r requirements.txt
 ```
 
 2. Using the environments.yml file
-Create a virtual environment of using the environment.yml file
 ```
 conda env create -f environment.yml
 conda activate rate
