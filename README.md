@@ -37,17 +37,33 @@ The Central Bank Rate Decision Indicator consist of three sub-models, namely Mac
 
  3. Fed Funds Futures Probability Model
  
- (insert your explanation here)
+The primary objective of the Federal Funds Futures model is to capture the market expectation of future federal funds rate and to calculate a probability for the rate change for each future FOMC meeting.
 
 ## 2. Installation
 #### Libraries
 Required libraries are described in requirements.txt. The code should run with no issues using Python versions 3.7+.
+There are 2 ways that you can create the environment required:
+
+1. Using the requirements.txt file
 Create a virtual environment of your choice. Here uses Anaconda:
 ```
 conda create -n rate python=3.7 jupyter
 conda activate rate
 pip install -r requirements.txt
 ```
+
+2. Using the environments.yml file
+Create a virtual environment of using the environment.yml file
+```
+conda env create -f environment.yml
+conda activate rate
+```
+
+To verify that all packages are installed correctly, you can run: 
+```
+conda env list
+```
+
 ## 3. Running Instructions
 #### To Run Notebook (Local)
 #### 3a) Macroeconomics Model
@@ -86,7 +102,16 @@ pip install -r requirements.txt
 
 #### 3c) Feds Futures Probability Model
  
-(insert your explanation here)
+1. Move to the fed_futures_model
+```
+cd ../fed_futures_model
+```
+
+2. To run the model (and concurrently download and update all data)
+```
+python main.py
+
+```
 
 ## 4. Data Understanding
 Textual data is scraped from FOMC Website. Other economic and market data are downloaded from FRB of St. Louis website
