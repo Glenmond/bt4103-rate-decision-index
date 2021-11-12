@@ -35,7 +35,9 @@ class Backtest:
         self.path = path
 
     def predict(self):
-
+        """
+        Predict dataset
+        """
         for name in self.docs:
             df = self.classify(name)
             self.update(df, name)

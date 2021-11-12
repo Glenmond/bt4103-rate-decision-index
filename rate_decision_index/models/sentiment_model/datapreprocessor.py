@@ -183,6 +183,9 @@ class DataPreprocessor:
         return tag_dict.get(tag, wordnet.NOUN)
 
     def lemmatize_list(self, sentences):
+        """
+        Lemmatize textual data
+        """
         new_sentences = []
         for sentence in sentences:
             if len(sentence) == 0:

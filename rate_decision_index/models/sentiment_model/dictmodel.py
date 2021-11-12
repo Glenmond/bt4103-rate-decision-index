@@ -16,18 +16,27 @@ class DictionaryModel:
         self.path = path
 
     def predict(self):
+        """
+        Predicting results for dataframe
+        """
         for name in self.docs:
             df = self.classify(name)
             self.update(df, name)
         self.combine_df()
         
     def negated(self, word):
+        """
+        Checking for negated words
+        """
         if word.lower() in negate:
             return True
         else:
             return False
 
     def tone_counter(self, dict, article):
+        """
+        Calculating word meaning into counts based on dictionary
+        """
         pos_count = 0
         neg_count = 0
         hawk_count = 0
@@ -134,6 +143,9 @@ class DictionaryModel:
                 return 1
 
     def aggregate_score(self, series):  # series == sentences
+        """
+        Aggregate sentences to document level scoring
+        """
         score = []
         series_count = 0  # to check only the Hawkish vs Dovish
         for i in series:
