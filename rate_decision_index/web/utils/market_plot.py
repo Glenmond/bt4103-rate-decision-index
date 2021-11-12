@@ -182,7 +182,7 @@ def get_top_n_gram_mins(data, date):
         font_color="black",
         title_font_family="Times New Roman Bold",
         title_font_color="black",
-        title_text='Most Common Words and Phrases in FOMC Minutes', 
+        title_text='Most Common Words and Phrases in FOMC Minutes for ' + str(date), 
         title_x=0.5,
         plot_bgcolor = 'white'
     )
@@ -319,7 +319,7 @@ def get_top_n_gram_st(data, date):
         font_color="black",
         title_font_family="Times New Roman Bold",
         title_font_color="black",
-        title_text='Most Common Words and Phrases in FOMC Statements', 
+        title_text='Most Common Words and Phrases in FOMC Statements for ' + str(date), 
         title_x=0.5,
         plot_bgcolor = 'white'
     )
@@ -456,7 +456,7 @@ def get_top_n_gram_news(data, date):
         font_color="black",
         title_font_family="Times New Roman Bold",
         title_font_color="black",
-        title_text='Most Common Words and Phrases in the News', 
+        title_text='Most Common Words and Phrases in the News for ' + str(date), 
         title_x=0.5,
         plot_bgcolor = 'white'
     )
