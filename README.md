@@ -78,7 +78,16 @@ python run.py
 #### To Run Notebook (Local)
 #### 3a) Macroeconomics Model
 
-(insert your explanation here)
+1. Move to models
+```
+cd rate_decision_index/models
+```
+
+2. To run the model (and concurrently download and update all data)
+```
+python macro_analysis.py
+
+```
 
 #### 3b) Sentiment Model
 ##### Step 1: Download input data
