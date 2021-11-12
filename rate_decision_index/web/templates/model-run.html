@@ -36,28 +36,6 @@ styling here
             <button type="submit">Run All Models</button>
         </form>
       </div>
-        <div class="container">
-            <div class="row">
-              <div class="col-sm">
-                  <h3>Market Consensus</h3>
-                <form action = "http://localhost:5000/uploader" method = "POST" 
-                    enctype = "multipart/form-data">
-                        <input type = "file" name = "file" />
-                        </br>
-                        <input type = "submit"/>
-                    </form>   
-              </div>
-              <div class="col-sm">
-                <h3>Macroeconomic Indicators</h3>
-              </div>
-              <div class="col-sm">
-                <h3>Federal Funds Futures</h3>
-                <form action = "http://localhost:5000/runfff" method = "POST">
-                    <button type="submit">Run Federal Funds Future Model</button>
-                </form>
-              </div>
-            </div>
-          </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>

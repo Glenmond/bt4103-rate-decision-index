@@ -166,6 +166,8 @@ def run_all_models():
     sentiment_hist_path = path.sentiment_hist_data
     update_saved_data(path_to_folder=macro_data_path, path_to_HD_folder=sentiment_hist_path)
 
+    print("********** All Models Completed! *************")
+
     return render_template('model-run.html')
 
 @app.route('/uploader', methods = ['GET', 'POST'])

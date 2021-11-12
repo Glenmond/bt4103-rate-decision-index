@@ -54,7 +54,7 @@ def plot_gauge(gauge_final_data, fff_prob_data, date):
         mode = "number",
         number = {'suffix': "%", "font":{"size":80}},
         value = (((fff_prob_data.iloc[(fff_prob_data.loc[fff_prob_data.Date == "2021-11"].index).tolist()[0]].Hike)*100).round(2)),
-        title = {'text':"Probability of Rate Change", 
+        title = {'text':"Probability of Rate Hike for Novemeber 2021", 
                  'font.size': 20, 
                  'font.color': '#401664', 
                  'font.family':'Times New Roman Bold'},
