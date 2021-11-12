@@ -35,19 +35,15 @@ class DataLoader:
 
         for k, v in self.directory.items():
             if k == "historical":
-
                 for k2, v2 in self.directory["historical"].items():
                     f = open(v2, "rb")
                     df = pickle.load(f)
                     data["historical"][k2] = df
-
             else:
                 f = open(v, "rb")
                 df = pickle.load(f)
-
                 if k == "statements" or k == "minutes" or k == "news":
                     df = self.filter_date(df)
-
                 data[k] = df
 
         return data

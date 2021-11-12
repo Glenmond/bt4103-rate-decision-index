@@ -1,14 +1,7 @@
 {% extends "layout.html" %}
-{% block script %}
-<!-- 
-styling here
-
--->
-{% endblock script %}
 
 {% block my_content %}
 
-<!-- Plotly plot placeholder -->
 <div class="container-fluid">
     <h2 style="color:navy; margin:10px; border:1px">Market Consensus Drill Down</h2>
     <!-- first row, first column-->
@@ -48,22 +41,18 @@ styling here
 
 
 <script>
-    //Parse your Json variable here
     var graphs = {{ context.ngram_statement| safe }};
     Plotly.plot('market-1', graphs, {});
 </script>
 <script>
-    //Parse your Json variable here
     var graphs = {{ context.ngram_min | safe }};
     Plotly.plot('market-2', graphs, {});
 </script>
 <script>
-    //Parse your Json variable here
     var graphs = {{ context.market_ts_plot| safe }};
     Plotly.plot('market-3', graphs, {});
 </script>
 <script>
-    //Parse your Json variable here
     var graphs = {{ context.ngram_news | safe }};
     Plotly.plot('market-4', graphs, {});
 </script>

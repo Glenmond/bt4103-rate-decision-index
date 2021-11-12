@@ -1,51 +1,15 @@
-# this is where we do our main analysis using our models and data
-import numpy as np
+import pandas as pd
+from pandas.tseries.offsets import MonthEnd
+from datetime import date as dt
 import pickle
-import math
-from sklearn.metrics import r2_score, mean_squared_error
 
 import dash
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 
-import pandas as pd
-import plotly.graph_objs as go
-
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
-import pandas as pd
-import numpy as np
-import dateutil
-import datetime
-from datetime import date as dt
-import numpy as np
-import pandas as pd
-import plotly
-import plotly.graph_objects as go
-import numpy as np
-import pandas as pd
-from vega_datasets import data
-from plotly.subplots import make_subplots
 import plotly.express as px
-import plotly.io as pio
-import json
-import os
-
-
-# IMPORT ALL THE DATASET
-from altair import Chart, X, Y, Axis, Data, DataFormat
-from pandas.tseries.offsets import MonthEnd
-import pandas as pd
-import numpy as np
-from flask import render_template, url_for, flash, redirect, request, make_response, jsonify, abort
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired
-
-import json
-from werkzeug.utils import secure_filename
 
 # Loading Raw Data For Main Dashboard Charts
 f = open("./web/utils/pickle/market_data_cleaned.pickle", "rb")
@@ -83,13 +47,14 @@ html_layout = """
         {%scripts%}
         {%renderer%}
     </footer>
-
 """
 
 def make_home_plot(server, date = default_date):
+    """
+    Plot the home plot
+    """
     app =dash.Dash(server=server, routes_pathname_prefix="/home-plot-dash/",)
     app.index_string = html_layout
-
     """
     Main Gauge
     """
@@ -133,7 +98,6 @@ def make_home_plot(server, date = default_date):
                  'font.family':'Times New Roman Bold'},
         domain = {'row': 0, 'column': 1}))
 
-    # fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
     fig1.update_layout(
         grid = {'rows': 1, 'columns': 2, 'pattern': "independent"},
         paper_bgcolor = "white", 
@@ -163,7 +127,6 @@ def make_home_plot(server, date = default_date):
         marker_color='#401664' #change color of line
     )
     ])
-
     fig2.update_layout(
         updatemenus=[
             dict(
@@ -202,7 +165,6 @@ def make_home_plot(server, date = default_date):
     fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     fig2.update_xaxes(rangeslider_visible=True)
 
-
     """
     Market Average Sentiment
     """
@@ -240,7 +202,6 @@ def make_home_plot(server, date = default_date):
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 2, 'column': 0}))
     
-    
     fig3.update_layout(
         grid = {'rows': 3, 'columns': 1, 'pattern': "independent"},
         paper_bgcolor = "white", 
@@ -255,8 +216,6 @@ def make_home_plot(server, date = default_date):
     """
     Sentiment Score
     """
-    #currently is static and hard coded. 
-    # need to implment date picker for entire dashboard for home page
     df_senti = market_data_cleaned
     fig4 = go.Figure()
     #Statement
@@ -324,7 +283,6 @@ def make_home_plot(server, date = default_date):
         mode = 'delta',
         delta = {'reference': 0, 'font.size': 1},
         domain = {'row': 5, 'column': 1}))
-
     
     fig4.update_layout(
         grid = {'rows': 6, 'columns': 2, 'pattern': "independent"},
@@ -341,7 +299,6 @@ def make_home_plot(server, date = default_date):
         margin=dict(l=150, r=100, t=75, b=20),
         autosize=True,)
     fig4.update_xaxes(automargin=True)
-
 
     """"
     Macroeconomic Indicators Contributions Plot
@@ -410,7 +367,6 @@ def make_home_plot(server, date = default_date):
     """"
     Macroeconomic Values Indication
     """
-    #date= '2004-09-01'
     ## Setting up values
     #T10Y3M
     df_plot = macro_df
@@ -471,10 +427,8 @@ def make_home_plot(server, date = default_date):
     X_shifted_target_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date].index-1).tolist()[0]].shifted_target #change to actual date to date
     value_shifted_target_prev = B_shifted_target * X_shifted_target_prev
 
-    
-    ## PLotting figures
+    ## Plotting figures
     fig6 = go.Figure()
-
 
     #T10Y3M Indicator
     fig6.add_trace(go.Indicator(
@@ -566,7 +520,6 @@ def make_home_plot(server, date = default_date):
         autosize=True)
     fig6.update_xaxes(automargin=True)
 
-
     """"
     Fed Funds Futures
     """
@@ -606,7 +559,6 @@ def make_home_plot(server, date = default_date):
                         placeholder='MM YYYY',
                         date=dt(2021, 10, 1)
                     ),
-
                     # Gauge + Prob
                     dcc.Graph(id='gauge',
                         figure=fig1, 
@@ -621,11 +573,8 @@ def make_home_plot(server, date = default_date):
                     style = {'width' : '100%',
                             'height':'20%',
                             'fontSize' : '20px',
-                            # 'padding-left' : '100px',
                             'display': 'inline-block'}
-                            
                     ), 
-                    
                     html.Div(children=[
                         html.Div([
                             #first
@@ -640,7 +589,6 @@ def make_home_plot(server, date = default_date):
                                         'height':'45%',
                                         'max-height':'45%',
                                         'fontSize' : '20px',
-                                        # 'padding-left' : '100px',
                                         'margin': 0,
                                         'display': 'inline-block'},),
                             #second
@@ -654,7 +602,6 @@ def make_home_plot(server, date = default_date):
                                         'height':'45%',
                                         'max-height':'45%',
                                         'fontSize' : '20px',
-                                        # 'padding-left' : '100px',
                                         'margin': 0,
                                         'display': 'inline-block'},),
                             #third
@@ -667,7 +614,6 @@ def make_home_plot(server, date = default_date):
                                         'height':'45%',
                                         'max-height':'45%',
                                         'fontSize' : '20px',
-                                        # 'padding-left' : '100px',
                                         'margin': 0,
                                         'display': 'inline-block'},),],
                         
@@ -675,7 +621,6 @@ def make_home_plot(server, date = default_date):
                         style = {'width' : '100%',
                                 'height':'60%',
                                 'fontSize' : '20px',
-                                # 'padding-left' : '100px',
                                 'display': 'inline-block'},)                
     ], style = {'display': 'flex', 'flex-direction': 'column', 'width' : "100%",'max-width':'100%','height':'100vh','max-height': '100vh'})
     
@@ -684,6 +629,9 @@ def make_home_plot(server, date = default_date):
     return app.server
 
 def init_callbacks(app):
+    """
+    Initialize callbacks for the app
+    """
     @app.callback(Output('gauge', 'figure'), #fig1
                   Output('market-avg-sentiment','figure'), #fig3
                   Output('sentiment-score','figure'), #fig4
@@ -692,11 +640,6 @@ def init_callbacks(app):
                   Input('datepicker','date'))
 
     def update_figure(input):
-        #date_object = dt.fromisoformat(input)
-        #print(type(input))
-        #print(input)
-        #date_string = date_object.strftime('%Y-%M')
-        #print(date_string)
         date_string = "-".join(input.split("-")[:-1])
         """
         Replot the gauge
@@ -729,7 +672,6 @@ def init_callbacks(app):
                     'line': {'color': "#401664", 'width': 4},
                     'thickness': 0.75,
                     'value': (gauge_final_data.iloc[(gauge_final_data.loc[gauge_final_data.Date == date_string].index).tolist()[0]]["Federal Funds Rate"]).round(4)}}))
-            
         # fff probability
         fig1.add_trace(go.Indicator(
             mode = "number",
@@ -790,7 +732,6 @@ def init_callbacks(app):
             mode = 'delta',
             delta = {'reference': 0, 'font.size': 1},
             domain = {'row': 2, 'column': 0}))
-        
         
         fig3.update_layout(
             grid = {'rows': 3, 'columns': 1, 'pattern': "independent"},
@@ -1017,8 +958,7 @@ def init_callbacks(app):
         X_shifted_target_prev = df_plot.iloc[(df_plot.loc[df_plot.Date == date_string].index-1).tolist()[0]].shifted_target #change to actual date to date
         value_shifted_target_prev = B_shifted_target * X_shifted_target_prev
 
-        
-        ## PLotting figures
+        ## Plotting figures
         fig6 = go.Figure()
 
         #T10Y3M Indicator
@@ -1099,7 +1039,6 @@ def init_callbacks(app):
             paper_bgcolor = "white", 
             font_family="Times New Roman Bold",
             font_color="black",
-            # width=590, height=470,
             title={
                 'text': "Contribution of Indicators for " + pd.to_datetime(date_string).strftime("%B %Y"),
                 'y':0.95,

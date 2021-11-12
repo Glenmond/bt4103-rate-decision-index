@@ -1,25 +1,13 @@
 import pandas as pd
-import numpy as np
-import dateutil
 import datetime
-import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objects as go
-import numpy as np
-import pandas as pd
-from vega_datasets import data
-from plotly.subplots import make_subplots
 import plotly.express as px
 import json
-import dash
-import dash as dcc
-import dash as html
-from web.utils.utils import load_market_data
 from sklearn.feature_extraction.text import CountVectorizer
 from datetime import datetime
-## Time series of market sentiments (drill down)
 
+## Time series of market sentiments (drill down)
 def plot_top_n_trigram(data):
     corpus = data
     n=3
@@ -44,7 +32,6 @@ def plot_top_n_trigram(data):
 
 #helper function
 def concat_list(series):
-    
     """Concat list of strings into one string"""
     
     all_words = ''
@@ -466,7 +453,6 @@ def get_top_n_gram_news(data, date):
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-
 def plot_hd_ts(data):
     df_senti = data
 
@@ -529,7 +515,6 @@ def plot_hd_ts(data):
         )
     plot.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot.update_yaxes(range=[-1.1, 1.1], showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
-    # plot.update_xaxes(rangeslider_visible=True)
 
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
