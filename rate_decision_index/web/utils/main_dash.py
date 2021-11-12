@@ -611,7 +611,7 @@ def make_home_plot(server, date = default_date):
                     dcc.Graph(id='gauge',
                         figure=fig1, 
                         style = {'width' : '100%',
-                            'height':'15%',
+                            'height':'20%',
                             'fontSize' : '20px',
                             'margin' : 0,
                             'display': 'inline-block'}
@@ -619,7 +619,7 @@ def make_home_plot(server, date = default_date):
                     # Predicted Rate
                     dcc.Graph(figure=fig2, 
                     style = {'width' : '100%',
-                            'height':'25%',
+                            'height':'20%',
                             'fontSize' : '20px',
                             # 'padding-left' : '100px',
                             'display': 'inline-block'}
