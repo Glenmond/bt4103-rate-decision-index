@@ -167,6 +167,9 @@ class MacroModel(Model):
             return
 
     def assess_val_set_performance(self):
+        """
+        Gets prediction result on validation set
+        """
         try:
             y_pred_res, y_pred = self.predict(self.data.X_val)
             self.validation_results = y_pred_res
@@ -186,6 +189,9 @@ class MacroModel(Model):
         print(f"\tThe RMSE score is {rmse}")
         
     def assess_test_set_performance(self):
+        """
+        Gets prediction result on test set
+        """
         try:
             y_pred_res, y_pred = self.predict(self.data.X_test)
             self.testing_result = y_pred_res
