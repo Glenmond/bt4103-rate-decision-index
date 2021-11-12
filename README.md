@@ -82,11 +82,14 @@ python run.py
 ```
 cd rate_decision_index/models
 ```
+2. To download and update all data
+```
+python update_macro_data.py
+```
 
-2. To run the model (and concurrently download and update all data)
+3. To run the model
 ```
 python macro_analysis.py
-
 ```
 
 #### 3b) Sentiment Model
@@ -129,5 +132,4 @@ cd rate_decision_index/models/fed_futures_model
 2. To run the model (and concurrently download and update all data)
 ```
 python main.py
-
 ```
