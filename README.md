@@ -4,8 +4,6 @@
 1. Project Description
 2. Installation
 3. Running Instructions
-4. Data Understanding
-5. Code Description
 
 ## 1. Project Description
 Our project aims to create a holistic and representative Central Bank Rate Decision Indicator leveraging on economics, finance, statistical
