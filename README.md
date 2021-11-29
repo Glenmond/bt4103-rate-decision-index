@@ -4,8 +4,6 @@
 1. Project Description
 2. Installation
 3. Running Instructions
-4. Data Understanding
-5. Code Description
 
 ## 1. Project Description
 Our project aims to create a holistic and representative Central Bank Rate Decision Indicator leveraging on economics, finance, statistical
@@ -25,7 +23,8 @@ The Central Bank Rate Decision Indicator consist of three sub-models, namely Mac
  Model and Fed Funds Futures Probability Model. Here is a brief summary for each sub-models:
  1. Macroeconomic Model
  
-(insert your explanation here)
+This model utilises 4 macroeconomic indicators (inflation, economic output, employment and bond yield spread) to predict the federal funds rate. To replicate the impact of economic data on the Central Bank rate decision making process, we employed data processing methods such as lead-lag analysis to account for leading and lagging effects of economic data versus the actual state of the economy. A regression model was then built to obtain a prediction of the Federal Funds Rate given these economic indicators. 
+
  
  2. Market Consensus Model
  
@@ -42,10 +41,9 @@ The primary objective of the Federal Funds Futures model is to capture the marke
 ## 2. Installation
 #### Libraries
 Required libraries are described in requirements.txt. The code should run with no issues using Python versions 3.7+.
-There are 2 ways that you can create the environment required:
+There are 2 ways that you can create the virtual environment required:
 
-1. Using the requirements.txt file
-Create a virtual environment of your choice. Here uses Anaconda:
+1. Using the requirements.txt file using Anaconda
 ```
 conda create -n rate python=3.7 jupyter
 conda activate rate
@@ -53,7 +51,6 @@ pip install -r requirements.txt
 ```
 
 2. Using the environments.yml file
-Create a virtual environment of using the environment.yml file
 ```
 conda env create -f environment.yml
 conda activate rate
@@ -65,16 +62,39 @@ conda env list
 ```
 
 ## 3. Running Instructions
+#### To Run Web Applications
+1. cd to the rate_decision_index directory, type in the command prompt:
+```
+cd rate_decision_index
+```
+
+2. Run the web application, type in the command prompt:
+```
+python run.py
+```
+
 #### To Run Notebook (Local)
 #### 3a) Macroeconomics Model
 
-(insert your explanation here)
+1. Move to models
+```
+cd rate_decision_index/models
+```
+2. To download and update all data
+```
+python update_macro_data.py
+```
+
+3. To run the model
+```
+python macro_analysis.py
+```
 
 #### 3b) Sentiment Model
 ##### Step 1: Download input data
-1. Move to data directory
+1. Move to extract directory
    ```
-   cd analytics/data
+   cd rate_decision_index/models/extract
    ```
 2. Get data from FOMC Website and New York Times. Specify document type. You can also specify from year.
    ```
@@ -104,50 +124,10 @@ conda env list
  
 1. Move to the fed_futures_model
 ```
-cd ../fed_futures_model
+cd rate_decision_index/models/fed_futures_model
 ```
 
 2. To run the model (and concurrently download and update all data)
 ```
 python main.py
-
 ```
-
-## 4. Data Understanding
-Textual data is scraped from FOMC Website. Other economic and market data are downloaded from FRB of St. Louis website
- (FRED). Data retrieved only after FOMC events for FOMC Documents
-
-#### Text Data
-* FOMC/statement.pickle - FOMC Statement text along with basic attributes such as dates, speaker, title. 
-* FOMC/minutes.pickle - FOMC Minutes text along with basic attributes such as dates, speaker, title. 
-
-#### Market Data
-In MarketData/Quandl, csv is saved with Quandl Code as the file name.
-* FED Rate
-  * FRED_DFEDTAR.csv - Target FED Rate till 2008, Daily
-  * FRED_DFEDTARU.csv - Target Upper FED Rate from 2008, Daily
-  * FRED_DFEDTARL.csv - Target Lower FED Rate from 2008, Daily
-  * FRED_DFF.csv - Effective FED Rate, Daily
-* GDP
-  * FRED_GDPC1.csv - Real GDP, Quarterly
-  * FRED_GDPPOT.csv - Real potential GDP, Quarterly
-* CPI
-  * FRED_PCEPILFE.csv - Core PCE excluding Food and Energy, Monthly
-  * FRED_CPIAUCSL.csv - Consumer Price Index for All Urban Consumers: All Items in U.S. City Average
-* Employment
-  * FRED_UNRATE.csv - Unemployment Rate, Monthly
-  * FRED_PAYEMS.csv - Employment, Monthly
-* Sales
-  * FRED_RRSFS.csv - Advance Real Retail and Food Services Sales, monthly
-  * FRED_HSN1F.csv - New Home Sales, monthly
-* ISM
-  * ISM_MAN_PMI.csv - ISM Purchasing Managers Index
-  * ISM_NONMAN_NMI.csv - ISM Non-manufacturing Index
-* Treasury
-  * USTREASURY_YIELD.csv - This is optional as not used in the final analysis.
-
-#### Loughran-McDonald Dictionary
-* LoughranMcDonald/LoughranMcDonald_SentimentWordLists_2018.csv - This is used in dictionary-based model and creating
- Tfidf vectors.
-
-## 5. Code Description

@@ -25,7 +25,6 @@ from sklearn.pipeline import Pipeline
 
 from sklearn.preprocessing import LabelEncoder
 
-
 class Backtest:
     def __init__(self, data, start_dt, path):
         self.data = data  # dictionary of dataframes
@@ -36,7 +35,9 @@ class Backtest:
         self.path = path
 
     def predict(self):
-
+        """
+        Predict dataset
+        """
         for name in self.docs:
             df = self.classify(name)
             self.update(df, name)
@@ -119,12 +120,10 @@ class Backtest:
         ]  # historical end date, maximum override 12 rows
 
         if start_dt < hist_end_dt:
-
             curr_df = curr_df[(curr_df["date"] >= hist_end_dt)]
             old_df = old_df[(old_df["date"] < hist_end_dt)]
 
         else:  # start_dt >= hist_end_dt
-
             old_df = old_df[(old_df["date"] < start_dt)]
 
         df = pd.concat([old_df, curr_df])
@@ -132,7 +131,6 @@ class Backtest:
         df = self.scale(df)
 
         self.save_df(name, df)
-
         self.data["historical"][name] = df  # replace the historical dictionary
 
     def save_df(self, name, df):

@@ -7,9 +7,7 @@ import pandas as pd
 from abc import ABCMeta, abstractmethod
 
 class FomcBase(metaclass=ABCMeta):
-
     def __init__(self, content_type, verbose, max_threads, base_dir):
-        
         # Set arguments to internal variables
         self.content_type = content_type
         self.verbose = verbose

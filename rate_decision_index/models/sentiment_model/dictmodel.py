@@ -1,12 +1,10 @@
 import re
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
 from models.sentiment_model.config import negate, lmdict
 from pandas.tseries.offsets import MonthEnd
 from functools import reduce
-
 
 class DictionaryModel:
     def __init__(self, data, start_dt, path):
@@ -18,20 +16,27 @@ class DictionaryModel:
         self.path = path
 
     def predict(self):
-
+        """
+        Predicting results for dataframe
+        """
         for name in self.docs:
             df = self.classify(name)
             self.update(df, name)
-        
         self.combine_df()
         
     def negated(self, word):
+        """
+        Checking for negated words
+        """
         if word.lower() in negate:
             return True
         else:
             return False
 
     def tone_counter(self, dict, article):
+        """
+        Calculating word meaning into counts based on dictionary
+        """
         pos_count = 0
         neg_count = 0
         hawk_count = 0
@@ -118,8 +123,6 @@ class DictionaryModel:
         4. Dovish + Negative = Hawkish --> decrease in uncertainty // decreasing slowdown
 
         """
-
-        wordcount = temp[0]
         NPositiveWords = temp[1]
         NNegativeWords = temp[2]
         NHawkishWords = temp[3]
@@ -131,17 +134,18 @@ class DictionaryModel:
         elif NHawkishWords > NDovishWords:  # more hawkish
             if NPositiveWords >= NNegativeWords:
                 return 1
-
             else:
                 return -1
         else:  # NHawkishWords < NDovishWords, more dovish
             if NPositiveWords >= NNegativeWords:
                 return -1
-
             else:
                 return 1
 
     def aggregate_score(self, series):  # series == sentences
+        """
+        Aggregate sentences to document level scoring
+        """
         score = []
         series_count = 0  # to check only the Hawkish vs Dovish
         for i in series:
@@ -164,14 +168,12 @@ class DictionaryModel:
         print(f"===== predicting {name} using dictionary-based model =====".title())
 
         data = self.data[name]
-
         data["Score DB"] = 0
 
         sentence_mapping = {"news": "lemmatizedSentences", "statements" : "lemmatizedSentencesDB", "minutes": "lemmatizedSentencesDB"}
         col = sentence_mapping[name] # column name
         
         for index, row in data.iterrows():
-
             # ignore rows that are empty
             if len(row[col]) == 0:
                 continue
@@ -179,7 +181,6 @@ class DictionaryModel:
             df = pd.DataFrame(row[col], columns=["Corpus"])
             df["Date"] = row["date"].strftime("%Y-%m-%d")
             df["Class"] = 0  # Hawkish = +1, Dovish=-1
-            date_details = row["date"].strftime("%Y-%m-%d")
 
             # initializing dataframe columns
             df["wordcount"] = 0
@@ -187,7 +188,6 @@ class DictionaryModel:
             df["NNegativeWords"] = 0
             df["NHawkishWords"] = 0
             df["NDovishWords"] = 0
-
             df = df[
                 [
                     "Date",
@@ -234,7 +234,6 @@ class DictionaryModel:
         df["Scaled Score DB"] = df["Score DB"].apply(
             lambda x: x / max_hawk if x > 0 else -(x / min_dov)
         )
-
         return df
 
     def update(self, curr_df, name):
@@ -243,7 +242,6 @@ class DictionaryModel:
         Rules:
         1. Update maximum up to 1 year from the latest data in existing dataframe
         """
-
         # get last index of the curr dataframe
         old_df = self.data["historical"][name]
 
@@ -253,12 +251,9 @@ class DictionaryModel:
         ]  # historical end date, maximum override 12 rows
 
         if start_dt < hist_end_dt:
-
             curr_df = curr_df[(curr_df["date"] >= hist_end_dt)]
             old_df = old_df[(old_df["date"] < hist_end_dt)]
-
         else:  # start_dt >= hist_end_dt
-
             old_df = old_df[(old_df["date"] < start_dt)]
         
         # concat values
@@ -288,7 +283,6 @@ class DictionaryModel:
         st_df = st_df[['date', 'Scaled Score', 'Scaled Score DB']]
         mins_df = mins_df[['date', 'Scaled Score', 'Scaled Score DB']]
         news_df = news_df[['date', 'Scaled Score', 'Scaled Score DB']]
-
 
         # rename columns
         st_df.rename(columns = {"Scaled Score" : "Score_Statement", "Scaled Score DB" : "Score_Statement_DB"}, inplace=True)

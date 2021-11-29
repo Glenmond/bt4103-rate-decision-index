@@ -9,9 +9,7 @@ import pickle
 
 apikey = os.getenv('NYTIMES_APIKEY', 'w3R4zcqQEA87fNdWNj866OzJ03SvgOwu')
 
-
 class News():
-
     def __init__(self, base_dir='../data/sentiment_data/extract/'):
         # Set arguments to internal variables
         self.content_type = "news"

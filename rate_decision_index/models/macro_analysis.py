@@ -96,7 +96,6 @@ def make_macro_plot(path_to_pickle_files = './data/macroeconomic_indicators_data
                     html.P([
                         html.Label("Coefficient"),
                         dcc.Slider(id = 'slider',
-                                        #marks = {i : i/10 for i in range(0, 10)},
                                         step = 0.01,
                                         min = -2,
                                         max = 2,

@@ -21,14 +21,15 @@ html_layout = """
         {%scripts%}
         {%renderer%}
     </footer>
-
 """
 
 conf_int_95_line_colour = 'rgba(255, 0, 0, 0.1)'
 conf_int_99_line_colour = 'rgba(0, 0, 255, 0.1)'
 
 def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_indicators_data/'):
-    # Get the data
+    """
+    Initialize the dashboard when we run the app
+    """
     try: # so that we do not need the FRED API call every time we try to access
         data = pd.read_pickle(path_to_pickle_files + 'macro_data_pickle')
         macro_data = MacroData(data, path_to_HD_pickle='./models/data/sentiment_data/historical/')
@@ -84,7 +85,6 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
                     fill='tonexty', line_color=conf_int_95_line_colour, 
                     fillcolor=conf_int_95_line_colour, name='95% Confidence Interval'))
 
-
     conf_int_99 = y_pred_res.summary_frame(0.01)
     conf_int_99_upper = conf_int_99['mean_ci_upper']
     conf_int_99_lower = conf_int_99['mean_ci_lower']
@@ -110,7 +110,7 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
                                                             }),
                     # slider
                     html.Div([
-                        html.Label("Coefficient"),
+                        html.Label("Coefficient", style={'margin': '0 0 1% 1%'}),
                         dcc.Slider(id = 'slider',
                                         step = 0.01,
                                         min = -2,
@@ -118,10 +118,11 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
                                         value = 1.65,
                                         tooltip={"placement": "bottom", "always_visible": True},
                                         ),
-                        html.P(id='metrics')], 
+                        html.P(id='metrics', style={'margin': '0 0 0 1%'})], 
                     style = {'width' : '100%',
                             'fontSize' : '20px',
-                            'padding' : '0 0 0 2%',
+                            'padding' : '0 2% 0 0',
+                            'margin': '0 1% 0 0',
                             'display': 'inline-block',
                             'height': '25vh',
                             'background-color': 'white'
@@ -133,6 +134,9 @@ def init_dashboard(server, path_to_pickle_files = './models/data/macroeconomic_i
     return dash_app.server
 
 def init_callbacks(app, macro_data, training_data,y_train_to_plot, y_perf):
+    """
+    Initialize the callbacks used in the app
+    """
     @app.callback(Output('plot','figure'),
                 Output('metrics','children'),
                 Input('slider','value'))

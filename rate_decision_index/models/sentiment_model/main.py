@@ -1,5 +1,4 @@
 import datetime
-import sys
 
 from models.sentiment_model.dataloader import DataLoader
 from models.sentiment_model.datapreprocessor import DataPreprocessor

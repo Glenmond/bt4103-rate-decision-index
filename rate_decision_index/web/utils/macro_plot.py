@@ -1,18 +1,7 @@
 import pandas as pd
-import numpy as np
-import dateutil
-import datetime
-import numpy as np
-import pandas as pd
 import plotly
 import plotly.graph_objects as go
-import numpy as np
-import pandas as pd
-from vega_datasets import data
-from plotly.subplots import make_subplots
-import plotly.express as px
 import json
-from web.utils.utils import load_macro_data
 from models.macro_model.macroeconomics_model import MacroModel, MacroData
 
 def plot_gdp_index(gdp_sub_index):
@@ -63,7 +52,6 @@ def plot_gdp_index(gdp_sub_index):
             )
         ],
         plot_bgcolor = 'white'
-
     )
 
     fig.update_xaxes(rangeslider_visible=True, showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
@@ -85,7 +73,6 @@ def plot_employment_index(gdp_sub_index):
 
     fig.update_layout(title_text='Employment and its components',
                     xaxis_title='Date', yaxis_title='Value')
-
 
     fig.update_layout(
         updatemenus=[
@@ -188,10 +175,6 @@ def plot_inflation_index(gdp_sub_index):
                     method="update",
                     args=[{"visible":[True,False,False,False,False,False,False,False,True]},
                         {"title":"Other goods and services"}])
-                
-
-
-                
                 ]),
             direction="down",
             pad={"r": 5, "t": 5},
@@ -214,11 +197,7 @@ def plot_inflation_index(gdp_sub_index):
 def plot_main_plot(data):
     macro_data = MacroData(data, path_to_HD_pickle='./models/data/sentiment_data/historical/')
     macro_model = MacroModel(macro_data)
-
     macro_model.fit_data()
-
-    #macro_model.assess_val_set_performance()
-    #macro_model.assess_test_set_performance()
 
     fig = go.Figure()
 
@@ -259,7 +238,6 @@ def plot_main_plot(data):
                     fill='tonexty', line_color='rgba(255, 0, 0, 0.1)', 
                     fillcolor='rgba(255, 0, 0, 0.1)', name='95% Confidence Interval'))
 
-
     conf_int_99 = y_pred_res.summary_frame(0.01)
     conf_int_99_upper = conf_int_99['mean_ci_upper']
     conf_int_99_lower = conf_int_99['mean_ci_lower']
@@ -270,7 +248,6 @@ def plot_main_plot(data):
                     y = conf_int_99_upper, x=y_test_to_plot.index,
                     fill='tonexty', line_color='rgba(0, 0, 255, 0.1)', 
                     fillcolor='rgba(0, 0, 255, 0.1)', name='99% Confidence Interval'))
-
 
     fig.update_layout(title='Prediction of Federal Funds Rate',
         xaxis_title='Date',
@@ -411,7 +388,6 @@ def plot_indicators_ts(df_plot):
             yanchor="top"
             )
         ])
-    
 
     plot.update_layout(
             title='The effect of individual indicators on Fed Fund Rate',
@@ -419,7 +395,6 @@ def plot_indicators_ts(df_plot):
             font_color="black",
             title_font_family="Times New Roman Bold",
             title_font_color="black",
-            #title_text='All Indicators', 
             title_x=0.5,
             plot_bgcolor = 'white'
         )
@@ -428,5 +403,3 @@ def plot_indicators_ts(df_plot):
     plot.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#ECECEC', zeroline=True, zerolinecolor='lightgrey')
     plot_json = json.dumps(plot, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
-
-

@@ -123,11 +123,9 @@ class DataPreprocessor:
         sentences = [
             " ".join(s.split()) for s in sentences
         ]  # ensure all spacing is single spacing
-        
         new_sentences = []
 
         for sentence in sentences:
-            
             # remove punctuations
             sentence = "".join([c for c in sentence if c not in string.punctuation])
 
@@ -138,15 +136,12 @@ class DataPreprocessor:
             sentence = re.sub(
                 "(\\b[A-Za-z] \\b|\\b [A-Za-z]\\b)", "", sentence
             )
-
             if len(sentence) < 1: # ignore empty strings
-                    continue
-
+                continue
             else:
                 new_sentences.append(sentence)
         
         return new_sentences
-
 
     def filter_keywords(self, sentences, news=False):  # take in list sentence as input
             """
@@ -160,9 +155,7 @@ class DataPreprocessor:
                 return new_sentences
             
             for sentence in sentences:
-
                 if any(s in sentence.lower() for s in filter_words):
-
                     if news:
                         if any(s in sentence.lower() for s in us_words
                         ):
@@ -171,14 +164,12 @@ class DataPreprocessor:
                         new_sentences.append(sentence)
             
             if len(new_sentences) == 0:  # revert to no filter usage
-                
                 if news: # return empty list
                     return new_sentences    
                 else:
                     return sentences # revert to no filter usage and return original docs
             else:
                 return new_sentences
-
 
     def get_wordnet_pos(self, word):
         """Map POS tag to first character lemmatize() accepts"""
@@ -189,17 +180,16 @@ class DataPreprocessor:
             "V": wordnet.VERB,
             "R": wordnet.ADV,
         }
-
         return tag_dict.get(tag, wordnet.NOUN)
 
     def lemmatize_list(self, sentences):
+        """
+        Lemmatize textual data
+        """
         new_sentences = []
-
         for sentence in sentences:
-
             if len(sentence) == 0:
                 continue
-
             lemmatized_list = [
                 lemmatizer.lemmatize(w, self.get_wordnet_pos(w))
                 for w in nltk.word_tokenize(sentence)
@@ -214,12 +204,10 @@ class DataPreprocessor:
         Transfer learning using FinBERT to remove neutral sentiments
         Note: sentences cannot be an empty list, else function will not work
         """
-
         assert len(sentences) != 0, "Sentences is an empty list, please debug to ensure that empty sentences are removed in df"
         
         inputs = tokenizer(sentences, return_tensors="pt", padding=True)
         outputs = finbert(**inputs)[0]
-
         new_sentences = []
 
         for idx, sent in enumerate(sentences):

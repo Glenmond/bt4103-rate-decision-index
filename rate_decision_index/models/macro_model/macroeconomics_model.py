@@ -39,9 +39,10 @@ class MacroData():
         self.preprocess(path_to_HD_pickle)
 
     def preprocess(self, path_to_HD_pickle):
-        # Preprocess the data obtained from the API call
-
-        # Add the HD index=
+        """
+        Preprocess the data obtained from the API call
+        """
+        # Add the HD index
         hd = pd.read_pickle(path_to_HD_pickle + 'final_df.pickle')
         hd.index = hd['date']
         hd.index = pd.to_datetime(hd.index).to_period('M')
@@ -74,8 +75,6 @@ class MacroData():
         #self.data.dropna(inplace=True)
 
         # Add interactions
-        #self.data['MEDCPI_PPIACO'] = self.data['MEDCPI'] * self.data['PPIACO']
-        #self.data['EMRATIO_MEDWAGES'] = self.data['EMRATIO'] * self.data['MEDWAGES']
         self.data = self.data.fillna(method="ffill")
         self.data = self.data.fillna(method="bfill")
 
@@ -87,16 +86,7 @@ class MacroData():
         y_train = y[:-test_proportion]
         self.X_test = X[-test_proportion:]
         self.y_test = y[-test_proportion:]
-        self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
-
-        # Impute
-        #imputer = KNNImputer(n_neighbors=7)
-        #imputer.fit(X_train)
-        #self.X_train = pd.DataFrame(imputer.transform(self.X_train), columns=self.X_train.columns, index=self.X_train.index)
-        #self.X_val = pd.DataFrame(imputer.transform(self.X_val), columns=self.X_val.columns, index=self.X_val.index)
-        #self.X_test = pd.DataFrame(imputer.transform(self.X_test), columns=self.X_test.columns, index=self.X_test.index)
-        #self.imputer = imputer
-        
+        self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)        
 
         # Add interactions
         self.X_train['MEDCPI_PPIACO'] = self.X_train['MEDCPI'] * self.X_train['PPIACO']
@@ -140,6 +130,9 @@ class MacroModel(Model):
         self.testing_results = None      
 
     def fit_data(self):
+        """
+        Fits the data onto the model
+        """
         exog = self.data.X_train.copy().drop('shifted_target', axis=1)
         endog = self.data.y_train
 
@@ -156,9 +149,9 @@ class MacroModel(Model):
             print("The dataset is not defined properly, make sure you preprocess the data first before fitting!") 
 
     def predict(self, data):
-        # TODO if the data is not in pd.DataFrame format (like if input is in a list of tuples or dictionary something like that), 
-        # convert into pd DataFrame format
-        
+        """
+        Predicts the data using the fitted model
+        """
         try:
             data_to_pred = data.copy().drop('shifted_target', axis=1)
 
@@ -174,6 +167,9 @@ class MacroModel(Model):
             return
 
     def assess_val_set_performance(self):
+        """
+        Gets prediction result on validation set
+        """
         try:
             y_pred_res, y_pred = self.predict(self.data.X_val)
             self.validation_results = y_pred_res
@@ -193,6 +189,9 @@ class MacroModel(Model):
         print(f"\tThe RMSE score is {rmse}")
         
     def assess_test_set_performance(self):
+        """
+        Gets prediction result on test set
+        """
         try:
             y_pred_res, y_pred = self.predict(self.data.X_test)
             self.testing_result = y_pred_res
@@ -292,9 +291,7 @@ class MacroModel(Model):
         fed_fund_rate.index = pd.to_datetime(fed_fund_rate.index).to_period("M")
         fed_fund_rate = fed_fund_rate[-13:]
         fed_fund_rate = fed_fund_rate.shift(1).dropna()
-        df["shifted_target"] = fed_fund_rate.to_numpy()
-
-        
+        df["shifted_target"] = fed_fund_rate.to_numpy()        
 
         # Add interactions
         df['MEDCPI_PPIACO'] = df['MEDCPI'] * df['PPIACO']
