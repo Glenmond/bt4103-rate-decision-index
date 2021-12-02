@@ -330,10 +330,3 @@ def import_modify_csv_fff(file):
     df['Date'] = newdate
     
     return df
-
-def preprocessed_data(fff_data):
-    """
-    placeholder for cleaning data
-    """
-    cleaned_data = fff_data
-    return cleaned_data
