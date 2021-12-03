@@ -44,7 +44,7 @@ def get_data2(indicators, start, end):
 
 def collect_indicator_data(path="../../data/macroeconomic_indicators_data/"):  
     indicatorsR = ['GDPC1', 'PCEC96', 'GPDIC1', 'GCEC1', 'NETEXC']
-    dfR = get_data(indicators=indicatorsR, start='2004-01-01', end='')
+    dfR = get_data2(indicators=indicatorsR, start='2004-01-01', end='')
     dfR.to_csv(f"{path}/macro_gdp_data.csv", index=True)
 
     indicators_employment = ['PAYEMS', 'USPRIV', 'CES9091000001', 'USCONS', 'MANEMP']
